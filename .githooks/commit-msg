@@ -1,0 +1,16 @@
+#!/bin/sh
+# Claude/AI가 커밋 기여자로 남지 않도록 Co-Authored-By 트레일러와 생성 문구를 차단·제거
+# ※ sed -i 는 맥(BSD)/윈도우(GNU) 문법이 달라 쓰지 않는다 — grep -v + 임시 파일로 양쪽 호환 (2026-08-18, 종광 리포트)
+MSG_FILE="$1"
+TMP="$MSG_FILE.tmp"
+
+# 1) 자동 제거 — Claude/Anthropic 트레일러, "Generated with … Claude" 문구
+grep -viE '^(Co-Authored-By|Signed-off-by):.*(claude|anthropic)|Generated with.*Claude' "$MSG_FILE" > "$TMP"
+mv "$TMP" "$MSG_FILE"
+
+# 2) 그래도 남아있으면 커밋 거부
+if grep -qiE 'noreply@anthropic\.com|Co-Authored-By:.*Claude|Generated with.*Claude' "$MSG_FILE"; then
+  echo "❌ 커밋 메시지에 Claude 기여자 정보가 포함되어 있어 커밋을 거부합니다." >&2
+  exit 1
+fi
+exit 0

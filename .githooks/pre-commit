@@ -1,0 +1,6 @@
+#!/bin/sh
+EMAIL="$(git config user.email)"
+case "$EMAIL" in
+  *anthropic.com*) echo "❌ user.email 이 anthropic 도메인입니다. 본인 이메일로 설정하세요." >&2; exit 1;;
+esac
+exit 0
