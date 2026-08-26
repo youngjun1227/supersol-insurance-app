@@ -85,7 +85,7 @@ export function Home() {
         {/* 카드 — 8월 이용 금액. S4-A 팝업이 이 값을 이어받는다 */}
         <Card radius="xl" className={styles.card}>
           <div className={styles.cardRow}>
-            <div className={styles.cardArt} aria-hidden="true" />
+            <img className={styles.cardArt} src="/assets/cards/kpass-check.png" alt="" aria-hidden="true" />
             <div className={styles.accountText}>
               <span className={`${styles.accountAmount} t-h2`}>(경기패스) K-패스 체크</span>
               <span className={`${styles.accountName} t-body`}>

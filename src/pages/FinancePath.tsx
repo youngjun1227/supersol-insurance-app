@@ -194,7 +194,7 @@ export function FinanceCard() {
           <span className={`${styles.headLink} t-caption`}>카드 관리 ›</span>
         </div>
         <div className={styles.myCardRow}>
-          <div className={styles.cardArt} aria-hidden="true" />
+          <img className={styles.cardArt} src="/assets/cards/kpass-check.png" alt="" aria-hidden="true" />
           <div className={styles.accountText}>
             <span className={`${styles.accountName} t-body-lg-bold`}>(경기패스) K-패스 체크</span>
             <span className={`${styles.accountNo} t-caption`}>26.08.01~26.08.26</span>

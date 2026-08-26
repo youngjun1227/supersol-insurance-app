@@ -151,13 +151,13 @@
   width: 100%;
 }
 
-/* 실제 카드 이미지는 없다 — 자리만 (실물 에셋 모사 금지) */
+/* 카드 아트 — Figma 원본 이미지 (홈과 같은 파일) */
 .cardArt {
   flex-shrink: 0;
   width: 44px;
-  height: 58px;
+  height: 60px;
   border-radius: var(--r-btn);
-  background: var(--bg-tint-alt);
+  object-fit: cover;
 }
 
 .emptyBox {

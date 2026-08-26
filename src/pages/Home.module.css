@@ -123,13 +123,14 @@
   text-align: center;
 }
 
-/* 카드 아트 — Figma 실제 카드 이미지 자리 (에셋 도착 전까지 자리만) */
+/* 카드 아트 — Figma 387:7913 원본 이미지.
+ * 에셋 모사 금지는 "직접 그리지 마라"는 뜻이지 Figma 내장 이미지를 쓰지 말라는 게 아니다 */
 .cardArt {
   flex-shrink: 0;
   width: 34px;
   height: 53px;
   border-radius: var(--r-btn);
-  background: var(--bg-tint-alt);
+  object-fit: cover;
 }
 
 /* ── 땡겨요 ──────────────────────────────────────────────── */
