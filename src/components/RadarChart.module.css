@@ -1,0 +1,40 @@
+.svg {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  overflow: visible;
+}
+
+.grid {
+  fill: none;
+  stroke: var(--border-default);
+  stroke-width: 1;
+}
+
+.spoke {
+  stroke: var(--border-default);
+  stroke-width: 1;
+}
+
+/* 또래 평균 — 점선 테두리만 */
+.peer {
+  fill: none;
+  stroke: var(--text-caption);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+/* 내 보장 — primary 채움 */
+.mine {
+  fill: var(--primary);
+  fill-opacity: 0.85;
+  stroke: var(--primary);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  fill: var(--text-secondary);
+}

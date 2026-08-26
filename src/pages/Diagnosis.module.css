@@ -39,22 +39,27 @@
   background: var(--border-default);
 }
 
-/* ── 내 보험 행 — 박스 없음, 틴트 위 직접 배치 ───────────── */
+/* ── 내 보험 행 — 박스 없음, 틴트 위 직접 배치 ─────────────
+ * ⚠️ 블록(272)은 카드 안에서 가운데 놓이지만 글자는 왼쪽 정렬이다.
+ * align-items:center 를 쓰면 글자까지 가운데로 밀린다 (한 번 틀렸던 지점) */
 .policies {
   display: flex;
   flex-direction: column;
+  align-items: center;   /* 272 블록을 가운데로 */
   width: 100%;
-  padding: 14px 0;
+  padding: 14px 0;       /* Figma 보험 카드 상하 패딩 14 */
 }
 
 .policy {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;  /* 글자는 왼쪽 */
   gap: 10px;
-  width: 100%;
+  width: 272px;
+  max-width: 100%;
 }
 
+/* 구분선은 카드 폭(313) 전체 — 보험 블록보다 넓다 */
 .policyDivider {
   width: 100%;
   height: 1px;
@@ -65,16 +70,13 @@
 .policyTitle {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-2);
-  width: 272px;
-  max-width: 100%;
+  width: 100%;
   color: var(--text-primary);
 }
 
 .policyDesc {
-  width: 272px;
-  max-width: 100%;
+  width: 100%;
   color: var(--text-secondary);
 }
 
