@@ -1,0 +1,127 @@
+/* S2-A. 상단(칩 영역) --bg-page → 목록부터 --bg-surface (스펙 §1 배경 규칙) */
+
+/* ── 카테고리 칩 — 가로 스크롤 ───────────────────────────── */
+.chipRow {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--gutter-main) var(--gutter);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.companyRow {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0 var(--gutter) var(--gutter-main);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 var(--space-4) 0 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-pill);
+  background: var(--bg-tint-alt);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.chip[data-selected='true'] {
+  background: var(--bg-chip-selected);
+  border-color: var(--bg-chip-selected);
+  color: var(--on-primary);
+}
+
+.chipIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* ── 채널 고지 — 규제 대응이라 지우지 않는다 ─────────────── */
+.notice {
+  width: 100%;
+  padding: 0 var(--gutter) var(--space-3);
+  color: var(--text-caption);
+}
+
+/* 목록 시작 전 구분 밴드 8 */
+.band {
+  width: 100%;
+  height: var(--space-2);
+  background: var(--bg-page);
+}
+
+/* ── 섹션 ────────────────────────────────────────────────── */
+.sections {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--bg-surface);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-bottom: var(--space-2);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: var(--space-2) var(--gutter);
+}
+
+.sectionName  { color: var(--text-primary); }
+.sectionCount { color: var(--primary); }
+
+/* ── 상품 행 ─────────────────────────────────────────────── */
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4) var(--gutter);
+  text-align: left;
+}
+
+.itemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 상품명은 링크색 — 자사·타사 구분 없이 동일 (타사에 로고 금지 규칙과 별개) */
+.itemName { color: var(--text-link); }
+.itemDesc { color: var(--text-caption); }
+
+/* ── 모두 보기 ───────────────────────────────────────────── */
+.seeAll {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--gutter-main) var(--gutter);
+  background: var(--bg-surface);
+}
+
+.seeAllText { color: var(--text-secondary); }

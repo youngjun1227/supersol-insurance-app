@@ -213,7 +213,8 @@ export const PRODUCTS: Product[] = [
   { id: 'op-b-diabetes',  category: 'health',   company: 'B생명',    issuer: 'other', name: '(무)당뇨플러스건강보험(모바일)', description: '당뇨병 진단자금부터 치료비까지' },
   { id: 'op-d-100friend', category: 'health',   company: 'D생명',    issuer: 'other', name: '(무)백년친구 e-안심보험', description: '만기까지 보험료 인상없이 보장' },
   { id: 'op-e-cancer',    category: 'cancer',   company: 'E생명',    issuer: 'other', name: '(무)언제나안심암보험(모바일)', description: '갱신없이 동일 보험료, 최대 110세까지' },
-  { id: 'op-f-carer',     category: 'health',   company: 'F손해보험', issuer: 'other', name: '간편간병인보험(무배당) 모바일', description: '입원 첫날부터 최대 365일 한도' },
+  // 간병 성격이라 치매·간병 (S2_카테고리체계 §S2-5: "간편간병인·장기요양안심은 치매·간병으로")
+  { id: 'op-f-carer',     category: 'dementia', company: 'F손해보험', issuer: 'other', name: '간편간병인보험(무배당) 모바일', description: '입원 첫날부터 최대 365일 한도' },
   { id: 'op-f-health',    category: 'health',   company: 'F손해보험', issuer: 'other', name: '간편건강보험(무배당) 모바일', description: '암·뇌·심장 주요치료비 10년 최대 2억' },
   { id: 'op-a-injury',    category: 'injury',   company: 'A생명',    issuer: 'other', name: '(무)일상안심상해보험', description: '일상 속 상해사고 대비' },
   { id: 'op-d-teeth',     category: 'dental',   company: 'D생명',    issuer: 'other', name: '(무)치아사랑보험', description: '충치·보철 치료비 보장' },
