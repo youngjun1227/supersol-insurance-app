@@ -169,7 +169,7 @@ export function FinanceInsurance() {
 
         <Battery level={batteryLevelFor(data.coverageTotal)} width={72} height={96} />
 
-        <span className={`${styles.diagHeadline} t-body-lg-medium`}>
+        <span className={`${styles.diagHeadline} t-body-lg-bold`}>
           {C.diagnosisHeadline.replace('{n}', String(emptyPriority.length))}
         </span>
         <span className={`${styles.diagBasis} t-caption`}>
