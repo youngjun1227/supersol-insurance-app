@@ -158,9 +158,3 @@
   gap: var(--space-1);
   color: var(--text-primary);
 }
-
-.disclaimer {
-  width: 100%;
-  color: var(--text-caption);
-  text-align: center;
-}

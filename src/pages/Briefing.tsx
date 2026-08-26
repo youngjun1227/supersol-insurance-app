@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom'
 import { AppShell, Button, Header, IconAction, RadarChart } from '@/components'
 import type { RadarAxis } from '@/components/RadarChart'
 import { useMock } from '@/app/MockProvider'
-import { DIAGNOSIS } from '@/data/copy'
 import { batteryAsset, batteryLevelFor } from '@/lib/coverage'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import styles from './Briefing.module.css'
@@ -143,8 +142,6 @@ export function Briefing() {
         >
           자세한 진단 보기
         </Button>
-
-        <p className={`${styles.disclaimer} t-caption`}>{DIAGNOSIS.disclaimer}</p>
       </div>
     </AppShell>
   )
