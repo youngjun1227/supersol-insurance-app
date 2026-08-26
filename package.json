@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "sync:assets": "bash scripts/sync-assets.sh"
+    "sync:assets": "bash scripts/sync-assets.sh",
+    "lint:tokens": "node scripts/lint-tokens.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.7",

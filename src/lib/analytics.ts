@@ -48,6 +48,11 @@ export interface AnalyticsEvent {
   outcome?: TaskOutcome
   /** 어려웠나 1~7 (type='difficulty'일 때) */
   score?: number
+  /**
+   * 화면 상태 스냅샷. 경로가 갈리는 화면에서 targetId 만으로는 해석이 안 된다.
+   * 예) S2-A 는 필터 2축이라 {cat, company} 를 같이 남긴다.
+   */
+  context?: Record<string, string>
 }
 
 /* ── 세션 ──────────────────────────────────────────────────── */
@@ -148,6 +153,8 @@ interface TrackInput {
   screen: string
   outcome?: TaskOutcome
   score?: number
+  /** 화면 상태 스냅샷 — S2-A 필터처럼 경로가 갈리는 화면에서 */
+  context?: Record<string, string>
   /** 과제를 명시하고 싶을 때 (기본은 진행 중인 과제) */
   taskId?: TaskId | null
 }
@@ -163,6 +170,7 @@ export function track(input: TrackInput): AnalyticsEvent {
     state: currentState,
     ...(input.outcome ? { outcome: input.outcome } : {}),
     ...(input.score !== undefined ? { score: input.score } : {}),
+    ...(input.context ? { context: input.context } : {}),
   }
 
   const events = readEvents()

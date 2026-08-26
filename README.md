@@ -19,6 +19,19 @@ clone 후 1회:
 git config core.hooksPath .githooks
 ```
 
+## 3인 개발 — 팀원은 여기부터
+
+작업 지시서를 먼저 읽으세요:
+- **팀원 A** → [docs/작업지시_팀원A.md](docs/작업지시_팀원A.md) — S1 보험 메인 계열
+- **팀원 B** → [docs/작업지시_팀원B.md](docs/작업지시_팀원B.md) — 청구 흐름 + 메인홈
+- 팀장 — 공용 컴포넌트 · S3 진단 계열 · S2 · S6
+
+규칙 요약:
+- `main` 직접 push 금지. 흐름 단위 브랜치 → PR → 팀장이 머지
+- 토큰 밖 색·라운드·폰트 크기는 **커밋이 막힙니다** (`npm run lint:tokens`)
+- 계측 `targetId`는 `src/lib/targetId.ts`의 `tid()`로만
+- 공용 컴포넌트는 팀장이 만듭니다 — 없으면 직접 만들지 말고 요청
+
 디자인 레포에서 에셋(3D 일러스트·로고) 가져오기 — 형제 폴더에 `../SOL_UI:UX_Redesign` 전제:
 ```bash
 npm run sync:assets

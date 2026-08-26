@@ -9,12 +9,14 @@ import { useCallback, useEffect } from 'react'
 import { useScreenName } from '@/app/AnalyticsProvider'
 import { track as rawTrack } from '@/lib/analytics'
 
-/** 탭 1회 기록. 클릭 수 지표의 원자료 */
+/** 탭 1회 기록. 클릭 수 지표의 원자료.
+    targetId 는 lib/targetId.ts 의 tid() 로 만든다 — 이름이 갈리면 집계가 안 된다.
+    context 는 경로가 갈리는 화면에서 필터 상태 등을 같이 남길 때 (S2-A). */
 export function useTrack() {
   const screen = useScreenName()
   return useCallback(
-    (targetId: string) => {
-      rawTrack({ type: 'tap', targetId, screen })
+    (targetId: string, context?: Record<string, string>) => {
+      rawTrack({ type: 'tap', targetId, screen, context })
     },
     [screen],
   )

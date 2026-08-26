@@ -1,6 +1,24 @@
 #!/bin/sh
+# 1) 커밋 작성자 확인
 EMAIL="$(git config user.email)"
 case "$EMAIL" in
   *anthropic.com*) echo "❌ user.email 이 anthropic 도메인입니다. 본인 이메일로 설정하세요." >&2; exit 1;;
 esac
+
+# 2) 토큰 규칙 lint — 스테이징된 src 파일만 검사
+STAGED="$(git diff --cached --name-only --diff-filter=ACM | grep -E '^src/.*\.(css|tsx|ts)$' || true)"
+if [ -n "$STAGED" ]; then
+  if command -v node >/dev/null 2>&1; then
+    # shellcheck disable=SC2086
+    node scripts/lint-tokens.mjs $STAGED || {
+      echo "" >&2
+      echo "커밋을 중단했습니다. 위 항목을 고치고 다시 커밋하세요." >&2
+      echo "정말 예외가 필요하면 팀장과 상의 후 --no-verify 를 쓰세요." >&2
+      exit 1
+    }
+  else
+    echo "⚠️  node 를 찾을 수 없어 토큰 lint 를 건너뜁니다." >&2
+  fi
+fi
+
 exit 0

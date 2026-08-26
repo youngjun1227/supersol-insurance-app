@@ -4,7 +4,7 @@
 신한 슈퍼쏠 보험 탭 **UI/UX 개선(리디자인)의 React 구현**. 룩앤필은 기존 슈퍼쏠 그대로, 개선하는 것은 정보 구조·흐름·배치다. Figma 최종 UI를 그대로 코드로 옮긴다. 1차 목표는 9/11 사용자 테스트(목데이터·백엔드 없음·폰 브라우저 링크 배포)이고, 이후 실제 기능 구현으로 확장한다 — **일회용 프로토타입이 아니다. 확장을 전제로 구조를 잡는다.**
 
 ## 저장소 관계
-- **이 레포 (개발)**: https://github.com/youngjun1227/supersol-insurance-app — 코드만. 담당: 영준(팀장) 단독.
+- **이 레포 (개발)**: https://github.com/youngjun1227/supersol-insurance-app — 코드만. **3인 개발**(아래 분담표).
 - **디자인 레포**: https://github.com/youngjun1227/supersol-insurance-redesign — Figma 작업·리서치·토큰 원본. 로컬 경로 `../SOL_UI:UX_Redesign` (형제 폴더 전제).
 - 디자인이 바뀌면 **디자인 레포가 원본** — 이쪽은 따라간다. 토큰·에셋은 스크립트로 동기화(`scripts/sync-assets.sh`, 생기면).
 
@@ -12,11 +12,28 @@
 - **커밋 메시지에 `Co-Authored-By: Claude …` / `Generated with Claude Code` 절대 넣지 말 것.** `.claude/settings.json`(`includeCoAuthoredBy:false`) + `.githooks/commit-msg`가 강제. clone 후 `git config core.hooksPath .githooks` 1회.
 - 커밋은 사용자가 요청할 때. 메시지는 한국어.
 
+## 협업 규칙 (3인 개발 — 2026-08-26부터)
+
+| 담당 | 화면 | 브랜치 |
+|---|---|---|
+| **영준(팀장, 주 개발)** | 공용 컴포넌트 · S3-C/D/E/F · S2-A · S2-D · S6-A | `feat/common`, `feat/s3-*`, `feat/s2-*` |
+| **팀원 A** | S1 보험 메인 3상태(`?state=A\|B`, `custom=off`) · S1-7 · S1-13 시트 | `feat/s1-main` |
+| **팀원 B** | 00 메인홈 · S5-A · S4-D · 청구완료 · S4-A 팝업 | `feat/claim-flow` |
+
+- **`main` 직접 push 금지.** 흐름 단위 브랜치 → PR → 팀장이 머지.
+- 작업 지시는 `docs/작업지시_팀원A.md` · `docs/작업지시_팀원B.md`.
+- **공용 컴포넌트(`src/components/`)는 팀장이 만든다.** 필요한 게 없으면 각자 만들지 말고 요청할 것 — 각자 만들면 크기·비율이 갈린다.
+- 계측 `targetId`는 반드시 `src/lib/targetId.ts`의 `tid()`로 만든다. 이름이 갈리면 9/11 집계가 안 된다.
+- 커밋 전 `npm run lint:tokens`가 자동으로 돈다(pre-commit 훅). 토큰 이탈은 커밋이 막힌다.
+
 ## 디자인 스펙 (구현 기준)
 **`docs/디자인스펙.md`가 단일 기준**이고, 스펙 이후의 변경은 **`docs/디자인변경로그.md`가 우선**한다 (충돌 시 로그가 최신). 색·타이포·라운드·간격·컴포넌트 스펙 전부 그 문서대로. 요점:
 - 뷰포트 393×852 고정, `max-width:393px` 중앙, `100dvh`(`100vh` 금지)
 - 폰트 **Pretendard** (웹폰트, 400/500/700만)
 - 색은 스펙 §1의 CSS 변수만 — **토큰 외 색·라운드·폰트 크기 새로 만들기 금지**
+- **토큰 vs Figma 충돌 시 토큰이 이긴다** — 스펙 §3은 실제 앱 픽셀 실측 규범이고 Figma는 손으로 그린 산출물이다. 토큰 밖 값을 발견하면 **가장 가까운 토큰으로 스냅해 구현 + 변경로그에 한 줄 보고**(Figma는 팀장이 고침)
+- **픽셀 퍼펙트는 목표가 아니다** — Figma는 Noto Sans KR, 브라우저는 Pretendard라 1~2px 차이는 정상. 검수 기준 2개: ① DevTools 값 = 토큰 ② 나란히 놓고 육안 등가. 픽셀 오버레이 비교는 하지 않는다
+- 구현 대상 화면의 Figma 레퍼런스 PNG 19장: `docs/figma-ref/` — 구현할 때 옆에 띄우고 검수 때 나란히 비교
 - **룩앤필 개선 금지** — 9/11 테스트가 기존 앱 vs 우리 구현 구조 비교라서, "조금 더 예쁘게"가 측정을 오염시킨다
 - 라이프 계열 색(`#265BF0` `#3668F6` `#111726` `#495365`) 금지
 - 아이콘: `@phosphor-icons/react` `weight="regular"`(탭바만 `fill`) / 3D는 `public/assets/3d/` PNG
@@ -44,4 +61,4 @@ Vite + React + TypeScript. 라이브러리 최소(라우터·Phosphor 정도). �
 React 1차 구현 8/25~31 → 9/1~ 다듬기·배포 → 🔒 9/11 사용자 테스트 → 9/20 발표. 화면 4~6개(8/25 회의에서 확정).
 
 ## 사용자
-영준(팀장). 한국어로 소통. 문서·커밋 메시지 한국어.
+영준(팀장). 한국어로 소통. 문서·커밋 메시지 한국어. 팀원 2명도 Claude Code로 개발한다.
