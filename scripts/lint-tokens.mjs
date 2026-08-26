@@ -12,9 +12,15 @@
    사용: node scripts/lint-tokens.mjs [파일...]   (없으면 src 전체)
 */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join, extname } from 'node:path'
+import { join, extname, sep } from 'node:path'
 
 const TOKENS_FILE = 'src/styles/tokens.css'
+
+/* 윈도우는 경로 구분자가 역슬래시라 walk() 결과가 'src\\styles\\tokens.css' 가 된다.
+   슬래시로 적힌 상수와 문자열 비교가 어긋나 tokens.css 제외 규칙이 통째로 무효였다
+   (윈도우에서만 자기 자신을 23건 위반으로 잡음). 비교 전에 항상 정규화한다.
+   git 이 넘겨주는 경로(pre-commit)와 CI(ubuntu)는 슬래시라 드러나지 않았다. */
+const norm = (p) => p.split(sep).join('/')
 // 스펙 §8 — 라이프 계열 색 금지
 const FORBIDDEN_HEX = ['265BF0', '3668F6', '111726', '495365']
 
@@ -29,7 +35,7 @@ function walk(dir, out = []) {
 
 const args = process.argv.slice(2)
 const files = (args.length ? args : walk('src')).filter(
-  (f) => f.startsWith('src') && ['.css', '.tsx', '.ts'].includes(extname(f)),
+  (f) => norm(f).startsWith('src/') && ['.css', '.tsx', '.ts'].includes(extname(f)),
 )
 
 const problems = []
@@ -50,7 +56,7 @@ for (const file of files) {
     const isComment = /^\s*(\/\/|\/\*|\*)/.test(line)
 
     // 1) 토큰 밖 hex
-    if (file !== TOKENS_FILE && !isComment) {
+    if (norm(file) !== TOKENS_FILE && !isComment) {
       const hex = line.match(/#[0-9A-Fa-f]{3,8}\b/g)
       if (hex) {
         problems.push(`${at}  토큰 밖 색 ${hex.join(' ')} — tokens.css 의 var(--…) 를 쓰세요`)
