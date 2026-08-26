@@ -10,6 +10,7 @@ import { MockProvider } from './MockProvider'
 import { Export } from '@/pages/Export'
 import { Diagnosis } from '@/pages/Diagnosis'
 import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
+import { Home } from '@/pages/Home'
 import { ProductDiscover } from '@/pages/ProductPath'
 import { Placeholder } from '@/pages/Placeholder'
 import { Skeleton } from '@/pages/Skeleton'
@@ -20,7 +21,7 @@ export function App() {
       <MockProvider>
         <Routes>
           {/* 00 메인홈 — S4-A 결제 감지 팝업은 이 위 오버레이 */}
-          <Route path="/" element={<Placeholder name="00-메인홈" title="홈" tabId="home" />} />
+          <Route path="/" element={<Home />} />
 
           {/* 금융 탭 = 은행이 기본. 상단 탭에서 '보험'을 눌러야 S1 에 도착한다
               (AS-IS 진입 마찰 유지 — 건너뛰면 클릭 수 비교가 오염된다) */}

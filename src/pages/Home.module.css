@@ -1,0 +1,180 @@
+/* 00 메인홈. 본문 좌우 패딩 12 (S1 메인 계열과 동일), 카드 r20 p20 */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--gutter-main) var(--gutter) var(--space-4);
+}
+
+.greeting {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.name { color: var(--text-primary); }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter-main);
+  padding: 0 var(--gutter-main) var(--gutter-main);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--pad-card);
+  /* 홈 카드는 테두리 없음 — 흰 면만 */
+  border: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: left;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-disabled);
+}
+
+/* ── 계좌 행 ─────────────────────────────────────────────── */
+.accountRow,
+.cardRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.logo {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.accountText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.accountName   { color: var(--text-secondary); }
+.accountAmount { color: var(--text-primary); }
+
+/* 이체 — 알약 버튼 */
+.pillBtn {
+  flex-shrink: 0;
+  padding: 6px var(--space-3);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-btn);
+  color: var(--text-link);
+}
+
+/* 카드 안 틴트 배너 */
+.tintBanner {
+  width: 100%;
+  padding: 10px 0;
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* 앱카드 가입 — Figma 는 라이프 계열 색이었으나 스펙 §8 금지 색이라 primary 로 스냅 */
+.tintBtn {
+  width: 100%;
+  padding: 10px 0;
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-btn);
+  color: var(--primary);
+  text-align: center;
+}
+
+/* 카드 아트 — Figma 실제 카드 이미지 자리 (에셋 도착 전까지 자리만) */
+.cardArt {
+  flex-shrink: 0;
+  width: 34px;
+  height: 53px;
+  border-radius: var(--r-btn);
+  background: var(--bg-tint-alt);
+}
+
+/* ── 땡겨요 ──────────────────────────────────────────────── */
+.promoRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.promoText {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-light);
+}
+
+.linkRow {
+  display: flex;
+  width: 100%;
+}
+
+.link {
+  flex: 1;
+  padding: var(--space-1) 0;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* ── 이벤트 ──────────────────────────────────────────────── */
+.eventRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.eventIcon {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
