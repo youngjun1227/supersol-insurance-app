@@ -1,7 +1,7 @@
 /* S3-C 보장 진단 결과 — Figma 485:2920(접힘) / 604:8662(펼침).
    탭바 없음, 하단 고정 CTA 없음 — "관련 보험 찾아보기"는 본문 스크롤 끝 버튼이다. */
 
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   AppShell, Badge, Battery, Button, Card,
@@ -96,16 +96,19 @@ export function Diagnosis() {
             {data.policies.map((policy, i) => {
               const fills = itemsFilledBy(data.coverage, policy.id)
               return (
-                <div key={policy.id} className={styles.policy}>
+                <Fragment key={policy.id}>
+                  {/* 구분선은 카드 폭 전체 — 보험 블록(272)보다 넓다 */}
                   {i > 0 ? <div className={styles.policyDivider} /> : null}
-                  <div className={styles.policyTitle}>
-                    <span className="t-body-sm-medium">{policy.name}</span>
-                    {policy.policyholder === '부모' ? (
-                      <Badge variant="neutral">부모님 가입</Badge>
-                    ) : null}
+                  <div className={styles.policy}>
+                    <div className={styles.policyTitle}>
+                      <span className="t-body-sm-medium">{policy.name}</span>
+                      {policy.policyholder === '부모' ? (
+                        <Badge variant="neutral">부모님 가입</Badge>
+                      ) : null}
+                    </div>
+                    <p className={`${styles.policyDesc} t-caption`}>{fillSentence(fills)}</p>
                   </div>
-                  <p className={`${styles.policyDesc} t-caption`}>{fillSentence(fills)}</p>
-                </div>
+                </Fragment>
               )
             })}
           </div>

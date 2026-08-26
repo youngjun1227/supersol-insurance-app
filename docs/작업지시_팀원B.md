@@ -25,7 +25,10 @@ git switch -c feat/claim-flow
 ```bash
 git push -u origin feat/...   # 브랜치는 통과
 git push origin main          # ❌ 훅이 거부
+git push --force              # ❌ 모든 브랜치에서 거부
 ```
+
+되돌릴 게 있으면 `git revert` 로 새 커밋을 쌓으세요. `--amend` 후 force push 는 막힙니다.
 
 PR 을 올리면 **팀장 승인 1개 + CI 통과** 후 머지됩니다.
 PR 에 "out-of-date" 가 뜨면 `Update branch` — 자세한 건 `docs/온보딩.md` 참고.
