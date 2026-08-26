@@ -21,10 +21,11 @@
   color: var(--text-caption);
 }
 
+/* figma-ref 상 "맞춤 설정 ›" 은 파란 링크다 (--text-link) */
 .basisAction {
   display: flex;
   align-items: center;
-  color: var(--text-primary);
+  color: var(--text-link);
 }
 
 /* 리스트·카드 chevron — 24 자리를 차지하되 글자로 그린다 (§5 --text-disabled) */
@@ -38,7 +39,7 @@
 
 .basisAction .chevron {
   width: 16px;
-  color: var(--text-primary);
+  color: var(--text-link);
 }
 
 /* ── 내 보험 카드 + 2분할 액션 ───────────────────────────────
