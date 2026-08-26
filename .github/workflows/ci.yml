@@ -50,6 +50,13 @@ jobs:
           if grep -rnE --include='*.ts' --include='*.tsx' "010-[0-9]{4}-[0-9]{4}" src/ | grep -v "010-0000-0000"; then
             echo "❌ 실전화번호 패턴 발견"; FAIL=1
           fi
+          # public 저장소 — 팀원 실명 금지, GitHub 계정명만 쓴다.
+          # docs 까지 검사한다 (디자인 레포에서 동기화된 문서에 실명이 섞여 들어온 적이 있다)
+          for name in "영준" "종광" "찬영"; do
+            if grep -rn --include='*.ts' --include='*.tsx' --include='*.md' "$name" src/ docs/ CLAUDE.md README.md 2>/dev/null; then
+              echo "❌ 실명 발견 — GitHub 계정명을 쓰세요 (public 저장소)"; FAIL=1
+            fi
+          done
           exit $FAIL
 
   mock:
