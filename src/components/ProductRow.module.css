@@ -1,0 +1,45 @@
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: var(--space-2) var(--gutter);
+}
+
+.headIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.headName  { color: var(--text-primary); }
+.headCount { color: var(--primary); }
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4) var(--gutter);
+  text-align: left;
+}
+
+.itemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName { color: var(--text-link); }
+.itemDesc { color: var(--text-caption); }

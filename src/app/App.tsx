@@ -13,6 +13,7 @@ import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
 import { Home } from '@/pages/Home'
 import { ProductDiscover } from '@/pages/ProductPath'
 import { ProductInsurance } from '@/pages/ProductInsurance'
+import { ProductList } from '@/pages/ProductList'
 import { Placeholder } from '@/pages/Placeholder'
 import { Skeleton } from '@/pages/Skeleton'
 
@@ -59,7 +60,7 @@ export function App() {
 
           {/* S2 상품 찾기 — 🔷 A/B/C 안 미정이라 구현 착수 금지. 자리만 잡아둔다 */}
           <Route path="/product/insurance" element={<ProductInsurance />} />
-          <Route path="/product/insurance/list" element={<Placeholder name="S2-D-카테고리선택후" title="상품" tabId="product" />} />
+          <Route path="/product/insurance/list" element={<ProductList />} />
           <Route path="/product/insurance/:productId" element={<Placeholder name="S6-A-상품상세" title="상품 상세" tabId="product" />} />
 
           {/* 비테스트 탭 — 이동은 되고 내용만 빈 화면 */}

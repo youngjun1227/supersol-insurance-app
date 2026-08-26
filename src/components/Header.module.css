@@ -8,10 +8,19 @@
 
 /* 제목형: h1 22/700 검정 (§5) */
 .title {
-  flex: 1;
   min-width: 0;
   color: var(--text-black);
 }
+
+/* 제목이 장식(▾)을 달면 그 뒤 여백이 늘어나야 우측 아이콘이 끝에 붙는다 */
+.adornment {
+  display: flex;
+  align-items: center;
+  margin-left: var(--space-2);
+}
+
+.title:only-of-type { flex: 1; }
+.adornment { flex: 1; }
 
 /* 서브형: 20/700 */
 .subTitle {

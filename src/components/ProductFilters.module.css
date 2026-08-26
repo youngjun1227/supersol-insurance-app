@@ -1,0 +1,59 @@
+/* S2 계열 필터. 상단(칩 영역) --bg-page → 목록부터 --bg-surface (§1 배경 규칙) */
+
+.chipRow {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--gutter-main) var(--gutter) var(--space-2);
+  background: var(--bg-page);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.companyRow {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-1) var(--gutter) var(--space-2);
+  background: var(--bg-page);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 var(--space-4) 0 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-pill);
+  background: var(--bg-tint-alt);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.chip[data-selected='true'] {
+  background: var(--bg-chip-selected);
+  border-color: var(--bg-chip-selected);
+  color: var(--on-primary);
+}
+
+.chipIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.notice {
+  width: 100%;
+  padding: 0 var(--gutter) var(--gutter-main);
+  background: var(--bg-page);
+  color: var(--text-caption);
+}
+
+/* 목록 시작 전 구분 밴드 8 */
+.band {
+  width: 100%;
+  height: var(--space-2);
+  background: var(--bg-page);
+}

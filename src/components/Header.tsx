@@ -14,11 +14,13 @@ interface HeaderProps {
   variant?: 'title' | 'sub'
   /** 우측 아이콘 버튼들 — <IconAction> 을 넣는다 */
   actions?: ReactNode
+  /** 제목 옆 장식 — 드롭다운형 헤더의 ▾ (S2-D) */
+  titleAdornment?: ReactNode
   /** 뒤로 눌렀을 때. 기본은 history back */
   onBack?: () => void
 }
 
-export function Header({ title, variant = 'title', actions, onBack }: HeaderProps) {
+export function Header({ title, variant = 'title', actions, titleAdornment, onBack }: HeaderProps) {
   const navigate = useNavigate()
   const track = useTrack()
 
@@ -39,6 +41,7 @@ export function Header({ title, variant = 'title', actions, onBack }: HeaderProp
       <h1 className={variant === 'title' ? `${styles.title} t-h1` : `${styles.subTitle} t-h2`}>
         {title}
       </h1>
+      {titleAdornment ? <span className={styles.adornment}>{titleAdornment}</span> : null}
 
       {actions ? <div className={styles.actions}>{actions}</div> : null}
     </header>
