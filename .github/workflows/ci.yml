@@ -1,7 +1,7 @@
 name: ci
 
-# required status check(ci)로 등록되므로 paths 필터를 두지 않는다 —
-# 필터에 걸려 실행되지 않으면 체크가 영원히 pending이 되어 병합 불가 (Ventry 교훈)
+# ⚠️ required status check 로 등록되므로 paths 필터를 두지 않는다 —
+# 필터에 걸려 실행되지 않으면 체크가 영원히 pending 이 되어 병합 불가 (Ventry 교훈)
 on:
   push:
     branches: [main]
@@ -13,55 +13,97 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: ci
+  # ── 빠른 검사 3종 — 서로 독립이라 병렬로 돈다 ─────────────
+  # pre-commit 훅은 --no-verify 나 훅 미설정으로 우회 가능하다. CI 가 최종 방어선.
+
+  tokens:
+    name: 토큰 lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-
-      - name: Install (lockfile 기준 재현 설치)
-        run: npm ci
-
-      # pre-commit 훅은 --no-verify나 훅 미설정으로 우회 가능 — CI가 최종 방어선
-      - name: 토큰 lint (토큰 밖 hex·직접 font-size/radius·라이프 색·100vh)
+      - run: npm ci
+      - name: 토큰 밖 hex·직접 font-size/radius·라이프 색·100vh
         run: npm run lint:tokens
 
-      # 문구 컴플라이언스 스윕 — 멘토 필수 문구·금지 단어가 화면 코드에 새는 것을 차단.
-      # "사람이 생각날 때만 돌리면 화면에 남는다"(Ventry term_sweep 교훈)
-      - name: 문구 컴플라이언스 스윕
+  copy:
+    name: 문구 컴플라이언스
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # 문구 스윕은 grep 뿐이라 node 설치가 필요 없다 — 그만큼 빨리 끝난다
+      - name: 금칙어·단정형 청구 표현·실명/실번호
         run: |
           set -e
           FAIL=0
-          # 금지: 8/25 전 금칙어·회사 관점 문구·단정형 청구 표현 (변경로그 §3: "가능할 수 있어요"만 허용)
+          # 변경로그 §3: 청구는 "가능할 수 있어요"만 허용 (단정 표현 금지)
           for term in "개선안" "솔루션" "노출 증대" "가입 전환" "청구할 수 있어요" "SOL:VE"; do
-            # 주석 줄은 제외 — 경고 주석("…는 금지" 설명)이 스스로 걸리지 않게
+            # 주석 줄 제외 — 경고 주석이 스스로 걸리지 않게
             if grep -rn --include='*.ts' --include='*.tsx' --include='*.css' --include='*.html' "$term" src/ index.html 2>/dev/null | grep -vE ':[0-9]+:\s*(//|\*|/\*)'; then
               echo "❌ 금지 문구 발견: '$term'"; FAIL=1
             fi
           done
-          # 실명·실번호 패턴 (목데이터 규칙: 김신한 / 010-0000-0000 만 허용)
+          # 목데이터 규칙: 김신한 / 010-0000-0000 만 허용
           if grep -rnE --include='*.ts' --include='*.tsx' "010-[0-9]{4}-[0-9]{4}" src/ | grep -v "010-0000-0000"; then
             echo "❌ 실전화번호 패턴 발견"; FAIL=1
           fi
           exit $FAIL
 
-      # 목데이터가 원본 문서와 어긋나는지 — 카테고리 분류를 AS-IS/TO-BE 섞어
-      # 넣었다가 화면에 "건강 7"이 뜨고서야 발견한 적이 있다
-      - name: 목데이터 정합성
+  mock:
+    name: 목데이터 정합성
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # 카테고리 분류를 AS-IS/TO-BE 섞어 넣었다가 화면에 "건강 7"이 뜨고서야 발견한 적이 있다
+      - name: 원본 문서와 대조 (상품 26 · 보장 10 · 티어 4)
         run: npm run check:mock
 
+  # ── 빌드 계열 — typecheck → build → 번들은 순서 의존이라 한 job ──
+  build:
+    name: 빌드·타입·번들
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
       - name: Typecheck
         run: npm run typecheck
-
       - name: Build
         run: npm run build
-
       # 폰으로 링크를 열어 하는 테스트라 초기 로딩이 곧 체감이다.
       # 아이콘을 이름으로 동적 조회했다가 317KB → 5.2MB 가 된 적이 있다
-      - name: 번들 크기
+      - name: 번들 크기 (gzip JS 200KB / CSS 40KB)
         run: npm run check:bundle
+
+  # ── 관문 job ──────────────────────────────────────────────
+  # ⚠️ 브랜치 보호의 required status check 는 이름으로 매칭된다.
+  # job 을 쪼개면 'ci' 라는 이름이 사라져 체크가 영원히 pending → 병합 불가.
+  # 위 4개를 모아 'ci' 이름을 유지하는 관문을 둔다. 보호 설정을 건드릴 필요가 없다.
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    needs: [tokens, copy, mock, build]
+    if: always()
+    steps:
+      - name: 앞 단계 결과 확인
+        run: |
+          echo "토큰 lint:      ${{ needs.tokens.result }}"
+          echo "문구 컴플라이언스: ${{ needs.copy.result }}"
+          echo "목데이터 정합성:   ${{ needs.mock.result }}"
+          echo "빌드·타입·번들:   ${{ needs.build.result }}"
+          if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "❌ 실패한 단계가 있습니다 — 위 목록에서 확인하세요."
+            exit 1
+          fi
+          echo "✓ 전부 통과"
