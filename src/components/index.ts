@@ -1,7 +1,14 @@
-/* 공통 컴포넌트. 화면은 여기서 가져다 쓴다. */
-export { AppShell } from './AppShell'
+/* 공용 컴포넌트. 화면은 여기서 가져다 쓴다.
+   ⚠️ 필요한 게 없으면 각자 만들지 말고 팀장에게 요청 (크기·비율이 갈린다). */
+export { AppShell, type FooterType } from './AppShell'
 export { Header, IconAction } from './Header'
 export { TopTabs, type TopTabItem } from './TopTabs'
 export { TabBar, TABS, type TabItem } from './TabBar'
 export { Button } from './Button'
 export { BottomCTA } from './BottomCTA'
+export { Battery, type BatterySize } from './Battery'
+export { Badge } from './Badge'
+export { Card } from './Card'
+export { TierHeader } from './TierHeader'
+export { CoverageRow } from './CoverageRow'
+export { MoreToggle } from './MoreToggle'

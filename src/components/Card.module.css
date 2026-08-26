@@ -1,0 +1,15 @@
+.card { width: 100%; }
+
+.card[data-variant='surface'] {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+}
+
+.card[data-variant='tint'] {
+  background: var(--bg-tint);
+}
+
+.card[data-radius='sm']   { border-radius: var(--r-card-sm); }
+.card[data-radius='card'] { border-radius: var(--r-card); }
+.card[data-radius='xl']   { border-radius: var(--r-card-xl); }
+.card[data-radius='lg']   { border-radius: var(--r-card-lg); }

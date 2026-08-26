@@ -1,0 +1,99 @@
+/* S3-C — 내용 영역 gap 20, p 16/20/40 (Figma 실측) */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--gutter) var(--space-8);
+  background: var(--bg-surface);
+}
+
+/* ── 요약 히어로 ─────────────────────────────────────────── */
+.summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5) var(--space-4);
+}
+
+.headline {
+  width: 100%;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.headlineSub {
+  color: var(--text-secondary);
+}
+
+.caption {
+  width: 100%;
+  text-align: center;
+  color: var(--text-caption);
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-default);
+}
+
+/* ── 내 보험 행 — 박스 없음, 틴트 위 직접 배치 ───────────── */
+.policies {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 14px 0;
+}
+
+.policy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.policyDivider {
+  width: 100%;
+  height: 1px;
+  margin: 10px 0;
+  background: var(--border-light);
+}
+
+.policyTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 272px;
+  max-width: 100%;
+  color: var(--text-primary);
+}
+
+.policyDesc {
+  width: 272px;
+  max-width: 100%;
+  color: var(--text-secondary);
+}
+
+.basis {
+  width: 100%;
+  text-align: center;
+  color: var(--text-caption);
+}
+
+/* ── 티어 ────────────────────────────────────────────────── */
+.tier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.disclaimer {
+  width: 100%;
+  text-align: center;
+  color: var(--text-caption);
+}

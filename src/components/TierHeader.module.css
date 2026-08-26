@@ -1,0 +1,31 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding-top: var(--space-2);
+}
+
+.bar {
+  flex-shrink: 0;
+  width: 4px;
+  height: 18px;
+  border-radius: var(--r-pill);
+  background: var(--border-default);
+}
+
+.name {
+  flex-shrink: 0;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* now 티어 — 바·제목 둘 다 primary */
+.row[data-emphasized='true'] .bar  { background: var(--primary); }
+.row[data-emphasized='true'] .name { color: var(--primary); }
+
+.count {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-caption);
+}

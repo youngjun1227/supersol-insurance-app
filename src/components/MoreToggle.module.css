@@ -1,0 +1,16 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  padding: 6px 0;
+  color: var(--text-caption);
+}
+
+.icon {
+  display: inline-flex;
+  transition: transform 0.2s var(--ease);
+}
+
+.icon[data-expanded='true'] { transform: rotate(180deg); }

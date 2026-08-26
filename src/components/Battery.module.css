@@ -1,0 +1,7 @@
+.battery {
+  flex-shrink: 0;
+  object-fit: contain;
+  /* 래스터라 색·모드 전환을 안 따라온다 — 그대로 둔다 */
+  pointer-events: none;
+  user-select: none;
+}
