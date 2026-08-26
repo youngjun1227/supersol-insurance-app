@@ -79,7 +79,20 @@ const { data, state, customOn } = useMock()   // 목데이터 + 상태
 - **목데이터는 `src/data/mock.ts`** — 값을 지어내지 마세요. 필요한 값이 없으면 팀장에게 요청.
 - **공용 컴포넌트는 팀장이 만듭니다.** 필요한 게 없으면 직접 만들지 말고 요청하세요 (각자 만들면 크기·비율이 갈립니다).
 
-## 5. 막히면
+## 5. 레퍼런스 구현
+
+**`src/pages/Diagnosis.tsx`(S3-C)를 먼저 열어보세요.** 팀장이 먼저 만든 화면이고, 여기에 규칙이 다 들어 있습니다:
+
+- `<AppShell name="...">` 사용법 (화면 진입 계측이 자동)
+- `tid()`로 targetId 만들기 — 탭 타깃이 2개일 때 분리하는 법 포함
+- 공용 컴포넌트 조합 (`Battery` `Badge` `Card` `TierHeader` `CoverageRow` `MoreToggle`)
+- `copy.ts`에서 문구 가져다 쓰기
+- `footerType` 지정 (탭바/CTA/입력바/없음)
+
+같이 볼 것: `docs/figma-ref/S3-C-진단결과-접힘.png` — 이 PNG와 위 코드를 나란히 보면
+"Figma를 코드로 옮긴다"가 무슨 뜻인지 바로 보입니다.
+
+## 6. 막히면
 
 - 화면 구성이 애매하다 → `docs/figma-ref/` PNG를 먼저 보고, 그래도 모르면 팀장
 - 목데이터에 값이 없다 → **지어내지 말고** 팀장에게 요청
