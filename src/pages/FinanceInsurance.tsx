@@ -12,7 +12,7 @@ import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
-import { DIAGNOSIS, INSURANCE_MAIN as C } from '@/data/copy'
+import { DIAGNOSIS, INSURANCE_EMPTY as E, INSURANCE_MAIN as C } from '@/data/copy'
 import type { Policy, ServiceItem } from '@/data/types'
 import { batteryLevelFor, emptyPriorityItems } from '@/lib/coverage'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
@@ -32,11 +32,19 @@ const HIDDEN_SERVICES = ['sv-energy']
 /** 서비스 그리드 묶음 — figma-ref 순서 그대로 */
 const SERVICE_GROUPS: ServiceItem['group'][] = ['조회·계약', '청구·신청', '정보']
 
+/** S1-8 "20대가 많이 보는 보험" 2행 — figma-ref 에 그려진 두 상품.
+    ⚠️ mock.ts 에 추천 플래그가 없어 화면에서 id 로 고른다. 목데이터에
+    필드를 추가할지는 팀장 확인 대기 (지금 mock 을 고치지 않는 이유). */
+const RECOMMENDED_IDS = ['sp-transit-mini', 'sp-sol-teeth']
+
 export function FinanceInsurance() {
   const navigate = useNavigate()
   const location = useLocation()
   const track = useTrack()
-  const { data } = useMock()
+  const { data, state } = useMock()
+
+  /** 상태 A(0건) = S1-8 분리형 / 상태 B(2건) = S1-9 통합형 */
+  const isEmpty = state === 'A'
 
   /** S1-13 기준 시트 — 라우트가 아니라 이 화면 위 오버레이 */
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -53,6 +61,29 @@ export function FinanceInsurance() {
   const topEmpty = emptyPriority[0]
 
   const services = data.services.filter((s) => !HIDDEN_SERVICES.includes(s.id))
+
+  /** figma-ref 순서대로 (id 순이 아니라 화면 순서) */
+  const recommended = RECOMMENDED_IDS.map((id) => data.products.find((p) => p.id === id)).filter(
+    (p): p is NonNullable<typeof p> => Boolean(p),
+  )
+
+  /** 서비스 그리드 한 칸 — 상태 A·B 가 같이 쓴다 */
+  const serviceItem = (s: ServiceItem) => (
+    <button
+      key={s.id}
+      type="button"
+      className={styles.gridItem}
+      onClick={() => track(tid(SCREEN.s1, ELEMENT.항목, s.id))}
+    >
+      <img
+        className={styles.gridIcon}
+        src={`/assets/3d/${s.icon3d}.png`}
+        alt=""
+        aria-hidden="true"
+      />
+      <span className={`${styles.gridLabel} t-body-sm`}>{s.label}</span>
+    </button>
+  )
 
   /* ── 기준 행 — 카드 밖, 상단 탭 바로 아래 ─────────────────── */
   const basisRow = (
@@ -208,27 +239,122 @@ export function FinanceInsurance() {
     return (
       <Card radius="lg" className={styles.serviceCard} key={group}>
         <p className={`${styles.title} t-h2`}>{group}</p>
-        <div className={styles.grid}>
-          {items.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              className={styles.gridItem}
-              onClick={() => track(tid(SCREEN.s1, ELEMENT.항목, s.id))}
-            >
-              <img
-                className={styles.gridIcon}
-                src={`/assets/3d/${s.icon3d}.png`}
-                alt=""
-                aria-hidden="true"
-              />
-              <span className={`${styles.gridLabel} t-body-sm`}>{s.label}</span>
-            </button>
-          ))}
-        </div>
+        <div className={styles.grid}>{items.map(serviceItem)}</div>
       </Card>
     )
   })
+
+  /* ══════ 상태 A (0건) 전용 — S1-8 분리형 ══════════════════════
+     변경로그 §1: 통합 카드는 상태 B 전용. 0건은 "내 보험이 채우는
+     에너지"가 없어 통합형 문장이 성립하지 않아 분리형을 유지한다. */
+
+  /* 페이지 상단 큰 제목 — 카드 밖, 기준 행 위 */
+  const emptyHeadline = (
+    <div className={styles.emptyHead}>
+      <p className={`${styles.emptyTitle} t-h1`}>{E.headline}</p>
+      <p className={`${styles.emptySub} t-body-sm`}>{E.headlineSub}</p>
+    </div>
+  )
+
+  /* 분리형 진단 카드 — 틴트 행도 면책도 없다 */
+  const diagnosisCardEmpty = (
+    <Card radius="lg" className={styles.diagCard}>
+      <button
+        type="button"
+        className={styles.diagMain}
+        onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '보장진단'), '/diagnosis/briefing')}
+      >
+        <span className={styles.titleRow}>
+          <span className={`${styles.title} t-h2`}>{E.diagnosisTitle}</span>
+          <span className={styles.chevron} aria-hidden="true">›</span>
+        </span>
+
+        {/* ⚠️ figma-ref S1-8 은 배터리_100(초록, +). 변경로그 §6 "수치에 맞는 단계"대로면
+            0건은 배터리_0 인데, 이 카드는 진단 결과가 아니라 초대 문구라 PNG 를 따른다.
+            팀장 확인 대기 — 수치 기준으로 가면 batteryLevelFor(data.coverageTotal) 로 교체 */}
+        <Battery level={100} width={72} height={96} />
+
+        <span className={`${styles.diagHeadline} t-body-lg-bold`}>
+          {E.diagnosisInviteLine1}
+          <br />
+          {E.diagnosisInviteLine2}
+        </span>
+      </button>
+    </Card>
+  )
+
+  /* "20대가 많이 보는 보험" — 상품 2행 */
+  const recommendCard = (
+    <Card radius="lg" className={styles.serviceCard}>
+      <p className={`${styles.title} t-h2`}>{E.recommendTitle}</p>
+
+      <div className={styles.recommends}>
+        {recommended.map((product) => {
+          const category = data.categories.find((c) => c.id === product.category)
+          return (
+            <button
+              key={product.id}
+              type="button"
+              className={styles.policyRow}
+              onClick={() =>
+                go(tid(SCREEN.s1, ELEMENT.항목, product.id), `/product/insurance/${product.id}`)
+              }
+            >
+              {category ? (
+                <img
+                  className={styles.recommendIcon}
+                  src={`/assets/3d/${category.icon3d}.png`}
+                  alt=""
+                  aria-hidden="true"
+                />
+              ) : null}
+              <span className={styles.policyText}>
+                <span className={`${styles.policyName} t-body-lg-medium`}>{product.name}</span>
+                <span className={`${styles.policyMeta} t-body-sm`}>{product.description}</span>
+              </span>
+              <span className={styles.chevron} aria-hidden="true">›</span>
+            </button>
+          )
+        })}
+      </div>
+
+      <p className={`${styles.diagDisclaimer} t-caption`}>{E.recommendNotice}</p>
+    </Card>
+  )
+
+  /* "알아두면 좋은 것" — 상태 B 의 "정보" 묶음과 같은 항목, 제목만 다르다 */
+  const infoCard = (() => {
+    const items = services.filter((s) => s.group === '정보')
+    if (!items.length) return null
+    return (
+      <Card radius="lg" className={styles.serviceCard}>
+        <p className={`${styles.title} t-h2`}>{E.infoTitle}</p>
+        <div className={styles.grid}>{items.map(serviceItem)}</div>
+      </Card>
+    )
+  })()
+
+  /* "가입하면 쓸 수 있어요 (9)" — 0건에서는 서비스 그리드가 한 줄로 접힌다 */
+  const servicesCollapsed = (() => {
+    const count = services.filter((s) => s.group !== '정보').length
+    return (
+      <Card radius="lg" className={styles.serviceCard}>
+        <button
+          type="button"
+          className={styles.collapsedRow}
+          onClick={() => track(tid(SCREEN.s1, ELEMENT.모두보기, '서비스'))}
+        >
+          <span className={styles.collapsedText}>
+            <span className={`${styles.title} t-h2`}>
+              {E.servicesTitle.replace('{n}', String(count))}
+            </span>
+            <span className={`${styles.policyMeta} t-body-sm`}>{E.servicesSub}</span>
+          </span>
+          <span className={styles.chevron} aria-hidden="true">›</span>
+        </button>
+      </Card>
+    )
+  })()
 
   /* ── 하단 배너 2개 ────────────────────────────────────────── */
   const banners = (
@@ -254,7 +380,7 @@ export function FinanceInsurance() {
 
   return (
     <AppShell
-      name="S1-9-보험메인"
+      name={isEmpty ? 'S1-8-보험메인-0건' : 'S1-9-보험메인'}
       header={
         <>
           <Header
@@ -280,11 +406,25 @@ export function FinanceInsurance() {
       background="page"
       footerType="tabbar"
     >
+      {/* 상태에 따라 섹션 구성이 통째로 갈린다 (변경로그 §1) */}
       <div className={styles.body}>
-        {basisRow}
-        {myInsurance}
-        {diagnosisCard}
-        {serviceGroups}
+        {isEmpty ? (
+          <>
+            {emptyHeadline}
+            {basisRow}
+            {diagnosisCardEmpty}
+            {recommendCard}
+            {infoCard}
+            {servicesCollapsed}
+          </>
+        ) : (
+          <>
+            {basisRow}
+            {myInsurance}
+            {diagnosisCard}
+            {serviceGroups}
+          </>
+        )}
         {banners}
       </div>
 
