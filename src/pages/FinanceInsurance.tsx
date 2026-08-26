@@ -7,6 +7,7 @@
    지금은 S1-9 만 구현한다. 섹션을 조각으로 쪼개 둔 건 나머지 두 상태가
    순서·문구만 갈아끼우면 되게 하려는 것이다. */
 
+import { useState } from 'react'
 import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
@@ -16,6 +17,7 @@ import type { Policy, ServiceItem } from '@/data/types'
 import { batteryLevelFor, emptyPriorityItems } from '@/lib/coverage'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { BasisSheet } from './BasisSheet'
 import styles from './FinanceInsurance.module.css'
 
 /** 원화 표기 — 35,000원 */
@@ -35,6 +37,9 @@ export function FinanceInsurance() {
   const location = useLocation()
   const track = useTrack()
   const { data } = useMock()
+
+  /** S1-13 기준 시트 — 라우트가 아니라 이 화면 위 오버레이 */
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   /** 쿼리(?state=A|B&custom=off)를 유지한 채 이동 — 조건이 풀리면 계측이 갈린다 */
   const go = (targetId: string, pathname: string) => {
@@ -59,8 +64,8 @@ export function FinanceInsurance() {
         type="button"
         className={`${styles.basisAction} t-caption-medium`}
         onClick={() => {
-          // S1-13 기준 시트(오버레이)는 이슈 #10 — 시트가 붙기 전까지 계측만 남긴다
           track(tid(SCREEN.s1, ELEMENT.버튼, '맞춤설정'))
+          setSheetOpen(true)
         }}
       >
         {C.basisAction}
@@ -282,6 +287,9 @@ export function FinanceInsurance() {
         {serviceGroups}
         {banners}
       </div>
+
+      {/* S1-13 기준 시트 — 이 화면 위 오버레이 (#10) */}
+      <BasisSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
     </AppShell>
   )
 }

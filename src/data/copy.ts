@@ -70,3 +70,25 @@ export const INSURANCE_MAIN = {
   bannerExpert: '보험이 어렵다면 전문가에게 물어보세요!',
   bannerEvent: '슈퍼SOL 여름 이벤트 참여하기',
 } as const
+
+/* ── S1-13 기준 시트 (오버레이) ─────────────────────────────
+   설문 "선별 기준 공개 요구 69.8%" 때문에 끄기가 필수인 화면.
+   토글을 끄면 ?custom=off → S1-14 로 바뀐다. */
+export const BASIS_SHEET = {
+  title: '보여드리는 기준',
+  /** {n} = 보유 계약 수 */
+  subtitle: '20대 · 가입 보험 {n}건 기준으로 화면 순서를 구성했어요',
+
+  /** 틴트 박스 제목 */
+  factsTitle: '화면 순서에 쓴 정보',
+  ageLabel: '연령대',
+  ageValue: '20대 · 회원 정보',
+  policyLabel: '보유 계약',
+  /** {n} = 보유 계약 수 */
+  policyValue: '{n}건 · 보험계약조회',
+
+  toggleLabel: '맞춤 구성 사용',
+  toggleHint: '끄면 모두에게 같은 화면으로 보여드려요',
+
+  confirm: '확인',
+} as const
