@@ -1,0 +1,27 @@
+/* S2-A — 필터는 ProductFilters, 행은 ProductRow 가 담당한다.
+   여기는 섹션 배치와 "모두 보기"만 */
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--bg-surface);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-bottom: var(--space-2);
+}
+
+.seeAll {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--gutter-main) var(--gutter);
+  background: var(--bg-surface);
+}
+
+.seeAllText { color: var(--text-secondary); }

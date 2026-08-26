@@ -21,4 +21,15 @@ if [ -n "$STAGED" ]; then
   fi
 fi
 
+# 3) 목데이터 정합성 — 원본 문서와 어긋나면 막는다
+if git diff --cached --name-only --diff-filter=ACM | grep -q '^src/data/mock\.ts$'; then
+  if command -v node >/dev/null 2>&1; then
+    node scripts/check-mock.mjs || {
+      echo "" >&2
+      echo "커밋을 중단했습니다. 목데이터는 임의로 바꾸지 않습니다." >&2
+      exit 1
+    }
+  fi
+fi
+
 exit 0

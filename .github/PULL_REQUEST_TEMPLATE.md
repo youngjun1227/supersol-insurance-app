@@ -15,5 +15,6 @@
 - [ ] 색·크기·라운드는 전부 토큰 (`docs/디자인스펙.md` §1~3) — 직접값 0
 - [ ] 탭 요소마다 `tid(SCREEN.…, ELEMENT.…, …)` 계측 부착
 - [ ] 문구는 `docs/디자인변경로그.md` 확정본 그대로 — **컴플라이언스 문구 임의 수정 금지**
-- [ ] 목데이터는 `mock.ts`만 사용 — 컴포넌트 안 하드코딩 값 0
+- [ ] 목데이터는 `mock.ts`만 사용 — 컴포넌트 안 하드코딩 값 0 (`npm run check:mock` 통과)
+- [ ] 아이콘은 쓰는 것만 명시 import — `import * as` 로 이름 조회 금지 (번들 폭증)
 - [ ] 커밋·PR 본문에 Claude co-author/attribution 라인 없음

@@ -1,0 +1,21 @@
+.sections {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 60vh;
+  padding-bottom: var(--space-2);
+  background: var(--bg-surface);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: var(--space-2);
+}
+
+.empty {
+  padding: var(--space-8) var(--gutter);
+  color: var(--text-caption);
+  text-align: center;
+}

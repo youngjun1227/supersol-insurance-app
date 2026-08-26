@@ -12,6 +12,9 @@ import { Diagnosis } from '@/pages/Diagnosis'
 import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
 import { Home } from '@/pages/Home'
 import { ProductDiscover } from '@/pages/ProductPath'
+import { ProductInsurance } from '@/pages/ProductInsurance'
+import { ProductList } from '@/pages/ProductList'
+import { ProductDetail } from '@/pages/ProductDetail'
 import { Placeholder } from '@/pages/Placeholder'
 import { Skeleton } from '@/pages/Skeleton'
 
@@ -57,9 +60,9 @@ export function App() {
           <Route path="/claim/done" element={<Placeholder name="청구완료" title="청구 완료" tabId="finance" />} />
 
           {/* S2 상품 찾기 — 🔷 A/B/C 안 미정이라 구현 착수 금지. 자리만 잡아둔다 */}
-          <Route path="/product/insurance" element={<Skeleton name="S2-상품찾기" title="상품" tabId="product" />} />
-          <Route path="/product/insurance/list" element={<Placeholder name="S2-D-카테고리선택후" title="상품" tabId="product" />} />
-          <Route path="/product/insurance/:productId" element={<Placeholder name="S6-A-상품상세" title="상품 상세" tabId="product" />} />
+          <Route path="/product/insurance" element={<ProductInsurance />} />
+          <Route path="/product/insurance/list" element={<ProductList />} />
+          <Route path="/product/insurance/:productId" element={<ProductDetail />} />
 
           {/* 비테스트 탭 — 이동은 되고 내용만 빈 화면 */}
           <Route path="/benefit" element={<Skeleton name="혜택-자리표시" title="혜택" tabId="benefit" />} />

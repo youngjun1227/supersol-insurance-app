@@ -50,8 +50,18 @@ jobs:
           fi
           exit $FAIL
 
+      # 목데이터가 원본 문서와 어긋나는지 — 카테고리 분류를 AS-IS/TO-BE 섞어
+      # 넣었다가 화면에 "건강 7"이 뜨고서야 발견한 적이 있다
+      - name: 목데이터 정합성
+        run: npm run check:mock
+
       - name: Typecheck
         run: npm run typecheck
 
       - name: Build
         run: npm run build
+
+      # 폰으로 링크를 열어 하는 테스트라 초기 로딩이 곧 체감이다.
+      # 아이콘을 이름으로 동적 조회했다가 317KB → 5.2MB 가 된 적이 있다
+      - name: 번들 크기
+        run: npm run check:bundle

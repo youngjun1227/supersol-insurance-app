@@ -1,0 +1,132 @@
+/* S6-A 상품 상세. 하단 고정 CTA(탭바 없음) */
+
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ── 상단 요약 ───────────────────────────────────────────── */
+.summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-6) var(--gutter) var(--space-5);
+  background: var(--bg-surface);
+}
+
+.hero {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.name {
+  width: 100%;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.desc {
+  width: 100%;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.terms {
+  display: flex;
+  gap: var(--space-6);
+}
+
+/* ── 스탯 3열 ────────────────────────────────────────────── */
+.stats {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+  padding-top: var(--space-2);
+}
+
+.stat {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.statCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-pill);
+  background: var(--bg-surface);
+}
+
+.statLabel { color: var(--text-caption); }
+
+.statValue {
+  width: 100%;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* ── 탭·표 ───────────────────────────────────────────────── */
+.tabs {
+  width: 100%;
+  background: var(--bg-surface);
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+  padding: var(--space-2) var(--gutter) var(--space-8);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-6);
+  width: 100%;
+  padding: var(--gutter-main) 0;
+}
+
+.key {
+  width: 80px;
+  flex-shrink: 0;
+  margin: 0;
+  color: var(--text-tertiary);
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.empty {
+  padding: var(--space-8) var(--gutter);
+  color: var(--text-caption);
+  text-align: center;
+}
+
+/* 하단 CTA 좌측 아이콘 버튼 56×60 (스펙 §5 IconButton) */
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 60px;
+  border-radius: var(--r-btn-lg);
+  background: var(--bg-tint-btn);
+}

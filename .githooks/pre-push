@@ -1,0 +1,44 @@
+#!/bin/sh
+# main 직접 push 차단.
+# ⚠️ 이 훅이 생긴 이유: 규칙을 CLAUDE.md 에만 적어뒀더니 팀장(에이전트)이 먼저 어겼다.
+# 화면 5장 분량이 main 에 직접 올라갔다. 사람 규칙은 새지만 훅은 안 샌다.
+#
+# GitHub 쪽 브랜치 보호가 최종 방어선이지만, 거기서 막히면 이미 push 를 시도한 뒤라
+# 되돌리는 수고가 든다. 여기서 먼저 잡는다.
+
+PROTECTED="main"
+BLOCKED=0
+
+# stdin 으로 "<local ref> <local sha> <remote ref> <remote sha>" 가 들어온다
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    refs/heads/"$PROTECTED")
+      BLOCKED=1
+      ;;
+  esac
+done
+
+if [ "$BLOCKED" -eq 1 ]; then
+  CURRENT="$(git rev-parse --abbrev-ref HEAD)"
+  cat >&2 <<MSG
+
+❌ main 에 직접 push 할 수 없습니다.
+
+  현재 브랜치: $CURRENT
+
+  흐름 단위 브랜치 → PR → 팀장 머지 순서로 가세요:
+
+    git switch -c feat/화면이름
+    git push -u origin feat/화면이름
+    gh pr create              (또는 GitHub 웹에서 PR 생성)
+
+  브랜치 이름은 CLAUDE.md 분담표를 따릅니다
+  (feat/s1-main · feat/claim-flow · feat/s3-* 등).
+
+  ⚠️ 비상시에만 팀장과 상의 후 --no-verify 를 씁니다.
+
+MSG
+  exit 1
+fi
+
+exit 0

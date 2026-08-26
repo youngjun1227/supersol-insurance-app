@@ -20,6 +20,15 @@ npm run dev                            # http://localhost:5173
 git switch -c feat/claim-flow
 ```
 **`main`에 직접 push하지 마세요.** PR을 올리면 팀장이 머지합니다.
+`.githooks/pre-push` 가 자동으로 막습니다 (clone 후 `git config core.hooksPath .githooks` 를 했다면).
+
+```bash
+git push -u origin feat/...   # 브랜치는 통과
+git push origin main          # ❌ 훅이 거부
+```
+
+PR 을 올리면 **팀장 승인 1개 + CI 통과** 후 머지됩니다.
+(팀장도 PR 은 똑같이 올립니다 — 승인만 자기가 생략합니다. 승인해줄 사람이 팀장뿐이라서요.)
 
 ## 2. 맡은 화면
 
@@ -69,6 +78,25 @@ git switch -c feat/claim-flow
 - 글자는 `.t-h1` `.t-body-sm` 같은 유틸 클래스 (`src/styles/typography.css`)
 - 커밋할 때 자동으로 검사합니다. 위반하면 **커밋이 막힙니다.**
 - 미리 확인: `npm run lint:tokens`
+
+### 목데이터는 임의로 바꾸지 않습니다
+
+`src/data/mock.ts` 값은 디자인 레포 `02_to-be/mock-data.md` 가 원본입니다.
+필요한 값이 없으면 **지어내지 말고 팀장에게 요청**하세요.
+
+커밋할 때 `npm run check:mock` 이 자동으로 돌아 원본과 어긋나면 막습니다.
+(카테고리 분류를 AS-IS/TO-BE 섞어 넣었다가 화면에 "건강 7"이 뜨고서야 발견한 적이 있어 생긴 검사입니다.)
+
+### 아이콘은 쓰는 것만 명시적으로 import
+
+```tsx
+import { Tooth, Virus } from '@phosphor-icons/react'   // ✅
+import * as Phosphor from '@phosphor-icons/react'       // ❌ 이름으로 조회하면
+const Icon = Phosphor[name]                             //    아이콘 전체가 번들에 들어감
+```
+
+폰으로 링크를 열어 하는 테스트라 초기 로딩이 곧 체감입니다.
+CI 에서 번들 상한(gzip 200KB)을 검사합니다 — 실제로 317KB → 5.2MB 가 된 적이 있습니다.
 
 ### Figma에 토큰 밖 값이 있으면
 Figma는 손으로 그린 산출물이라 가끔 규범을 벗어납니다.
