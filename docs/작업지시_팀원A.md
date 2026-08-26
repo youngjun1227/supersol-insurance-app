@@ -20,6 +20,12 @@ npm run dev                            # http://localhost:5173
 git switch -c feat/s1-main
 ```
 **`main`에 직접 push하지 마세요.** PR을 올리면 팀장이 머지합니다.
+`.githooks/pre-push` 가 자동으로 막습니다 (clone 후 `git config core.hooksPath .githooks` 를 했다면).
+
+```bash
+git push -u origin feat/...   # 브랜치는 통과
+git push origin main          # ❌ 훅이 거부
+```
 
 ## 2. 맡은 화면
 
