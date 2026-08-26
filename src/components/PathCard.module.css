@@ -1,0 +1,135 @@
+/* 경로 화면 공통 조각. 카드 369 r24 (변경로그 경로 화면 규격) */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 369px;
+  max-width: 100%;
+  padding: 22px var(--space-5);
+  border-radius: var(--r-card-lg);
+  background: var(--bg-surface);
+}
+
+.title { color: var(--text-primary); }
+
+/* ── 배너 (카드 밖) ──────────────────────────────────────── */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 10px var(--space-5);
+}
+
+.bannerText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bannerTitle {
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary);
+}
+
+.bannerLink { color: var(--primary); }
+
+.bannerIcon {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+/* ── 2열 그리드 ──────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5) var(--space-3);
+  width: 100%;
+}
+
+.gridItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.gridIcon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.gridLabel {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-secondary);
+}
+
+/* ── 아이콘 박스 행 ──────────────────────────────────────── */
+.iconRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+}
+
+.iconBoxImg {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.iconRowText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.iconRowCaption { color: var(--text-caption); }
+.iconRowTitle   { color: var(--text-primary); }
+
+/* ── 제공 고지 ───────────────────────────────────────────── */
+.provider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-5) 0;
+}
+
+.providerRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.providerLogo {
+  width: 22px;
+  height: 22px;
+  opacity: 0.35;
+  object-fit: contain;
+}
+
+.providerName,
+.providerNote { color: var(--text-disabled); }

@@ -2,7 +2,7 @@
    ⚠️ 8/25 회의에서 화면 4~6개를 확정하면 이 자리에 실제 화면이 들어간다.
    셸·계측·목데이터가 붙어 도는지 확인하는 용도. */
 
-import { AppShell, Header, TabBar } from '@/components'
+import { AppShell, FinanceTopTabs, Header, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import styles from './Placeholder.module.css'
 
@@ -10,15 +10,22 @@ interface PlaceholderProps {
   name: string
   title: string
   tabId: string
+  /** 금융 상단 탭 행을 달지 — S1 계열. 팀원 A가 실제 화면을 만들 때까지 경로 유지 */
+  financeTabs?: boolean
 }
 
-export function Placeholder({ name, title, tabId }: PlaceholderProps) {
+export function Placeholder({ name, title, tabId, financeTabs = false }: PlaceholderProps) {
   const { data, state } = useMock()
 
   return (
     <AppShell
       name={name}
-      header={<Header title={title} />}
+      header={
+        <>
+          <Header title={title} />
+          {financeTabs ? <FinanceTopTabs active="insurance" /> : null}
+        </>
+      }
       footer={<TabBar activeId={tabId} />}
       background={tabId === 'finance' ? 'page' : 'surface'}
       footerType="tabbar"

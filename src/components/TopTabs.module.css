@@ -15,7 +15,8 @@
 
 .tab[data-selected='true'] { color: var(--text-primary); }
 
-/* 선택 언더라인 2px */
+/* 선택 언더라인 2px — 회색(--text-caption).
+ * ⚠️ 파랑(--primary)도 검정도 아니다. 캡처 3x 실측으로 정정 (스펙 §5 2026-08-26) */
 .tab[data-selected='true']::after {
   content: '';
   position: absolute;
@@ -23,5 +24,5 @@
   right: 0;
   bottom: 0;
   height: 2px;
-  background: var(--primary);
+  background: var(--text-caption);
 }

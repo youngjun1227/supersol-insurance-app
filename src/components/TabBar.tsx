@@ -23,12 +23,14 @@ export interface TabItem {
 }
 
 /* 실제 슈퍼쏠 탭 5개.
-   금융·상품은 하위 상단 탭(보험)으로 직행한다 — 테스트 과제가 전부 보험이라
-   기본 진입을 보험 상단 탭으로 둔다 (변경로그 라우팅 원칙). */
+   ⚠️ 금융·상품을 보험으로 직행시키지 않는다 — 실제 앱은 금융 탭 → 은행,
+   상품 탭 → 발견이 기본이고 상단 탭에서 '보험'을 눌러야 도착한다.
+   이 진입 마찰(클릭 1~2회)은 AS-IS 클릭 수의 일부라서, 건너뛰면 우리가 설계하지
+   않은 이득으로 비교가 오염된다 (변경로그 라우팅 원칙 · 2026-08-26 정정). */
 export const TABS: TabItem[] = [
   { id: 'home',    label: '홈',   path: '/',                   match: '/',         icon: House },
-  { id: 'finance', label: '금융', path: '/finance/insurance',  match: '/finance',  icon: Wallet },
-  { id: 'product', label: '상품', path: '/product/insurance',  match: '/product',  icon: Storefront },
+  { id: 'finance', label: '금융', path: '/finance',            match: '/finance',  icon: Wallet },
+  { id: 'product', label: '상품', path: '/product',            match: '/product',  icon: Storefront },
   { id: 'benefit', label: '혜택', path: '/benefit',            match: '/benefit',  icon: Gift },
   { id: 'stock',   label: '주식', path: '/stock',              match: '/stock',    icon: ChartLineUp },
 ]

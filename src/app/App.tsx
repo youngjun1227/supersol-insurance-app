@@ -9,6 +9,8 @@ import { AnalyticsProvider } from './AnalyticsProvider'
 import { MockProvider } from './MockProvider'
 import { Export } from '@/pages/Export'
 import { Diagnosis } from '@/pages/Diagnosis'
+import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
+import { ProductDiscover } from '@/pages/ProductPath'
 import { Placeholder } from '@/pages/Placeholder'
 import { Skeleton } from '@/pages/Skeleton'
 
@@ -20,11 +22,20 @@ export function App() {
           {/* 00 메인홈 — S4-A 결제 감지 팝업은 이 위 오버레이 */}
           <Route path="/" element={<Placeholder name="00-메인홈" title="홈" tabId="home" />} />
 
+          {/* 금융 탭 = 은행이 기본. 상단 탭에서 '보험'을 눌러야 S1 에 도착한다
+              (AS-IS 진입 마찰 유지 — 건너뛰면 클릭 수 비교가 오염된다) */}
+          <Route path="/finance" element={<FinanceBank />} />
+          <Route path="/finance/card" element={<FinanceCard />} />
+          <Route path="/finance/stock" element={<FinanceStock />} />
+
+          {/* 상품 탭 = 발견이 기본. '보험'은 상단 탭 가로 스크롤 맨 끝 */}
+          <Route path="/product" element={<ProductDiscover />} />
+
           {/* S1 보험 메인 — 라우트 하나에 상태 3개:
               ?state=B(기본) 통합형 · ?state=A 0건 분리형 · ?state=B&custom=off 맞춤 OFF 분리형 */}
           <Route
             path="/finance/insurance"
-            element={<Placeholder name="S1-보험메인" title="금융" tabId="finance" />}
+            element={<Placeholder name="S1-보험메인" title="금융" tabId="finance" financeTabs />}
           />
           <Route
             path="/finance/insurance/my"

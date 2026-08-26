@@ -1,0 +1,216 @@
+/* 경로 화면 본문 — 좌우 패딩 12 · 카드 간격 12 · 상단 12 · 하단 100
+   (변경로그 경로 화면 규격. 보험 화면의 gutter 20 과 다르다) */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gutter-main);
+  padding: var(--gutter-main) var(--gutter-main) 100px;
+}
+
+/* ── 금액 토글 행 ────────────────────────────────────────── */
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0 var(--space-5);
+}
+
+.toggleLabel { color: var(--text-primary); }
+
+/* Off 상태 토글 (조작 안 함 — 경로 화면이라 정적) */
+.toggleOff {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 26px;
+  border-radius: var(--r-pill);
+  background: var(--bg-segment-track);
+}
+
+.toggleOff::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-pill);
+  background: var(--bg-surface);
+}
+
+.spacer { flex: 1; }
+.edit { color: var(--text-secondary); }
+
+/* ── 카드 내부 ───────────────────────────────────────────── */
+.cardHead {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.headTitle { flex: 1; color: var(--text-primary); }
+.headLink  { color: var(--text-caption); }
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-default);
+}
+
+/* 계좌 행 */
+.accountRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.accountLogo {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.accountText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.accountName { color: var(--text-primary); }
+.accountNo   { color: var(--text-caption); }
+
+/* "금액 숨김" — 실물의 큰 회색 글자 */
+.hidden {
+  color: var(--text-disabled);
+  font-size: var(--fs-display);
+  font-weight: var(--fw-bold);
+}
+
+.hiddenSm {
+  width: 100%;
+  text-align: right;
+  color: var(--text-disabled);
+}
+
+/* 이체 버튼 (정적) */
+.transferBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 44px;
+  border-radius: var(--r-pill);
+  background: var(--bg-tint-btn);
+  color: var(--primary);
+}
+
+/* ── 증권 히어로 ─────────────────────────────────────────── */
+.center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.hero {
+  width: 84px;
+  height: 84px;
+  object-fit: contain;
+}
+
+.heroTitle {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.primaryCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border-radius: var(--r-btn-lg);
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+/* ── 카드 화면 ───────────────────────────────────────────── */
+.myCardRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+/* 실제 카드 이미지는 없다 — 자리만 (실물 에셋 모사 금지) */
+.cardArt {
+  flex-shrink: 0;
+  width: 44px;
+  height: 58px;
+  border-radius: var(--r-btn);
+  background: var(--bg-tint-alt);
+}
+
+.emptyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) 0;
+}
+
+.emptyThumb {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+}
+
+.emptyText { color: var(--text-caption); }
+.bannerLink { color: var(--primary); }
+
+/* ── 간편 이체 대상 ──────────────────────────────────────── */
+.quickRow {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.quickCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  padding: 10px var(--space-3) 10px 10px;
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+}
+
+.quickAvatar {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  background: var(--bg-segment-track);
+}
+
+.quickText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.quickName   { color: var(--text-secondary); }
+.quickAmount { color: var(--text-caption); font-weight: var(--fw-regular); }

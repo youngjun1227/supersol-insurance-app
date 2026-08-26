@@ -1,0 +1,39 @@
+/* 가로 스크롤 탭 행 — 고정 폭 393 클립 + 안쪽 flex 행 */
+
+.scroller {
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.row {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: var(--space-6);
+  padding: 0 var(--gutter);
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 10px 0 4px;
+  color: var(--text-caption);
+  white-space: nowrap;
+}
+
+.tab[data-selected='true'] { color: var(--text-primary); }
+
+/* 선택 언더라인 2px — 회색(--text-caption).
+ * 캡처 3x 실측으로 정정 (스펙 §5 2026-08-26). 파랑도 검정도 아니다 */
+.tab[data-selected='true']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--text-caption);
+}

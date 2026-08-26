@@ -15,6 +15,8 @@ export const SCREEN = {
   s1: 'S1',
   s1My: 'S1-7',
   s1Sheet: 'S1-13',
+  financePath: 'FINPATH',
+  productPath: 'PRODPATH',
   s2: 'S2A',
   s2List: 'S2D',
   s3c: 'S3C',
@@ -44,6 +46,7 @@ export const ELEMENT = {
   뒤로: '뒤로',
   닫기: '닫기',
   모두보기: '모두보기',
+  탭행: '탭행',
 } as const
 
 /**
