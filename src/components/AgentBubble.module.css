@@ -1,0 +1,24 @@
+.wrap {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--gutter);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.bubble {
+  padding: var(--space-2) 14px;
+  border-radius: var(--r-pill);
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: var(--shadow-float);
+  white-space: nowrap;
+}
+
+.mascot {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}

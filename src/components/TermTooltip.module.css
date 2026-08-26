@@ -1,0 +1,39 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.term { color: var(--text-secondary); }
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--text-disabled);
+  border-radius: var(--r-pill);
+  color: var(--text-disabled);
+}
+
+/* 오버레이 — 콘텐츠를 밀지 않는다 (스펙 §5 TermTooltip) */
+.bubble {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  width: max-content;
+  max-width: 240px;
+  padding: 10px var(--space-3);
+  border-radius: var(--r-btn);
+  background: var(--bg-chip-selected);
+  color: var(--on-primary);
+  text-align: left;
+}
