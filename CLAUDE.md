@@ -71,9 +71,14 @@ React 1차 구현 8/25~31 → 9/1~ 다듬기·배포 → 🔒 9/11 사용자 테
 
 ## 브랜치·CI 확정 (2026-08-26 팀장)
 - **main + 짧은 토픽 브랜치** (`feat/s1-main` 등, 화면 단위 1~2일). develop·사람별 장수 브랜치 없음 — 같은 코드베이스라 충돌만 커짐
-- main 직접 push 금지(보호 설정됨) · **PR + CI(ci) 통과 + 팀장 승인 1개** · **Squash merge만** · 머지 후 브랜치 자동 삭제
-- 팀장(owner)은 admin bypass 가능 — 비상시만. 팀원은 예외 없음
-- CI = 토큰 lint → 문구 컴플라이언스 스윕 → typecheck → build (`.github/workflows/ci.yml`). pre-commit 우회해도 CI가 막는다
-- PR 템플릿의 **figma-ref 비교 스크린샷 필수** — 이게 시각 검수의 관문
+- **main 직접 push 금지 — 예외 없음(팀장 포함).** GitHub 브랜치 보호 + `.githooks/pre-push` 가 막는다.
+  ⚠️ 이 훅은 규칙을 문서로만 뒀다가 실제로 어겨져서(화면 5장이 main 에 직접 올라감) 추가한 것이다
+- **PR 은 팀장도 예외 없이 거친다** — figma-ref 비교 스크린샷 포함. 이게 시각 검수의 유일한 관문이다
+- **승인**: 팀원은 팀장 승인 1개 필요 / **팀장은 승인 없이 머지한다** — 승인해줄 사람이 팀장뿐이라
+  자기 PR 을 자기가 승인하는 건 의미가 없다. GitHub 설정은 `enforce_admins: false`(admin bypass),
+  PR 화면의 `Merge without waiting for requirements to be met` 로 머지
+- **Squash merge만** · 머지 후 브랜치 자동 삭제
+- CI = 토큰 lint → 문구 컴플라이언스 스윕 → 목데이터 정합성 → typecheck → build → 번들 크기
+  (`.github/workflows/ci.yml`). pre-commit 우회해도 CI가 막는다
 - **9/10부터 main 프리즈** (9/11 테스트 전날) — 핫픽스만
 - 배포: Vercel main=프로덕션 / PR=프리뷰 (⚠️ Vercel 연결은 팀장이 vercel.com에서 GitHub 연동 1회 필요 — 아직 미연결)
