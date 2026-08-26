@@ -1,0 +1,27 @@
+.row {
+  display: flex;
+  align-items: stretch;
+  height: var(--h-toptabs);
+  padding: 0 var(--gutter);
+  gap: var(--space-5);
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: var(--text-caption);
+}
+
+.tab[data-selected='true'] { color: var(--text-primary); }
+
+/* 선택 언더라인 2px */
+.tab[data-selected='true']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--primary);
+}

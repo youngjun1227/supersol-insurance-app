@@ -1,0 +1,49 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: var(--h-header);
+  padding: 0 var(--gutter);
+}
+
+/* 제목형: h1 22/700 검정 (§5) */
+.title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-black);
+}
+
+/* 서브형: 20/700 */
+.subTitle {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 뒤로 화살표는 좌측 여백을 먹고 들어간다 — 아이콘 광학 정렬 */
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: -2px;
+  margin-right: var(--space-2);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}

@@ -1,0 +1,202 @@
+/* ─────────────────────────────────────────────────────────────
+   목데이터 — 원본: 디자인 레포 `02_to-be/mock-data.md`.
+   ⚠️ 여기 없는 값이 필요하면 지어내지 말고 원본 문서에 먼저 추가한다.
+   ⚠️ 수치는 전부 가상값이며 실제 통계가 아니다.
+   ⚠️ 실명·실번호·타사 실제 상품명 금지 — 타사는 가명(A생명…), 병원도 가명.
+   화면은 이 파일을 직접 import 하지 말고 `useMock()`(src/app/MockProvider)을 쓴다.
+   ───────────────────────────────────────────────────────────── */
+
+import type {
+  AccountData, AccountState, Category, Copy,
+  CoverageItem, Payment, Policy, Product, ServiceItem, User,
+} from './types'
+
+/* ── 1. 사용자 ─────────────────────────────────────────────── */
+export const USER: User = {
+  name: '김신한',
+  phone: '010-0000-0000',
+  age: 26,
+  peerLabel: '20대 중반',
+}
+
+/* ── 2-1. 메인홈 배경 값 (최종 UI 기준) ────────────────────── */
+export const HOME = {
+  accountBalance: 9_250_000,
+  cardMonthlyUsage: 122_400,
+}
+
+/* ── 2. 보유 계약 — 상태 B ─────────────────────────────────── */
+const POLICIES_B: Policy[] = [
+  {
+    id: 'p-one-core',
+    name: '신한통합건강보험 원(ONE)Core',
+    company: '신한라이프',
+    issuer: 'own',
+    policyholder: '부모',
+    insured: '김신한',
+    monthlyPremium: 32_000,
+    startedAt: '2018.04',
+    note: '가족이 들어준 보험',
+  },
+  {
+    id: 'p-transit-mini',
+    name: '신한SOL대중교통보험 mini',
+    company: '신한라이프',
+    issuer: 'own',
+    policyholder: '김신한',
+    insured: '김신한',
+    monthlyPremium: 3_000,
+    startedAt: '2026.03',
+    note: '본인 가입',
+  },
+]
+
+/* ── 2-2. 보장 진단 10항목 (전부 가상값) ───────────────────── */
+// "N% 부족" 화법 금지 — 내 보장/또래를 나란히 보여주기만 한다.
+const COVERAGE_B: CoverageItem[] = [
+  { id: 'c-actual',   label: '실손의료비',     group: '치료비',    mine: null,                        peer: '78%가 가입', battery: 0,   isRadarAxis: true,  peerRadar: 78 },
+  { id: 'c-hospital', label: '입원',           group: '치료비',    mine: '입원일당 1만원', fromPolicyId: 'p-one-core',      peer: '3만원',      battery: 30,  isRadarAxis: true,  peerRadar: 60 },
+  { id: 'c-surgery',  label: '수술',           group: '치료비',    mine: null,                        peer: '500만',      battery: 0,   isRadarAxis: true,  peerRadar: 55 },
+  { id: 'c-dental',   label: '치과치료',       group: '치료비',    mine: null,                        peer: '100만',      battery: 0,   isRadarAxis: false },
+  { id: 'c-cancer',   label: '암 진단',        group: '큰 병',     mine: '3,000만', fromPolicyId: 'p-one-core',            peer: '3,000만',    battery: 100, isRadarAxis: true,  peerRadar: 65 },
+  { id: 'c-heart',    label: '심혈관질환진단', group: '큰 병',     mine: null,                        peer: '1,000만',    battery: 0,   isRadarAxis: false },
+  { id: 'c-brain',    label: '뇌혈관질환진단', group: '큰 병',     mine: null,                        peer: '1,000만',    battery: 0,   isRadarAxis: false },
+  { id: 'c-dementia', label: '치매진단',       group: '노후·간병', mine: null,                        peer: '500만',      battery: 0,   isRadarAxis: false },
+  { id: 'c-disabled', label: '후유장해',       group: '노후·간병', mine: '1,000만', fromPolicyId: 'p-transit-mini',        peer: '3,000만',    battery: 30,  isRadarAxis: true,  peerRadar: 50 },
+  { id: 'c-death',    label: '사망',           group: '만일',      mine: null,                        peer: '5,000만',    battery: 0,   isRadarAxis: true,  peerRadar: 45 },
+]
+
+/** 상태 A는 같은 10항목에 내 보장만 전부 비어 있다 */
+const COVERAGE_A: CoverageItem[] = COVERAGE_B.map((c) => ({
+  ...c,
+  mine: null,
+  fromPolicyId: undefined,
+  battery: 0,
+}))
+
+/* ── 계정 상태 2벌 ─────────────────────────────────────────── */
+export const ACCOUNTS: Record<AccountState, AccountData> = {
+  // 상태 A — 보유 0건 20대 (두 번째 상태)
+  A: {
+    state: 'A',
+    policies: [],
+    monthlyPremiumTotal: 0,
+    coverage: COVERAGE_A,
+    coverageTotal: 0,
+  },
+  // 상태 B — 보유 2건 20대 (부모 가입분 포함). 기본값
+  B: {
+    state: 'B',
+    policies: POLICIES_B,
+    monthlyPremiumTotal: 35_000, // 과제 "이번 달 보험료 확인"의 정답값
+    coverage: COVERAGE_B,
+    coverageTotal: 30, // 10개 중 3개에 보험 있음
+  },
+}
+
+/** 또래 평균 총점(가상값) */
+export const PEER_COVERAGE_TOTAL = 60
+
+/* ── 3. 카테고리 9종 (S2 통일 체계) ────────────────────────── */
+export const CATEGORIES: Category[] = [
+  { id: 'cancer',   label: '암',        icon3d: '암' },
+  { id: 'health',   label: '건강',      icon3d: '건강' },
+  { id: 'dementia', label: '치매·간병', icon3d: '치매간병' },
+  { id: 'dental',   label: '치아',      icon3d: '치아' },
+  { id: 'injury',   label: '상해',      icon3d: '상해' },
+  { id: 'travel',   label: '여행·레저', icon3d: '여행레저' },
+  { id: 'etc',      label: '그 밖의 보장', icon3d: '그밖의보장' },
+  { id: 'pension',  label: '연금·저축', icon3d: '연금저축' },
+  { id: 'variable', label: '변액',      icon3d: '변액' },
+]
+
+/* ── 3. 상품 목록 ──────────────────────────────────────────── */
+// 자사(신한라이프)는 실명, 타사는 가명. 타사에 로고 금지.
+export const PRODUCTS: Product[] = [
+  // 신한라이프 채널 (자사)
+  { id: 'sp-cancer-care',   category: 'cancer',   company: '신한라이프', issuer: 'own', name: '신한케어받는암보험(무배당, 갱신형)', description: '치료비 걱정은 덜고, 암 걱정은 멈추세요' },
+  { id: 'sp-one-more-care', category: 'dementia', company: '신한라이프', issuer: 'own', name: '신한치매간병보험 ONE더케어Core(무배당, 해약환급금 미지급형)', description: '장기요양과 치매를 준비하는 보험' },
+  { id: 'sp-one-core',      category: 'health',   company: '신한라이프', issuer: 'own', name: '신한통합건강보험 원(ONE)Core(무배당, 갱신형)', description: '라이프스타일에 맞게 설계가능' },
+  { id: 'sp-teeth-plus',    category: 'dental',   company: '신한라이프', issuer: 'own', name: '신한참좋은치아보험 PlusⅢ(무배당, 갱신형)', description: '치아 치료비 든든하게' },
+  { id: 'sp-sol-teeth',     category: 'dental',   company: '신한라이프', issuer: 'own', name: '신한SOL쏠한치아보험(무배당)(일반보장형)', description: '빈번한 치과치료, 핵심 보장으로 든든' },
+  { id: 'sp-sol-teeth-kid', category: 'dental',   company: '신한라이프', issuer: 'own', name: '신한SOL쏠한치아보험(무배당)(자녀보장형)', description: '우리아이에게 맞춘 치과치료 중심' },
+  { id: 'sp-transit-mini',  category: 'injury',   company: '신한라이프', issuer: 'own', name: '신한SOL대중교통보험 mini(무배당)', description: '매일타는 대중교통, 365일 안심' },
+  { id: 'sp-one-safe',      category: 'injury',   company: '신한라이프', issuer: 'own', name: '신한생활보장보험 ONE더세이프(무배당, 해약환급금 미지급형)', description: '일상 생활 중 상해사고를 대비' },
+  { id: 'sp-sol-pension',   category: 'pension',  company: '신한라이프', issuer: 'own', name: '신한슈퍼SOL연금보험(무배당)', description: '연금 강화형으로 은퇴 후 더 든든하게' },
+
+  // 신한은행 채널 (타사 — 전부 가명)
+  { id: 'op-a-care',      category: 'cancer',   company: 'A생명',    issuer: 'other', name: '(무)안심케어보험(e)(해약환급금 일부지급형)', description: '암 검사·진단·치료 3단계 보장' },
+  { id: 'op-b-checkup',   category: 'health',   company: 'B생명',    issuer: 'other', name: '(무)건강검진 걱정없는 미니보험(모바일)', description: '한 번 납입으로 면책기간 없이 바로 보장' },
+  { id: 'op-c-better',    category: 'health',   company: 'C생명',    issuer: 'other', name: '(무)더나은안심보험', description: '10년간 적용이율 최대 연 3.0%' },
+  { id: 'op-b-diabetes',  category: 'health',   company: 'B생명',    issuer: 'other', name: '(무)당뇨플러스건강보험(모바일)', description: '당뇨병 진단자금부터 치료비까지' },
+  { id: 'op-d-100friend', category: 'health',   company: 'D생명',    issuer: 'other', name: '(무)백년친구 e-안심보험', description: '만기까지 보험료 인상없이 보장' },
+  { id: 'op-e-cancer',    category: 'cancer',   company: 'E생명',    issuer: 'other', name: '(무)언제나안심암보험(모바일)', description: '갱신없이 동일 보험료, 최대 110세까지' },
+  { id: 'op-f-carer',     category: 'health',   company: 'F손해보험', issuer: 'other', name: '간편간병인보험(무배당) 모바일', description: '입원 첫날부터 최대 365일 한도' },
+  { id: 'op-f-health',    category: 'health',   company: 'F손해보험', issuer: 'other', name: '간편건강보험(무배당) 모바일', description: '암·뇌·심장 주요치료비 10년 최대 2억' },
+  { id: 'op-a-injury',    category: 'injury',   company: 'A생명',    issuer: 'other', name: '(무)일상안심상해보험', description: '일상 속 상해사고 대비' },
+  { id: 'op-d-teeth',     category: 'dental',   company: 'D생명',    issuer: 'other', name: '(무)치아사랑보험', description: '충치·보철 치료비 보장' },
+  { id: 'op-c-ltc',       category: 'dementia', company: 'C생명',    issuer: 'other', name: '(무)장기요양안심보험', description: '장기요양등급 판정 시 보장' },
+  { id: 'op-f-travel',    category: 'travel',   company: 'F손해보험', issuer: 'other', name: '해외여행보험(무배당)', description: '여행 중 사고·질병 보장' },
+  { id: 'op-a-loan',      category: 'etc',      company: 'A생명',    issuer: 'other', name: '(무)대출안심보험', description: '사고 시 남은 대출 상환 지원' },
+  { id: 'op-f-golf',      category: 'travel',   company: 'F손해보험', issuer: 'other', name: '골프보험(무배당)', description: '홀인원·배상책임 보장' },
+  { id: 'op-b-variable',  category: 'variable', company: 'B생명',    issuer: 'other', name: '(무)변액연금보험', description: '1일 1회 적합성 진단 후 확인 가능' },
+  { id: 'op-d-happy',     category: 'pension',  company: 'D생명',    issuer: 'other', name: '(무)행복연금보험(거치형, 무배당)', description: '5년 유지 시 최저적립액 보장' },
+  { id: 'op-c-taxsave',   category: 'pension',  company: 'C생명',    issuer: 'other', name: '(무)연금저축보험', description: '연말정산 세액공제 대상' },
+]
+
+/* ── 3-1. 상품 상세 가상값 (S6 — 신한케어받는암보험) ───────── */
+export const PRODUCT_DETAIL = {
+  productId: 'sp-cancer-care',
+  /** 스탯 3열 */
+  stats: [
+    { label: '납입방법', value: '월납' },
+    { label: '가입나이', value: '만 15~70세' },
+    { label: '보험기간', value: '10년 (갱신형)' },
+  ],
+  /** 키-값 표 3행 (스탯·제목과 겹치는 항목은 뺐다) */
+  rows: [
+    { label: '보험종류', value: '갱신형 암보험 (무배당)' },
+    { label: '제조사', value: '신한라이프' },
+    { label: '판매 채널', value: '신한라이프 직접 판매' },
+  ],
+}
+
+/** 용어 툴팁 (S2-12) */
+export const TERM_TOOLTIPS: Record<string, string> = {
+  무배당: '배당금을 주지 않는 대신 보험료가 저렴한 상품이에요',
+  갱신형: '일정 주기마다 보험료를 다시 계산해 계약을 이어가는 방식이에요',
+}
+
+/* ── 5. 카드 결제 내역 (S4) — 병원·약국은 가명 ─────────────── */
+export const PAYMENTS: Payment[] = [
+  { id: 'pay-1', date: '08.17', merchant: '○○내과의원',  amount: 32_000,  claimable: true },
+  { id: 'pay-2', date: '08.17', merchant: '○○약국',      amount: 8_400,   claimable: true },
+  { id: 'pay-3', date: '08.09', merchant: '△△정형외과',  amount: 45_000,  claimable: true },
+  { id: 'pay-4', date: '07.28', merchant: '□□치과의원',  amount: 120_000, claimable: true },
+  { id: 'pay-5', date: '07.15', merchant: '○○약국',      amount: 6_200,   claimable: true },
+  { id: 'pay-6', date: '08.16', merchant: '◇◇마트',      amount: 23_500,  claimable: false }, // 병원 아님 — 목록에 안 나옴
+]
+
+/* ── 6. 서비스 12개 (S1 그리드 3묶음) ──────────────────────── */
+export const SERVICES: ServiceItem[] = [
+  { id: 'sv-contract',  label: '보험계약조회',      group: '조회·계약', icon3d: '계약조회' },
+  { id: 'sv-history',   label: '보험거래내역',      group: '조회·계약', icon3d: '거래내역' },
+  { id: 'sv-autopay',   label: '자동이체등록/변경', group: '조회·계약', icon3d: '자동이체' },
+  { id: 'sv-claim',     label: '보험금청구',        group: '청구·신청', icon3d: '보험금청구' },
+  { id: 'sv-premium',   label: '보험료납입',        group: '청구·신청', icon3d: '보험료납입' },
+  { id: 'sv-loan',      label: '보험계약대출신청',  group: '청구·신청', icon3d: '계약대출' },
+  { id: 'sv-dividend',  label: '배당금신청',        group: '청구·신청', icon3d: '배당금' },
+  { id: 'sv-withdraw',  label: '중도인출신청',      group: '청구·신청', icon3d: '중도인출' },
+  { id: 'sv-split',     label: '분할보험금신청',    group: '청구·신청', icon3d: '분할보험금' },
+  { id: 'sv-dict',      label: '건강사전',          group: '정보',      icon3d: '건강사전' },
+  { id: 'sv-nutrition', label: 'AI영양분석',        group: '정보',      icon3d: '영양분석' },
+  { id: 'sv-energy',    label: '보장에너지',        group: '정보',      icon3d: '보장에너지' },
+]
+
+/* ── 4. 공통 문구 ──────────────────────────────────────────── */
+export const COPY: Copy = {
+  peerBasis: '20대 중반과 비교했어요',
+  limitation: '보험마다 보장 기준이 달라 실제와 다를 수 있어요. 가족이 가입해준 보험은 일부만 반영됩니다.',
+  noPressure: '가입을 권하는 것이 아니에요. 궁금한 점만 물어보셔도 됩니다.',
+  emptyCoverage: '아직 준비된 보장이 없어요',
+}

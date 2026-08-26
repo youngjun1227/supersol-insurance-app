@@ -1,0 +1,19 @@
+{
+  "name": "슈퍼SOL 보험",
+  "short_name": "슈퍼SOL 보험",
+  "lang": "ko",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#F0F4FA",
+  "icons": [
+    {
+      "src": "/assets/logo/app-icon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

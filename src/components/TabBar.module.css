@@ -1,0 +1,34 @@
+.bar {
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--tabbar-bottom) + env(safe-area-inset-bottom, 0px));
+
+  display: flex;
+  align-items: center;
+  width: var(--w-tabbar);   /* 363 */
+  height: var(--h-tabbar);  /* 62 */
+  /* 393 기준 좌우 여백 15 (§3). 더 좁은 폰에서만 줄어든다 */
+  max-width: calc(100% - 30px);
+
+  background: var(--bg-surface);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-float);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 100%;
+  /* 선택 원 없음 — 색만 바뀐다 (§4) */
+  color: var(--text-disabled);
+}
+
+.tab[data-selected='true'] { color: var(--primary); }
+
+.label { color: inherit; }

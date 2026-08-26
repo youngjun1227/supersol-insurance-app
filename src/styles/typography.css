@@ -1,0 +1,16 @@
+/* §2 타이포그래피 스케일 13단계.
+   글자 스타일은 반드시 이 중 하나를 쓴다 — font-size를 직접 적지 않는다. */
+
+.t-display        { font-size: var(--fs-display);  font-weight: var(--fw-bold);    }
+.t-h1             { font-size: var(--fs-h1);       font-weight: var(--fw-bold);    }
+.t-h2             { font-size: var(--fs-h2);       font-weight: var(--fw-bold);    }
+.t-h3             { font-size: var(--fs-h3);       font-weight: var(--fw-bold);    }
+.t-body-lg-bold   { font-size: var(--fs-body-lg);  font-weight: var(--fw-bold);    }
+.t-body-lg-medium { font-size: var(--fs-body-lg);  font-weight: var(--fw-medium);  }
+.t-body-lg        { font-size: var(--fs-body-lg);  font-weight: var(--fw-regular); }
+.t-body           { font-size: var(--fs-body);     font-weight: var(--fw-regular); }
+.t-body-sm        { font-size: var(--fs-body-sm);  font-weight: var(--fw-regular); }
+.t-body-sm-medium { font-size: var(--fs-body-sm);  font-weight: var(--fw-medium);  }
+.t-caption        { font-size: var(--fs-caption);  font-weight: var(--fw-regular); }
+.t-caption-medium { font-size: var(--fs-caption);  font-weight: var(--fw-medium);  }
+.t-label          { font-size: var(--fs-label);    font-weight: var(--fw-medium);  }

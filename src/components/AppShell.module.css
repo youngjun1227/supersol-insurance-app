@@ -1,0 +1,40 @@
+/* §0 뷰포트 393×852 고정 · 100dvh (100vh 금지) · max-width 393 중앙 */
+
+.shell {
+  position: relative;
+  width: 100%;
+  max-width: var(--viewport-w);
+  min-height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* §1 배경 규칙 */
+.shell[data-bg='surface'] { background: var(--bg-surface); }
+.shell[data-bg='page'] {
+  /* S1 메인: 상단 --bg-page-top → --bg-page 그라데이션 */
+  background: linear-gradient(180deg, var(--bg-page-top) 0%, var(--bg-page) 160px);
+  background-color: var(--bg-page);
+}
+
+/* 헤더는 sticky — 본문이 스크롤해도 붙어 있다 (§4) */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  /* standalone 모드 상태바 겹침 방지 (§0) */
+  padding-top: env(safe-area-inset-top, 0px);
+  background: inherit;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* §3 본문 하단 여백 */
+.body[data-footer='tabbar'] { padding-bottom: var(--pb-tabbar); }
+.body[data-footer='cta']    { padding-bottom: var(--pb-cta); }

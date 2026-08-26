@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- §0: 393×852 고정. viewport-fit=cover + safe-area 로 상태바 겹침 처리 -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    />
+    <title>슈퍼SOL 보험</title>
+
+    <!-- 홈 화면 추가 시 주소창 없는 전체화면 (§0) -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#F0F4FA" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="슈퍼SOL 보험" />
+    <link rel="apple-touch-icon" href="/assets/logo/app-icon.png" />
+    <link rel="icon" href="/assets/logo/app-icon.png" />
+
+    <!-- 테스트용 프로토타입 — 검색에 잡히지 않게 -->
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
