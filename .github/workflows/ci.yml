@@ -1,0 +1,56 @@
+name: ci
+
+# required status check(ci)로 등록되므로 paths 필터를 두지 않는다 —
+# 필터에 걸려 실행되지 않으면 체크가 영원히 pending이 되어 병합 불가 (Ventry 교훈)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install (lockfile 기준 재현 설치)
+        run: npm ci
+
+      # pre-commit 훅은 --no-verify나 훅 미설정으로 우회 가능 — CI가 최종 방어선
+      - name: 토큰 lint (토큰 밖 hex·직접 font-size/radius·라이프 색·100vh)
+        run: npm run lint:tokens
+
+      # 문구 컴플라이언스 스윕 — 멘토 필수 문구·금지 단어가 화면 코드에 새는 것을 차단.
+      # "사람이 생각날 때만 돌리면 화면에 남는다"(Ventry term_sweep 교훈)
+      - name: 문구 컴플라이언스 스윕
+        run: |
+          set -e
+          FAIL=0
+          # 금지: 8/25 전 금칙어·회사 관점 문구·단정형 청구 표현 (변경로그 §3: "가능할 수 있어요"만 허용)
+          for term in "개선안" "솔루션" "노출 증대" "가입 전환" "청구할 수 있어요" "SOL:VE"; do
+            if grep -rn --include='*.ts' --include='*.tsx' --include='*.css' --include='*.html' "$term" src/ index.html 2>/dev/null; then
+              echo "❌ 금지 문구 발견: '$term'"; FAIL=1
+            fi
+          done
+          # 실명·실번호 패턴 (목데이터 규칙: 김신한 / 010-0000-0000 만 허용)
+          if grep -rnE --include='*.ts' --include='*.tsx' "010-[0-9]{4}-[0-9]{4}" src/ | grep -v "010-0000-0000"; then
+            echo "❌ 실전화번호 패턴 발견"; FAIL=1
+          fi
+          exit $FAIL
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
