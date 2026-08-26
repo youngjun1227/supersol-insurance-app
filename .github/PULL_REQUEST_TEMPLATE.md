@@ -7,6 +7,7 @@
 ## 어떻게 확인했나
 
 - [ ] **figma-ref PNG와 나란히 비교한 스크린샷 첨부** (`docs/figma-ref/…` ↔ 구현 화면) ← 필수
+- [ ] **Vercel 프리뷰를 폰에서 열어 확인** (PR에 자동으로 링크가 달립니다) — 스크린샷보다 정확합니다
 - [ ] `npm run lint:tokens` · `npm run typecheck` · `npm run build` 로컬 통과
 - [ ] 393px 뷰포트에서 확인 (다른 폭 아님)
 
