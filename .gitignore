@@ -7,3 +7,6 @@ dist/
 .vercel
 .playwright-mcp/
 *.png.tmp
+
+# 검수용 임시 스크린샷 (커밋하지 않는다)
+/*.png

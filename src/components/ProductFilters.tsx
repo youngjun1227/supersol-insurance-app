@@ -22,13 +22,17 @@ export function ProductFilters({
 }: ProductFiltersProps) {
   const rowRef = useRef<HTMLDivElement>(null)
 
-  /* 선택된 칩이 화면 밖이면 보이게 스크롤한다 — 어떤 필터가 켜져 있는지
-     안 보이면 사용자가 상태를 알 수 없다 (S2-D 는 칩이 뒤쪽에 있는 경우가 많다) */
+  /* 선택된 칩을 맨 앞(왼쪽)으로 스크롤한다 — 어떤 필터가 켜져 있는지 보이면서,
+     그 뒤 칩들도 함께 노출돼 다음 선택으로 이어가기 쉽다.
+     ⚠️ 가운데 정렬(inline:'center')이 아니다 — 뒤 칩이 절반만 보여 탐색이 끊긴다 */
   useEffect(() => {
     const row = rowRef.current
     if (!row || !activeCategory) return
     const chip = row.querySelector<HTMLElement>('[data-selected="true"]')
-    if (chip) chip.scrollIntoView({ block: 'nearest', inline: 'center' })
+    if (!chip) return
+    // 행 왼쪽 패딩만큼 빼서 칩이 여백에 딱 붙게
+    const pad = parseFloat(getComputedStyle(row).paddingLeft) || 0
+    row.scrollLeft = chip.offsetLeft - pad
   }, [activeCategory])
 
   return (
