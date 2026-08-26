@@ -8,6 +8,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AnalyticsProvider } from './AnalyticsProvider'
 import { MockProvider } from './MockProvider'
 import { Export } from '@/pages/Export'
+import { Briefing } from '@/pages/Briefing'
 import { Diagnosis } from '@/pages/Diagnosis'
 import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
 import { Home } from '@/pages/Home'
@@ -48,7 +49,7 @@ export function App() {
 
           {/* S3 보장 진단 — 탭바 없음 */}
           <Route path="/diagnosis" element={<Diagnosis />} />
-          <Route path="/diagnosis/briefing" element={<Placeholder name="S3-D-브리핑" title="브리핑" tabId="finance" />} />
+          <Route path="/diagnosis/briefing" element={<Briefing />} />
           <Route path="/diagnosis/:itemId" element={<Placeholder name="S3-E-항목상세" title="항목 상세" tabId="finance" />} />
 
           {/* S3-F 에이전트 대화 — 진입 문맥은 쿼리로 */}

@@ -1,0 +1,166 @@
+/* S3-D 브리핑. 내용 gap 16, p 20/20/40 (Figma 실측) */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--gutter) var(--space-8);
+  background: var(--bg-surface);
+}
+
+/* ── 히어로 ──────────────────────────────────────────────── */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary);
+}
+
+.percent {
+  color: var(--primary);
+  font-style: normal;
+}
+
+.heroRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.heroText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.basis { color: var(--text-caption); }
+.emptyText { color: var(--text-secondary); }
+
+.battery {
+  flex-shrink: 0;
+  width: 104px;
+  height: 139px;
+  object-fit: contain;
+}
+
+/* ── 차트 ────────────────────────────────────────────────── */
+.chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  border-radius: var(--r-card-xl);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.swatchMine,
+.swatchPeer {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--r-check);
+}
+
+.swatchMine { background: var(--primary); }
+.swatchPeer { background: var(--text-caption); }
+
+.summary {
+  width: 100%;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.note {
+  width: 100%;
+  color: var(--text-caption);
+  text-align: center;
+}
+
+/* ── 에이전트 존 ─────────────────────────────────────────── */
+.agent {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: var(--gutter-main) 10px var(--space-2);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 36px;
+  border-radius: var(--r-pill);
+  background: var(--bg-tint);
+}
+
+.avatarImg {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.agentBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.agentName {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-secondary);
+}
+
+.sparkle {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.bubble {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.bubbleText {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-primary);
+}
+
+.disclaimer {
+  width: 100%;
+  color: var(--text-caption);
+  text-align: center;
+}
