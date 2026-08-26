@@ -1,0 +1,277 @@
+/* S1-9 보험 메인. 메인 계열이라 본문 좌우 12(--gutter-main), 카드 사이 12. */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-card-main);
+  padding: var(--space-1) var(--gutter-main) var(--gutter-main);
+}
+
+/* ── 기준 행 — 카드 밖. 상단 탭과 첫 카드 사이 ───────────────── */
+.basis {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+}
+
+.basisText {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-caption);
+}
+
+.basisAction {
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+/* 리스트·카드 chevron — 24 자리를 차지하되 글자로 그린다 (§5 --text-disabled) */
+.chevron {
+  flex: none;
+  width: 24px;
+  text-align: center;
+  color: var(--text-disabled);
+  line-height: 1;
+}
+
+.basisAction .chevron {
+  width: 16px;
+  color: var(--text-primary);
+}
+
+/* ── 내 보험 카드 + 2분할 액션 ───────────────────────────────
+   PNG 상 흰 카드 아래로 틴트 면이 이어져 한 덩어리로 보인다.
+   틴트 컨테이너 위에 흰 카드를 얹어서 만든다. */
+.myBlock {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--r-card-lg);
+  background: var(--bg-tint);
+}
+
+.myCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--pad-card);
+  /* 메인 카드는 테두리 없음 — 흰 면만 (홈과 동일) */
+  border: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: left;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+}
+
+/* 보험 N건 / 이번 달 보험료 — 라벨 위, 값 아래 */
+.stats {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.statLabel { color: var(--text-caption); }
+.statCount { color: var(--primary); }
+.statValue { color: var(--text-primary); }
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-default);
+}
+
+.policies {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.policyRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+}
+
+.policyLogo {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+.policyText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.policyName {
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.policyMeta { color: var(--text-caption); }
+
+/* 스펙 §5 SplitButton — 2분할, 아이콘 24 + 라벨 16/700 */
+.split {
+  display: flex;
+  align-items: stretch;
+}
+
+.splitItem {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  color: var(--text-secondary);
+}
+
+/* ── 보장진단 통합 카드 (변경로그 §1) ────────────────────────
+   카드 전체 탭과 틴트 박스 탭이 서로 다른 타깃이라 두 버튼으로 나눠 둔다. */
+.diagCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--pad-card);
+  border: 0;
+}
+
+.diagMain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.diagHeadline {
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.diagBasis {
+  color: var(--text-caption);
+  text-align: center;
+}
+
+/* 틴트 박스 — 지금 비어 있는 우선순위 항목 1개 */
+.diagItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 6px 14px;
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+  text-align: left;
+}
+
+.diagItemIcon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.diagItemText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.diagItemName { color: var(--text-primary); }
+.diagItemPeer { color: var(--text-caption); }
+
+.diagDisclaimer { color: var(--text-caption); }
+
+/* ── 서비스 그리드 3묶음 ─────────────────────────────────────── */
+.serviceCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--pad-card);
+  border: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: var(--space-5);
+  column-gap: var(--space-3);
+}
+
+/* 스펙 §5 GridMenuItem — 3D PNG 24 + 라벨 14/400 한 줄 */
+.gridItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  text-align: left;
+}
+
+.gridIcon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.gridLabel {
+  min-width: 0;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 하단 배너 2개 (스펙 §5 BannerCard — h80 r20) ────────────── */
+.banners {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-3) var(--pad-card);
+  border-radius: var(--r-card-xl);
+  background: var(--bg-tint);
+  text-align: left;
+}
+
+.bannerIcon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.bannerText { color: var(--text-secondary); }

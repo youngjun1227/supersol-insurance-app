@@ -1,0 +1,287 @@
+/* S1-9 보험 메인 (보유 2건) — Figma 310:608. 기본 상태이자 9/11 과제 대부분의 출발점.
+
+   라우트 하나에 상태 3개가 얹힌다:
+     ?state=B (기본)        S1-9  통합형 — 보장진단 카드가 내 보험 바로 아래
+     ?state=A               S1-8  0건 분리형
+     ?state=B&custom=off    S1-14 맞춤 OFF 분리형 — 보장진단이 맨 아래로 내려간다
+   지금은 S1-9 만 구현한다. 섹션을 조각으로 쪼개 둔 건 나머지 두 상태가
+   순서·문구만 갈아끼우면 되게 하려는 것이다. */
+
+import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
+import { useMock } from '@/app/MockProvider'
+import { DIAGNOSIS, INSURANCE_MAIN as C } from '@/data/copy'
+import type { Policy, ServiceItem } from '@/data/types'
+import { batteryLevelFor, emptyPriorityItems } from '@/lib/coverage'
+import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
+import { useTrack } from '@/lib/useTrack'
+import styles from './FinanceInsurance.module.css'
+
+/** 원화 표기 — 35,000원 */
+function won(n: number): string {
+  return `${n.toLocaleString('ko-KR')}원`
+}
+
+/** figma-ref 에 없는 서비스. 목데이터는 건드리지 않고 화면에서만 뺀다
+    (2026-08-27 확인 — "정보" 묶음은 PNG 기준 2개가 맞다) */
+const HIDDEN_SERVICES = ['sv-energy']
+
+/** 서비스 그리드 묶음 — figma-ref 순서 그대로 */
+const SERVICE_GROUPS: ServiceItem['group'][] = ['조회·계약', '청구·신청', '정보']
+
+export function FinanceInsurance() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const track = useTrack()
+  const { data } = useMock()
+
+  /** 쿼리(?state=A|B&custom=off)를 유지한 채 이동 — 조건이 풀리면 계측이 갈린다 */
+  const go = (targetId: string, pathname: string) => {
+    track(targetId)
+    navigate({ pathname, search: location.search })
+  }
+
+  const policyCount = data.policies.length
+  /** 카드가 가리키는 항목 — 우선순위가 높은데 비어 있는 것 중 첫 번째 (상태 B = 실손의료비) */
+  const emptyPriority = emptyPriorityItems(data.coverage)
+  const topEmpty = emptyPriority[0]
+
+  const services = data.services.filter((s) => !HIDDEN_SERVICES.includes(s.id))
+
+  /* ── 기준 행 — 카드 밖, 상단 탭 바로 아래 ─────────────────── */
+  const basisRow = (
+    <div className={styles.basis}>
+      <span className={`${styles.basisText} t-caption`}>
+        가입 보험 {policyCount}건 · {C.basisOn}
+      </span>
+      <button
+        type="button"
+        className={`${styles.basisAction} t-caption-medium`}
+        onClick={() => {
+          // S1-13 기준 시트(오버레이)는 이슈 #10 — 시트가 붙기 전까지 계측만 남긴다
+          track(tid(SCREEN.s1, ELEMENT.버튼, '맞춤설정'))
+        }}
+      >
+        {C.basisAction}
+        <span className={styles.chevron} aria-hidden="true">›</span>
+      </button>
+    </div>
+  )
+
+  /* ── 내 보험 카드 + 2분할 액션 ────────────────────────────── */
+  const policyRow = (policy: Policy) => (
+    <button
+      key={policy.id}
+      type="button"
+      className={styles.policyRow}
+      onClick={() => go(tid(SCREEN.s1, ELEMENT.행, policy.id), '/finance/insurance/my')}
+    >
+      {policy.issuer === 'own' ? (
+        <img
+          className={styles.policyLogo}
+          src="/assets/logo/shinhan-symbol.png"
+          alt=""
+          aria-hidden="true"
+        />
+      ) : (
+        <span className={styles.policyLogo} aria-hidden="true" />
+      )}
+      <span className={styles.policyText}>
+        <span className={`${styles.policyName} t-body-lg-medium`}>{policy.name}</span>
+        <span className={`${styles.policyMeta} t-body-sm`}>
+          {policy.startedAt} 가입 · 월 {won(policy.monthlyPremium)}
+        </span>
+      </span>
+      <span className={styles.chevron} aria-hidden="true">›</span>
+    </button>
+  )
+
+  const myInsurance = (
+    <div className={styles.myBlock}>
+      <Card radius="lg" className={styles.myCard}>
+        <button
+          type="button"
+          className={styles.titleRow}
+          onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '내보험'), '/finance/insurance/my')}
+        >
+          <span className={`${styles.title} t-h2`}>{C.myTitle}</span>
+          <span className={styles.chevron} aria-hidden="true">›</span>
+        </button>
+
+        <div className={styles.stats}>
+          <span className={styles.stat}>
+            <span className={`${styles.statLabel} t-caption`}>{C.myCountLabel}</span>
+            <span className={`${styles.statCount} t-h2`}>{policyCount}건</span>
+          </span>
+          <span className={styles.stat}>
+            <span className={`${styles.statLabel} t-caption`}>{C.myPremiumLabel}</span>
+            <span className={`${styles.statValue} t-h2`}>{won(data.monthlyPremiumTotal)}</span>
+          </span>
+        </div>
+
+        <div className={styles.divider} />
+
+        <div className={styles.policies}>{data.policies.map(policyRow)}</div>
+      </Card>
+
+      {/* 2분할 액션 — 내 보험 카드 아래 붙는 틴트 면 (스펙 §5 SplitButton) */}
+      <div className={styles.split}>
+        <button
+          type="button"
+          className={styles.splitItem}
+          onClick={() => go(tid(SCREEN.s1, ELEMENT.버튼, '보험금청구'), '/claim/guide')}
+        >
+          <HandCoins size={24} weight="regular" color="var(--text-secondary)" />
+          <span className="t-body-lg-bold">{C.actionClaim}</span>
+        </button>
+        <button
+          type="button"
+          className={styles.splitItem}
+          onClick={() => go(tid(SCREEN.s1, ELEMENT.버튼, '보험찾기'), '/product/insurance')}
+        >
+          <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
+          <span className="t-body-lg-bold">{C.actionFind}</span>
+        </button>
+      </div>
+    </div>
+  )
+
+  /* ── 보장진단 통합 카드 (변경로그 §1) ──────────────────────
+     카드 전체 탭 → S3-D 브리핑 / 틴트 박스 탭 → S3-E 항목 상세.
+     타깃이 2개라 버튼을 겹치지 않게 나눈다 (중첩 버튼은 HTML 위반). */
+  const diagnosisCard = (
+    <Card radius="lg" className={styles.diagCard}>
+      <button
+        type="button"
+        className={styles.diagMain}
+        onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '보장진단'), '/diagnosis/briefing')}
+      >
+        <span className={styles.titleRow}>
+          <span className={`${styles.title} t-h2`}>{C.diagnosisTitle}</span>
+          <span className={styles.chevron} aria-hidden="true">›</span>
+        </span>
+
+        <Battery level={batteryLevelFor(data.coverageTotal)} width={72} height={96} />
+
+        <span className={`${styles.diagHeadline} t-body-lg-medium`}>
+          {C.diagnosisHeadline.replace('{n}', String(emptyPriority.length))}
+        </span>
+        <span className={`${styles.diagBasis} t-caption`}>
+          {C.diagnosisBasis.replace('{n}', String(policyCount))}
+        </span>
+      </button>
+
+      {topEmpty ? (
+        <button
+          type="button"
+          className={styles.diagItem}
+          onClick={() => go(tid(SCREEN.s1, ELEMENT.항목, topEmpty.id), `/diagnosis/${topEmpty.id}`)}
+        >
+          <img
+            className={styles.diagItemIcon}
+            src="/assets/3d/병원.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <span className={styles.diagItemText}>
+            <span className={`${styles.diagItemName} t-body-lg-medium`}>{topEmpty.label}</span>
+            <span className={`${styles.diagItemPeer} t-body-sm`}>{C.diagnosisPeer}</span>
+          </span>
+          <span className={styles.chevron} aria-hidden="true">›</span>
+        </button>
+      ) : null}
+
+      <p className={`${styles.diagDisclaimer} t-caption`}>{DIAGNOSIS.disclaimer}</p>
+    </Card>
+  )
+
+  /* ── 서비스 그리드 3묶음 ──────────────────────────────────── */
+  const serviceGroups = SERVICE_GROUPS.map((group) => {
+    const items = services.filter((s) => s.group === group)
+    if (!items.length) return null
+    return (
+      <Card radius="lg" className={styles.serviceCard} key={group}>
+        <p className={`${styles.title} t-h2`}>{group}</p>
+        <div className={styles.grid}>
+          {items.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className={styles.gridItem}
+              onClick={() => track(tid(SCREEN.s1, ELEMENT.항목, s.id))}
+            >
+              <img
+                className={styles.gridIcon}
+                src={`/assets/3d/${s.icon3d}.png`}
+                alt=""
+                aria-hidden="true"
+              />
+              <span className={`${styles.gridLabel} t-body-sm`}>{s.label}</span>
+            </button>
+          ))}
+        </div>
+      </Card>
+    )
+  })
+
+  /* ── 하단 배너 2개 ────────────────────────────────────────── */
+  const banners = (
+    <div className={styles.banners}>
+      <button
+        type="button"
+        className={styles.banner}
+        onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '상담'), '/agent')}
+      >
+        <img className={styles.bannerIcon} src="/assets/3d/상담.png" alt="" aria-hidden="true" />
+        <span className={`${styles.bannerText} t-body`}>{C.bannerExpert}</span>
+      </button>
+      <button
+        type="button"
+        className={styles.banner}
+        onClick={() => track(tid(SCREEN.s1, ELEMENT.카드, '이벤트'))}
+      >
+        <img className={styles.bannerIcon} src="/assets/3d/이벤트.png" alt="" aria-hidden="true" />
+        <span className={`${styles.bannerText} t-body`}>{C.bannerEvent}</span>
+      </button>
+    </div>
+  )
+
+  return (
+    <AppShell
+      name="S1-9-보험메인"
+      header={
+        <>
+          <Header
+            title="금융"
+            actions={
+              <>
+                <IconAction targetId={tid(SCREEN.s1, ELEMENT.버튼, '검색')} label="검색">
+                  <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
+                </IconAction>
+                <IconAction targetId={tid(SCREEN.s1, ELEMENT.버튼, '알림')} label="알림">
+                  <Bell size={24} weight="regular" color="var(--text-secondary)" />
+                </IconAction>
+                <IconAction targetId={tid(SCREEN.s1, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
+                  <List size={24} weight="regular" color="var(--text-secondary)" />
+                </IconAction>
+              </>
+            }
+          />
+          <FinanceTopTabs active="insurance" />
+        </>
+      }
+      footer={<TabBar activeId="finance" />}
+      background="page"
+      footerType="tabbar"
+    >
+      <div className={styles.body}>
+        {basisRow}
+        {myInsurance}
+        {diagnosisCard}
+        {serviceGroups}
+        {banners}
+      </div>
+    </AppShell>
+  )
+}

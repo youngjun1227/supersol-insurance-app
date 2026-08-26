@@ -10,6 +10,7 @@ import { MockProvider } from './MockProvider'
 import { Export } from '@/pages/Export'
 import { Briefing } from '@/pages/Briefing'
 import { Diagnosis } from '@/pages/Diagnosis'
+import { FinanceInsurance } from '@/pages/FinanceInsurance'
 import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
 import { Home } from '@/pages/Home'
 import { ProductDiscover } from '@/pages/ProductPath'
@@ -38,10 +39,7 @@ export function App() {
 
           {/* S1 보험 메인 — 라우트 하나에 상태 3개:
               ?state=B(기본) 통합형 · ?state=A 0건 분리형 · ?state=B&custom=off 맞춤 OFF 분리형 */}
-          <Route
-            path="/finance/insurance"
-            element={<Placeholder name="S1-보험메인" title="금융" tabId="finance" financeTabs />}
-          />
+          <Route path="/finance/insurance" element={<FinanceInsurance />} />
           <Route
             path="/finance/insurance/my"
             element={<Placeholder name="S1-7-내보험" title="내 보험" tabId="finance" />}
