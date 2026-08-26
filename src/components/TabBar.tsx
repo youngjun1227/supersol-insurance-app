@@ -15,17 +15,22 @@ import styles from './TabBar.module.css'
 export interface TabItem {
   id: string
   label: string
+  /** 탭을 눌렀을 때 가는 곳 */
   path: string
+  /** 선택 판정용 경로 앞부분. 하위 화면에서도 탭이 켜져 있게 한다 */
+  match: string
   icon: Icon
 }
 
-/** 실제 슈퍼쏠 탭 5개 */
+/* 실제 슈퍼쏠 탭 5개.
+   금융·상품은 하위 상단 탭(보험)으로 직행한다 — 테스트 과제가 전부 보험이라
+   기본 진입을 보험 상단 탭으로 둔다 (변경로그 라우팅 원칙). */
 export const TABS: TabItem[] = [
-  { id: 'home',    label: '홈',   path: '/',        icon: House },
-  { id: 'finance', label: '금융', path: '/finance', icon: Wallet },
-  { id: 'product', label: '상품', path: '/product', icon: Storefront },
-  { id: 'benefit', label: '혜택', path: '/benefit', icon: Gift },
-  { id: 'stock',   label: '주식', path: '/stock',   icon: ChartLineUp },
+  { id: 'home',    label: '홈',   path: '/',                   match: '/',         icon: House },
+  { id: 'finance', label: '금융', path: '/finance/insurance',  match: '/finance',  icon: Wallet },
+  { id: 'product', label: '상품', path: '/product/insurance',  match: '/product',  icon: Storefront },
+  { id: 'benefit', label: '혜택', path: '/benefit',            match: '/benefit',  icon: Gift },
+  { id: 'stock',   label: '주식', path: '/stock',              match: '/stock',    icon: ChartLineUp },
 ]
 
 interface TabBarProps {
@@ -38,9 +43,11 @@ export function TabBar({ activeId }: TabBarProps) {
   const location = useLocation()
   const track = useTrack()
 
+  /* 서브 화면(진단·청구·에이전트)에는 탭바가 아예 없어서(Figma 실측)
+     여기 걸릴 일이 없다. 탭바가 뜨는 건 홈·금융·상품·스켈레톤뿐. */
   const current =
     activeId ??
-    TABS.find((t) => t.path !== '/' && location.pathname.startsWith(t.path))?.id ??
+    TABS.find((t) => t.match !== '/' && location.pathname.startsWith(t.match))?.id ??
     'home'
 
   return (

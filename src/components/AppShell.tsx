@@ -9,17 +9,25 @@ import styles from './AppShell.module.css'
 
 export type ShellBackground = 'page' | 'surface'
 
+export type FooterType = 'tabbar' | 'cta' | 'input' | 'none'
+
 interface AppShellProps {
   /** 계측에 남는 화면 이름. 화면마다 유일하게 */
   name: string
   /** 상단 고정 영역 — <Header> (+ <TopTabs>) */
   header?: ReactNode
-  /** 하단 고정 영역 — <TabBar> 또는 <BottomCTA> */
+  /** 하단 고정 영역 — <TabBar> · <BottomCTA> · 입력 바 */
   footer?: ReactNode
   /** 본문 배경 (§1 배경 규칙): 메인 계열 'page' / 그 밖 'surface' */
   background?: ShellBackground
-  /** 본문 하단 여백 — 탭바 90 / CTA 126 */
-  footerType?: 'tabbar' | 'cta' | 'none'
+  /**
+   * 본문 하단 여백. 변경로그 "서브 화면 하단 처리" 실측 표 기준:
+   *  'tabbar' 90  — 홈·금융·상품·스켈레톤만
+   *  'cta'    126 — S3-E·S4-D·S5-A·청구완료·S6-A
+   *  'input'  — S3-F 대화 입력 바 (CTA 아님)
+   *  'none'   — S1-7·S3-D·S3-C. 탭바도 CTA도 없다 (§4 "둘 중 하나"의 예외)
+   */
+  footerType?: FooterType
   children: ReactNode
 }
 

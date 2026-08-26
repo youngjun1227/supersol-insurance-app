@@ -1,22 +1,56 @@
-/* 라우터. 화면은 8/25 회의 후 확정 — 지금은 탭 5개 자리와 진행자 화면만.
-   ⚠️ 화면을 추가하면 AppShell의 name(계측 화면 이름)도 같이 붙인다. */
+/* 라우터 — 변경로그 "화면 목록 v2" 기준.
+   ⚠️ 화면을 추가하면 AppShell의 name(계측 화면 이름)도 같이 붙인다.
+
+   탭바가 뜨는 화면: / · /finance/insurance · /product/insurance · 스켈레톤
+   그 밖(진단·청구·에이전트)은 Figma 실측상 탭바가 아예 없다. */
 
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AnalyticsProvider } from './AnalyticsProvider'
 import { MockProvider } from './MockProvider'
-import { Placeholder } from '@/pages/Placeholder'
 import { Export } from '@/pages/Export'
+import { Placeholder } from '@/pages/Placeholder'
+import { Skeleton } from '@/pages/Skeleton'
 
 export function App() {
   return (
     <AnalyticsProvider>
       <MockProvider>
         <Routes>
-          <Route path="/"        element={<Placeholder name="00-메인홈"   title="홈"   tabId="home" />} />
-          <Route path="/finance" element={<Placeholder name="S1-보험메인" title="금융" tabId="finance" />} />
-          <Route path="/product" element={<Placeholder name="S2-상품찾기" title="상품" tabId="product" />} />
-          <Route path="/benefit" element={<Placeholder name="혜택"        title="혜택" tabId="benefit" />} />
-          <Route path="/stock"   element={<Placeholder name="주식"        title="주식" tabId="stock" />} />
+          {/* 00 메인홈 — S4-A 결제 감지 팝업은 이 위 오버레이 */}
+          <Route path="/" element={<Placeholder name="00-메인홈" title="홈" tabId="home" />} />
+
+          {/* S1 보험 메인 — 라우트 하나에 상태 3개:
+              ?state=B(기본) 통합형 · ?state=A 0건 분리형 · ?state=B&custom=off 맞춤 OFF 분리형 */}
+          <Route
+            path="/finance/insurance"
+            element={<Placeholder name="S1-보험메인" title="금융" tabId="finance" />}
+          />
+          <Route
+            path="/finance/insurance/my"
+            element={<Placeholder name="S1-7-내보험" title="내 보험" tabId="finance" />}
+          />
+
+          {/* S3 보장 진단 — 탭바 없음 */}
+          <Route path="/diagnosis" element={<Placeholder name="S3-C-진단결과" title="보장 진단" tabId="finance" />} />
+          <Route path="/diagnosis/briefing" element={<Placeholder name="S3-D-브리핑" title="브리핑" tabId="finance" />} />
+          <Route path="/diagnosis/:itemId" element={<Placeholder name="S3-E-항목상세" title="항목 상세" tabId="finance" />} />
+
+          {/* S3-F 에이전트 대화 — 진입 문맥은 쿼리로 */}
+          <Route path="/agent" element={<Placeholder name="S3-F-에이전트" title="대화" tabId="finance" />} />
+
+          {/* S4·S5 청구 흐름 */}
+          <Route path="/claim/settings" element={<Placeholder name="S5-A-알림설정" title="알림 설정" tabId="finance" />} />
+          <Route path="/claim/guide" element={<Placeholder name="S4-D-절차안내" title="청구 절차" tabId="finance" />} />
+          <Route path="/claim/done" element={<Placeholder name="청구완료" title="청구 완료" tabId="finance" />} />
+
+          {/* S2 상품 찾기 — 🔷 A/B/C 안 미정이라 구현 착수 금지. 자리만 잡아둔다 */}
+          <Route path="/product/insurance" element={<Skeleton name="S2-상품찾기" title="상품" tabId="product" />} />
+          <Route path="/product/insurance/list" element={<Placeholder name="S2-D-카테고리선택후" title="상품" tabId="product" />} />
+          <Route path="/product/insurance/:productId" element={<Placeholder name="S6-A-상품상세" title="상품 상세" tabId="product" />} />
+
+          {/* 비테스트 탭 — 이동은 되고 내용만 빈 화면 */}
+          <Route path="/benefit" element={<Skeleton name="혜택-자리표시" title="혜택" tabId="benefit" />} />
+          <Route path="/stock" element={<Skeleton name="주식-자리표시" title="주식" tabId="stock" />} />
 
           {/* 진행자용 — 참가자에게 노출하지 않는다 */}
           <Route path="/export" element={<Export />} />

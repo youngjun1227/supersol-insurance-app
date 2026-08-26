@@ -10,8 +10,16 @@ import { setCurrentAccountState } from '@/lib/analytics'
 interface MockContextValue {
   data: MockData
   state: AccountState
+  /**
+   * 맞춤(또래 비교) 켜짐 여부. `?custom=off`면 false.
+   * 라우트가 아니라 S1-13 기준 시트 토글의 결과 상태다.
+   * ⚠️ false면 또래·우선순위 문구를 쓰지 않는다 — 맞춤을 껐다는 전제와 모순된다.
+   */
+  customOn: boolean
   /** 상태를 바꾼다 (URL 쿼리도 같이 갱신 — 링크로 공유 가능) */
   setState: (next: AccountState) => void
+  /** 맞춤 토글 — S1-13 시트에서 쓴다 */
+  setCustomOn: (next: boolean) => void
 }
 
 const MockContext = createContext<MockContextValue | null>(null)
@@ -21,6 +29,7 @@ export function MockProvider({ children }: { children: ReactNode }) {
 
   const raw = searchParams.get('state')?.toUpperCase()
   const state: AccountState = isAccountState(raw) ? raw : DEFAULT_STATE
+  const customOn = searchParams.get('custom')?.toLowerCase() !== 'off'
 
   // 계측 이벤트에 조건(A|B)을 같이 남기기 위해
   useEffect(() => {
@@ -31,6 +40,7 @@ export function MockProvider({ children }: { children: ReactNode }) {
     () => ({
       data: getMockData(state),
       state,
+      customOn,
       setState: (next) => {
         setSearchParams(
           (prev) => {
@@ -41,8 +51,19 @@ export function MockProvider({ children }: { children: ReactNode }) {
           { replace: true },
         )
       },
+      setCustomOn: (next) => {
+        setSearchParams(
+          (prev) => {
+            const p = new URLSearchParams(prev)
+            if (next) p.delete('custom')
+            else p.set('custom', 'off')
+            return p
+          },
+          { replace: true },
+        )
+      },
     }),
-    [state, setSearchParams],
+    [state, customOn, setSearchParams],
   )
 
   return <MockContext.Provider value={value}>{children}</MockContext.Provider>

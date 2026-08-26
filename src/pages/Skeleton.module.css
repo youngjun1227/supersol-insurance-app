@@ -1,0 +1,67 @@
+/* 회색 스켈레톤. 토큰 안에서만 — 새 회색 만들지 않는다 */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-card-main);
+  padding: var(--space-4) var(--gutter);
+}
+
+.banner {
+  height: 80px;
+  border-radius: var(--r-card-xl);
+  background: var(--bg-tint-alt);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--pad-card);
+  border-radius: var(--r-card-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+}
+
+.line {
+  height: 14px;
+  border-radius: var(--r-btn);
+  background: var(--bg-segment-track);
+}
+
+.w30 { width: 30%; }
+.w40 { width: 40%; }
+.w50 { width: 50%; }
+.w60 { width: 60%; }
+.w70 { width: 70%; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4) var(--space-2);
+  padding: var(--pad-card);
+  border-radius: var(--r-card-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+}
+
+.gridItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.gridIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+}
+
+.gridLabel {
+  width: 80%;
+  height: 10px;
+  border-radius: var(--r-btn);
+  background: var(--bg-segment-track);
+}

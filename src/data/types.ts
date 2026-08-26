@@ -58,16 +58,38 @@ export interface Product {
 export interface CoverageItem {
   id: string
   label: string
-  /** 4그룹: 치료비 / 큰 병 / 노후·간병 / 만일 */
+  /** 4그룹: 치료비 / 큰 병 / 노후·간병 / 만일. `tier`와는 별개 축이다 */
   group: CoverageGroup
+
+  /* ── 원본 값 — 레이더·집계용. 화면에 그대로 찍지 않는다 ──────── */
   /** 내 보장 — 없으면 null */
   mine: string | null
   /** 내 보장이 어느 계약에서 왔는지 */
   fromPolicyId?: string
   /** 또래 평균(가상값) */
   peer: string
-  /** 배터리 0~100 */
-  battery: number
+
+  /* ── 표시용 라벨 — 화면은 이것만 쓴다 (변경로그 §2 확정본) ────
+     mine/peer 에서 규칙으로 만들지 않는다: 실손만 "가입률" 어순이라
+     분기가 생기고 그 분기가 곧 표시 버그가 된다. */
+  /** 예: "내 보장 없음" · "내 보장 1만원" */
+  mineLabel: string
+  /** 예: "또래 평균 500만원" · "또래 가입률 78%" */
+  peerLabel: string
+  /** 아래 줄 13 caption. 있는 항목만 (now 2개 + 사망) */
+  desc?: string
+  /** now 티어 전용 뱃지 — "먼저 볼 항목" */
+  badge?: string
+
+  /* ── S3-C 티어 ─────────────────────────────────────────────── */
+  /** 우선순위 티어. 기준은 "20대 중요도 × 충족 여부"이지 보장 유무가 아니다 */
+  tier: CoverageTier
+  /** 티어 안 표시 순서(1부터). 접기는 이 순서 앞 3개를 보여준다 */
+  order: number
+
+  /** 배터리 단계 — 없음 0 / 일부 30 / 또래 도달 100 (60은 현재 미사용) */
+  batteryLevel: BatteryLevel
+
   /** S3-D 레이더 축 6개에 들어가는 주요 항목인지 */
   isRadarAxis: boolean
   /** 레이더용 또래 값 (주요 6개만) */
@@ -75,6 +97,22 @@ export interface CoverageItem {
 }
 
 export type CoverageGroup = '치료비' | '큰 병' | '노후·간병' | '만일'
+
+/** S3-C 우선순위 티어 (변경로그 §2 / 디자인 레포 mock-data.md §2-3) */
+export type CoverageTier = 'now' | 'later' | 'covered' | 'notyet'
+
+/** 3D 배터리 에셋이 있는 단계. public/assets/3d/배터리_{n}.png */
+export type BatteryLevel = 0 | 30 | 60 | 100
+
+/** 티어 메타. 카운트 라벨은 티어마다 문자열이 달라(now만 "20대 우선 ·" 접두)
+    조립하지 않고 통째로 둔다 */
+export interface TierMeta {
+  id: CoverageTier
+  /** 티어 이름 — "지금 채우면 좋아요" 등 */
+  name: string
+  /** 카운트 라벨 — "20대 우선 · 2개 항목" · "6개 항목" */
+  countLabel: string
+}
 
 /** 카드 결제 내역 (S4) */
 export interface Payment {

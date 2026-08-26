@@ -35,6 +35,9 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* §3 본문 하단 여백 */
+/* §3 본문 하단 여백 — 변경로그 하단 처리 표 */
 .body[data-footer='tabbar'] { padding-bottom: var(--pb-tabbar); }
 .body[data-footer='cta']    { padding-bottom: var(--pb-cta); }
+.body[data-footer='input']  { padding-bottom: var(--pb-cta); }
+/* 'none' = 탭바도 CTA도 없음. 본문 끝 여백만 (S1-7·S3-D·S3-C) */
+.body[data-footer='none']   { padding-bottom: var(--space-8); }

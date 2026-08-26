@@ -8,7 +8,7 @@
 
 import type {
   AccountData, AccountState, Category, Copy,
-  CoverageItem, Payment, Policy, Product, ServiceItem, User,
+  CoverageItem, Payment, Policy, Product, ServiceItem, TierMeta, User,
 } from './types'
 
 /* ── 1. 사용자 ─────────────────────────────────────────────── */
@@ -53,25 +53,107 @@ const POLICIES_B: Policy[] = [
 
 /* ── 2-2. 보장 진단 10항목 (전부 가상값) ───────────────────── */
 // "N% 부족" 화법 금지 — 내 보장/또래를 나란히 보여주기만 한다.
+// mineLabel/peerLabel/desc/badge/tier/order/batteryLevel 은 변경로그 §2 확정본 그대로.
+// ⚠️ 라벨을 mine/peer 에서 규칙으로 만들지 않는다 (실손만 어순이 달라 분기가 생긴다).
 const COVERAGE_B: CoverageItem[] = [
-  { id: 'c-actual',   label: '실손의료비',     group: '치료비',    mine: null,                        peer: '78%가 가입', battery: 0,   isRadarAxis: true,  peerRadar: 78 },
-  { id: 'c-hospital', label: '입원',           group: '치료비',    mine: '입원일당 1만원', fromPolicyId: 'p-one-core',      peer: '3만원',      battery: 30,  isRadarAxis: true,  peerRadar: 60 },
-  { id: 'c-surgery',  label: '수술',           group: '치료비',    mine: null,                        peer: '500만',      battery: 0,   isRadarAxis: true,  peerRadar: 55 },
-  { id: 'c-dental',   label: '치과치료',       group: '치료비',    mine: null,                        peer: '100만',      battery: 0,   isRadarAxis: false },
-  { id: 'c-cancer',   label: '암 진단',        group: '큰 병',     mine: '3,000만', fromPolicyId: 'p-one-core',            peer: '3,000만',    battery: 100, isRadarAxis: true,  peerRadar: 65 },
-  { id: 'c-heart',    label: '심혈관질환진단', group: '큰 병',     mine: null,                        peer: '1,000만',    battery: 0,   isRadarAxis: false },
-  { id: 'c-brain',    label: '뇌혈관질환진단', group: '큰 병',     mine: null,                        peer: '1,000만',    battery: 0,   isRadarAxis: false },
-  { id: 'c-dementia', label: '치매진단',       group: '노후·간병', mine: null,                        peer: '500만',      battery: 0,   isRadarAxis: false },
-  { id: 'c-disabled', label: '후유장해',       group: '노후·간병', mine: '1,000만', fromPolicyId: 'p-transit-mini',        peer: '3,000만',    battery: 30,  isRadarAxis: true,  peerRadar: 50 },
-  { id: 'c-death',    label: '사망',           group: '만일',      mine: null,                        peer: '5,000만',    battery: 0,   isRadarAxis: true,  peerRadar: 45 },
+  {
+    id: 'c-actual', label: '실손의료비', group: '치료비',
+    mine: null, peer: '78% 가입',
+    mineLabel: '내 보장 없음', peerLabel: '또래 가입률 78%',
+    desc: '병원비 부담을 가장 자주 덜어 주는 보장인데, 아직 가입된 보험이 없어요.',
+    badge: '먼저 볼 항목',
+    tier: 'now', order: 1, batteryLevel: 0,
+    isRadarAxis: true, peerRadar: 78,
+  },
+  {
+    id: 'c-hospital', label: '입원', group: '치료비',
+    mine: '입원일당 1만원', fromPolicyId: 'p-one-core', peer: '3만원',
+    mineLabel: '내 보장 1만원', peerLabel: '또래 평균 3만원',
+    desc: '입원하면 하루 단위로 받는 보장이에요. 일부만 준비돼 있어요.',
+    badge: '먼저 볼 항목',
+    tier: 'now', order: 2, batteryLevel: 30,
+    isRadarAxis: true, peerRadar: 60,
+  },
+  {
+    id: 'c-surgery', label: '수술', group: '치료비',
+    mine: null, peer: '500만',
+    mineLabel: '내 보장 없음', peerLabel: '또래 평균 500만원',
+    tier: 'later', order: 1, batteryLevel: 0,
+    isRadarAxis: true, peerRadar: 55,
+  },
+  {
+    id: 'c-dental', label: '치과치료', group: '치료비',
+    mine: null, peer: '100만',
+    mineLabel: '내 보장 없음', peerLabel: '또래 평균 100만원',
+    tier: 'later', order: 2, batteryLevel: 0,
+    isRadarAxis: false,
+  },
+  {
+    id: 'c-heart', label: '심혈관질환진단', group: '큰 병',
+    mine: null, peer: '1,000만',
+    mineLabel: '내 보장 없음', peerLabel: '또래 평균 1,000만원',
+    tier: 'later', order: 3, batteryLevel: 0,
+    isRadarAxis: false,
+  },
+  {
+    id: 'c-brain', label: '뇌혈관질환진단', group: '큰 병',
+    mine: null, peer: '1,000만',
+    mineLabel: '내 보장 없음', peerLabel: '또래 평균 1,000만원',
+    tier: 'later', order: 4, batteryLevel: 0,
+    isRadarAxis: false,
+  },
+  {
+    id: 'c-dementia', label: '치매진단', group: '노후·간병',
+    mine: null, peer: '500만',
+    mineLabel: '내 보장 없음', peerLabel: '또래 평균 500만원',
+    tier: 'later', order: 5, batteryLevel: 0,
+    isRadarAxis: false,
+  },
+  {
+    // 보유 중(1,000만)이지만 또래(3,000만) 미달이라 covered 자격이 없고,
+    // 20대 중요도가 낮아 now 도 아니다 — later 가 의도다 (변경로그 §2)
+    id: 'c-disabled', label: '후유장해', group: '노후·간병',
+    mine: '1,000만', fromPolicyId: 'p-transit-mini', peer: '3,000만',
+    mineLabel: '내 보장 1,000만원', peerLabel: '또래 평균 3,000만원',
+    tier: 'later', order: 6, batteryLevel: 30,
+    isRadarAxis: true, peerRadar: 50,
+  },
+  {
+    // covered 는 "또래 평균 도달"만 들어간다
+    id: 'c-cancer', label: '암 진단', group: '큰 병',
+    mine: '3,000만', fromPolicyId: 'p-one-core', peer: '3,000만',
+    mineLabel: '내 보장 3,000만원', peerLabel: '또래 평균 3,000만원',
+    tier: 'covered', order: 1, batteryLevel: 100,
+    isRadarAxis: true, peerRadar: 65,
+  },
+  {
+    id: 'c-death', label: '사망', group: '만일',
+    mine: null, peer: '5,000만',
+    mineLabel: '내 보장 없음', peerLabel: '또래 평균 5,000만원',
+    desc: '보통 부양가족이 생길 때 필요해져요.',
+    tier: 'notyet', order: 1, batteryLevel: 0,
+    isRadarAxis: true, peerRadar: 45,
+  },
 ]
+
+/** 티어 메타 — 표시 순서대로. 카운트 라벨은 조립하지 않고 통째로 둔다 */
+export const TIERS: TierMeta[] = [
+  { id: 'now',     name: '지금 채우면 좋아요',       countLabel: '20대 우선 · 2개 항목' },
+  { id: 'later',   name: '여유 있을 때 봐도 돼요',    countLabel: '6개 항목' },
+  { id: 'covered', name: '이미 준비돼 있어요',       countLabel: '1개 항목' },
+  { id: 'notyet',  name: '지금은 서두르지 않아도 돼요', countLabel: '1개 항목' },
+]
+
+/** 티어당 표시할 최대 항목 수. 초과분은 접힘 (기본 접힘) */
+export const TIER_VISIBLE_MAX = 3
 
 /** 상태 A는 같은 10항목에 내 보장만 전부 비어 있다 */
 const COVERAGE_A: CoverageItem[] = COVERAGE_B.map((c) => ({
   ...c,
   mine: null,
   fromPolicyId: undefined,
-  battery: 0,
+  mineLabel: '내 보장 없음',
+  batteryLevel: 0,
 }))
 
 /* ── 계정 상태 2벌 ─────────────────────────────────────────── */
