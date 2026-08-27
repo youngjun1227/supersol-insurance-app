@@ -294,8 +294,10 @@
   padding: var(--space-3) var(--space-2) var(--space-1);
 }
 
-.emptyTitle { color: var(--text-black); }
-.emptySub   { color: var(--text-caption); }
+/* figma-ref 픽셀 실측(2026-08-28): 헤드라인 #101828 · 부제 #344054.
+   --text-black 은 스펙 §1 상 "페이지 큰 제목(금융)" 용도라 이 자리가 아니다. */
+.emptyTitle { color: var(--text-primary); }
+.emptySub   { color: var(--text-secondary); }
 
 /* "20대가 많이 보는 보험" 상품 2행 */
 .recommends {
