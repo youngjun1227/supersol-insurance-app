@@ -35,6 +35,15 @@ export const DIAGNOSIS = {
 export const MY_INSURANCE = {
   /** "보험거래내역 보기"에서 교체됨. 탭하면 S1 보험 메인으로 */
   backToHome: '보험 홈으로',
+
+  /* ── 계약 카드 키-값 행 — figma-ref S1-7 순서 그대로 ────────
+     라벨 3개는 계약 정보의 법정 명칭이라 임의로 줄이지 않는다. */
+  policyholder: '계약자',
+  insured: '피보험자',
+  premium: '월 보험료',
+
+  /** 계약 카드 맨 아래 캡션. {date} = 가입 연월(YYYY.MM) */
+  policyFooter: '{date} 가입 · 유지 중',
 } as const
 
 /* ── S1 보험 메인 (변경로그 §1) ─────────────────────────────

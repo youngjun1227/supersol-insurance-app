@@ -13,6 +13,7 @@ import { Diagnosis } from '@/pages/Diagnosis'
 import { FinanceInsurance } from '@/pages/FinanceInsurance'
 import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
 import { Home } from '@/pages/Home'
+import { MyInsurance } from '@/pages/MyInsurance'
 import { ProductDiscover } from '@/pages/ProductPath'
 import { ProductInsurance } from '@/pages/ProductInsurance'
 import { ProductList } from '@/pages/ProductList'
@@ -40,10 +41,8 @@ export function App() {
           {/* S1 보험 메인 — 라우트 하나에 상태 3개:
               ?state=B(기본) 통합형 · ?state=A 0건 분리형 · ?state=B&custom=off 맞춤 OFF 분리형 */}
           <Route path="/finance/insurance" element={<FinanceInsurance />} />
-          <Route
-            path="/finance/insurance/my"
-            element={<Placeholder name="S1-7-내보험" title="내 보험" tabId="finance" />}
-          />
+          {/* S1-7 내 보험 — 탭바도 CTA 도 없다 (변경로그 "탭바 귀속" 표) */}
+          <Route path="/finance/insurance/my" element={<MyInsurance />} />
 
           {/* S3 보장 진단 — 탭바 없음 */}
           <Route path="/diagnosis" element={<Diagnosis />} />
