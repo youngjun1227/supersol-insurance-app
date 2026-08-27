@@ -1,0 +1,118 @@
+/* S1-7 내 보험. figma-ref 실측:
+     카드 x 12..380 (폭 369) = --gutter-main · 카드 사이 12 · 헤더 아래 12
+     계약 카드 = 흰 면 + 테두리 + r 16(--r-card) · 안쪽 패딩 20(--pad-card) */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-card-main);
+  padding: var(--gap-card-main) var(--gutter-main) 0;
+}
+
+/* ── 요약 카드 — 두 칸을 같은 폭으로 나눈다 (figma-ref 상 2번째 칸 x=208) ── */
+.summary {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--pad-card);
+}
+
+.stat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* ⚠️ S1-9 의 같은 자리는 라벨 --text-caption · 건수 --primary 인데
+   figma-ref S1-7 은 라벨 --text-secondary · 값 --text-primary 다 (PNG 픽셀 실측) */
+.statLabel { color: var(--text-secondary); }
+.statValue { color: var(--text-primary); }
+
+/* ── 계약 카드 ────────────────────────────────────────────── */
+.policyCard {
+  display: flex;
+  flex-direction: column;
+  padding: var(--pad-card);
+}
+
+.badgeRow {
+  display: flex;
+  margin-bottom: var(--space-3);
+}
+
+/* 한 화면 전용이라 공용 <Badge> 를 쓰지 않는다 — figma-ref 의 이 뱃지는
+   pill 이 아니라 모서리 4 짜리 사각형이고 테두리가 --primary 다.
+   4 는 라운드 토큰 8개 중 --r-check 뿐이다. 이름은 체크박스용이지만 값이 맞아 그대로 쓴다
+   (새 라운드 값을 만들지 않는 게 먼저다 — 스펙 §8). */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--primary);
+  border-radius: var(--r-check);
+  color: var(--text-link);
+  white-space: nowrap;
+}
+
+.policyTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: left;
+}
+
+.policyName {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+}
+
+/* ── 키-값 3행 — 행 하나가 60(--h-row) ─────────────────────── */
+.kvList {
+  display: flex;
+  flex-direction: column;
+}
+
+.kv {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: var(--h-row);
+}
+
+.kvLabel {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-tertiary);
+}
+
+.kvValue {
+  text-align: right;
+  color: var(--text-secondary);
+}
+
+.policyFoot {
+  margin-top: var(--space-1);
+  color: var(--text-caption);
+}
+
+/* ── 마지막 행 "보험 홈으로" ───────────────────────────────
+   고정 CTA 가 아니다 — 본문 흐름 안의 60 높이 행이고, 좌우는 카드 안쪽과
+   같은 20 을 맞춰 글자가 카드 글자와 세로로 정렬된다 */
+.backRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: var(--h-row);
+  padding: 0 var(--pad-card);
+  text-align: left;
+}
+
+.backText {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-link);
+}
