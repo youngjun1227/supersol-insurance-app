@@ -173,3 +173,19 @@ export interface Copy {
   /** 0건일 때 대체 문구 */
   emptyCoverage: string
 }
+
+/* ── S3-F 에이전트 대화 (프리셋 고정) ──────────────────────────
+   ⚠️ 실제 LLM 을 붙이지 않는다 — 9/11 테스트의 통제 변수다(CLAUDE.md 데이터 규칙).
+      문답은 Figma 에 이미 그려져 있고 그대로 옮긴다. */
+
+/** 답변 한 덩이 — 문단 배열. 화면이 문단 사이 간격을 준다 */
+export interface AgentAnswer {
+  /** 회색 시스템 칩 — "실손의료비 항목에서 자동으로 물어봤어요" */
+  systemNote: string
+  /** 사용자 말풍선 (오른쪽) */
+  question: string
+  /** 에이전트 답변 문단들 (왼쪽, 로고 아래) */
+  paragraphs: string[]
+  /** 답변 아래 추천 칩. 누르면 그 프리셋으로 갈아탄다 */
+  suggestion?: { label: string; to: string }
+}
