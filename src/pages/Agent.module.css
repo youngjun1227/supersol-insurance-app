@@ -1,0 +1,159 @@
+/* S3-F 에이전트 대화. figma-ref 실측(상태바 47 제외):
+     헤더 흰 띠 55 · 입력 바 x 21..371(폭 351) 높이 49 · 추천 칩 높이 30
+     배경은 위→아래 세로 그라데이션 (아래로 갈수록 푸르다)
+
+   ⚠️ 실측 그라데이션은 토큰 밖 값이라 가장 가까운 --bg-page-top → --bg-page 로 스냅했다
+      (변경로그 보고). 이 화면만 쓰는 배경이라 AppShell 에 variant 를 늘리지 않고
+      페이지 안에서 깐다 — 공용 셸을 한 화면 때문에 넓히지 않는다. */
+
+/* 대화가 짧아도 그라데이션이 화면 끝까지 이어져야 한다.
+   AppShell 의 본문은 내용만큼만 높아서 min-height:100% 가 잡히지 않는다 —
+   화면 전체에 고정으로 깔고 대화는 그 위에 얹는다 (스크롤해도 배경은 안 움직인다). */
+.thread {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: var(--space-4) var(--gutter) var(--space-8);
+}
+
+.thread::before {
+  content: '';
+  position: fixed;
+  /* 0 이 아니라 auto — 셸의 흰 배경 위에 깔리되 대화 내용보다는 아래여야 한다.
+     z-index:-1 로 두면 셸 배경 뒤로 숨어 그라데이션이 아예 안 보인다 */
+  z-index: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  width: 100%;
+  max-width: var(--viewport-w);
+  height: 100dvh;
+  background: linear-gradient(180deg, var(--bg-page-top) 0%, var(--bg-page) 100%);
+  pointer-events: none;
+}
+
+/* 대화 내용은 배경 위로 */
+.thread > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 헤더 — 뒤로가 아니라 X (figma-ref) ───────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--h-header);
+  padding: 0 var(--gutter);
+  background: var(--bg-surface);
+}
+
+.headerTitle {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+}
+
+.close {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+/* ── 대화 ──────────────────────────────────────────────────── */
+.date {
+  margin-bottom: var(--space-4);
+  color: var(--text-caption);
+  text-align: center;
+}
+
+/* 회색 pill — "…항목에서 자동으로 물어봤어요". 가운데 정렬 */
+.systemNote {
+  align-self: center;
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--r-pill);
+  background: var(--bg-segment-track);
+  color: var(--text-caption);
+}
+
+/* 사용자 말풍선 — 오른쪽. figma-ref 는 오른쪽 끝이 카드와 같은 선(372)에 붙는다 */
+.question {
+  align-self: flex-end;
+  max-width: 88%;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--r-card-lg);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+/* 에이전트 답변 — 말풍선 없이 배경 위에 바로 쓴다 (figma-ref) */
+.answer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.paragraph {
+  color: var(--text-primary);
+}
+
+/* AI 생성 고지 — 답변과 추천 칩 사이 */
+.aiNotice {
+  color: var(--text-disabled);
+}
+
+/* 추천 칩 — 파란 테두리 pill. 누르면 그 프리셋으로 갈아탄다 */
+.suggestion {
+  height: var(--h-chip);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--primary);
+  border-radius: var(--r-pill);
+  background: var(--bg-surface);
+  color: var(--text-link);
+}
+
+/* ── 하단 입력 바 — fixed. 스펙 §4 의 CTA 독이 아니라 떠 있는 흰 pill ──
+   figma-ref 는 바 아래로 배경 그라데이션이 계속 보인다 (독이 아니다) */
+.inputBar {
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+
+  display: flex;
+  width: 100%;
+  max-width: var(--viewport-w);
+  padding: var(--space-3) var(--gutter) var(--space-6);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+
+  /* 바 자체는 투명 — 흰 pill 만 뜬다 */
+  background: transparent;
+  pointer-events: none;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: var(--h-btn);
+  padding: 0 var(--space-5);
+  border-radius: var(--r-pill);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--text-disabled);
+  text-align: left;
+  pointer-events: auto;
+}

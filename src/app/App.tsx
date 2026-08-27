@@ -7,6 +7,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AnalyticsProvider } from './AnalyticsProvider'
 import { MockProvider } from './MockProvider'
+import { Agent } from '@/pages/Agent'
 import { Export } from '@/pages/Export'
 import { Briefing } from '@/pages/Briefing'
 import { Diagnosis } from '@/pages/Diagnosis'
@@ -51,8 +52,8 @@ export function App() {
           {/* S3-E 항목 상세 — 헤더는 "보장 상세"(figma-ref). 탭바 없음 + 하단 버튼독 */}
           <Route path="/diagnosis/:itemId" element={<ItemDetail />} />
 
-          {/* S3-F 에이전트 대화 — 진입 문맥은 쿼리로 */}
-          <Route path="/agent" element={<Placeholder name="S3-F-에이전트" title="대화" tabId="finance" />} />
+          {/* S3-F 에이전트 대화 — 진입 문맥은 쿼리로 (?ctx=). 프리셋 고정 응답 */}
+          <Route path="/agent" element={<Agent />} />
 
           {/* S4·S5 청구 흐름 */}
           <Route path="/claim/settings" element={<Placeholder name="S5-A-알림설정" title="알림 설정" tabId="finance" />} />
