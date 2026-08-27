@@ -4,15 +4,17 @@
      ?state=B (기본)        S1-9  통합형 — 보장진단 카드가 내 보험 바로 아래
      ?state=A               S1-8  0건 분리형
      ?state=B&custom=off    S1-14 맞춤 OFF 분리형 — 보장진단이 맨 아래로 내려간다
-   지금은 S1-9 만 구현한다. 섹션을 조각으로 쪼개 둔 건 나머지 두 상태가
-   순서·문구만 갈아끼우면 되게 하려는 것이다. */
+   세 상태가 섹션 조각을 공유하고, 상태별로 순서·문구만 갈아끼운다.
+   분리형 진단 카드(S1-8 · S1-14)는 통합 카드와 별개 — 변경로그 §1. */
 
 import { useState } from 'react'
 import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
-import { DIAGNOSIS, INSURANCE_EMPTY as E, INSURANCE_MAIN as C } from '@/data/copy'
+import {
+  DIAGNOSIS, INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
+} from '@/data/copy'
 import type { Policy, ServiceItem } from '@/data/types'
 import { batteryLevelFor, emptyPriorityItems } from '@/lib/coverage'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
@@ -41,10 +43,12 @@ export function FinanceInsurance() {
   const navigate = useNavigate()
   const location = useLocation()
   const track = useTrack()
-  const { data, state } = useMock()
+  const { data, state, customOn } = useMock()
 
-  /** 상태 A(0건) = S1-8 분리형 / 상태 B(2건) = S1-9 통합형 */
+  /** 상태 A(0건) = S1-8 분리형 / 상태 B(2건) = S1-9 통합형 / B + custom=off = S1-14 분리형.
+      0건 + custom=off 는 Figma 에 없다 — S1-8 그대로 둔다 */
   const isEmpty = state === 'A'
+  const isCustomOff = !isEmpty && !customOn
 
   /** S1-13 기준 시트 — 라우트가 아니라 이 화면 위 오버레이 */
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -89,7 +93,7 @@ export function FinanceInsurance() {
   const basisRow = (
     <div className={styles.basis}>
       <span className={`${styles.basisText} t-caption`}>
-        가입 보험 {policyCount}건 · {C.basisOn}
+        {isCustomOff ? C.basisOff : `가입 보험 ${policyCount}건 · ${C.basisOn}`}
       </span>
       <button
         type="button"
@@ -248,16 +252,19 @@ export function FinanceInsurance() {
      변경로그 §1: 통합 카드는 상태 B 전용. 0건은 "내 보험이 채우는
      에너지"가 없어 통합형 문장이 성립하지 않아 분리형을 유지한다. */
 
-  /* 페이지 상단 큰 제목 — 카드 밖, 기준 행 위 */
+  /* 페이지 상단 큰 제목 — 카드 밖, 기준 행 위.
+     스펙 §2 display 28/700 "온보딩 헤드라인". figma-ref 글리프 실측 25px = 28 (h1 22 는 20px) */
   const emptyHeadline = (
     <div className={styles.emptyHead}>
-      <p className={`${styles.emptyTitle} t-h1`}>{E.headline}</p>
+      <p className={`${styles.emptyTitle} t-display`}>{E.headline}</p>
       <p className={`${styles.emptySub} t-body-sm`}>{E.headlineSub}</p>
     </div>
   )
 
-  /* 분리형 진단 카드 — 틴트 행도 면책도 없다 */
-  const diagnosisCardEmpty = (
+  /* 분리형 진단 카드 — S1-8 · S1-14 공용. 틴트 행도 면책도 없다.
+     배터리는 PNG 대로 100(초록) — 진단 결과가 아니라 초대 카드라 수치 기준이 아님 (팀장 확인, 2026-08-27).
+     초대 문구는 h3 18/700 — figma-ref 글리프 16px (h2 20 → 19px · body-lg 16 → ~15px 보정). */
+  const inviteCard = (title: string, line1: string, line2: string) => (
     <Card radius="lg" className={styles.diagCard}>
       <button
         type="button"
@@ -265,23 +272,23 @@ export function FinanceInsurance() {
         onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '보장진단'), '/diagnosis/briefing')}
       >
         <span className={styles.titleRow}>
-          <span className={`${styles.title} t-h2`}>{E.diagnosisTitle}</span>
+          <span className={`${styles.title} t-h2`}>{title}</span>
           <span className={styles.chevron} aria-hidden="true">›</span>
         </span>
 
-        {/* ⚠️ figma-ref S1-8 은 배터리_100(초록, +). 변경로그 §6 "수치에 맞는 단계"대로면
-            0건은 배터리_0 인데, 이 카드는 진단 결과가 아니라 초대 문구라 PNG 를 따른다.
-            팀장 확인 대기 — 수치 기준으로 가면 batteryLevelFor(data.coverageTotal) 로 교체 */}
         <Battery level={100} width={72} height={96} />
 
-        <span className={`${styles.diagHeadline} t-body-lg-bold`}>
-          {E.diagnosisInviteLine1}
+        <span className={`${styles.diagHeadline} t-h3`}>
+          {line1}
           <br />
-          {E.diagnosisInviteLine2}
+          {line2}
         </span>
       </button>
     </Card>
   )
+  const diagnosisCardEmpty = inviteCard(E.diagnosisTitle, E.diagnosisInviteLine1, E.diagnosisInviteLine2)
+  /* S1-14 — 통합 카드 대신 분리형이 맨 아래로 내려간다 */
+  const diagnosisCardOff = inviteCard(O.diagnosisTitle, O.diagnosisInviteLine1, O.diagnosisInviteLine2)
 
   /* "20대가 많이 보는 보험" — 상품 2행 */
   const recommendCard = (
@@ -380,7 +387,7 @@ export function FinanceInsurance() {
 
   return (
     <AppShell
-      name={isEmpty ? 'S1-8-보험메인-0건' : 'S1-9-보험메인'}
+      name={isEmpty ? 'S1-8-보험메인-0건' : isCustomOff ? 'S1-14-보험메인-맞춤OFF' : 'S1-9-보험메인'}
       header={
         <>
           <Header
@@ -416,6 +423,13 @@ export function FinanceInsurance() {
             {recommendCard}
             {infoCard}
             {servicesCollapsed}
+          </>
+        ) : isCustomOff ? (
+          <>
+            {basisRow}
+            {myInsurance}
+            {serviceGroups}
+            {diagnosisCardOff}
           </>
         ) : (
           <>

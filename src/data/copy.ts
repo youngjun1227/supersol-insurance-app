@@ -119,3 +119,16 @@ export const INSURANCE_EMPTY = {
   servicesTitle: '가입하면 쓸 수 있어요 ({n})',
   servicesSub: '계약조회 · 보험금청구 · 보험료납입 · 자동이체 등',
 } as const
+
+/* ── S1-14 보험 메인 · 맞춤 OFF (분리형) ─────────────────────
+   S1-13 시트 토글의 결과 상태 (?custom=off). 변경로그 §1: 통합 카드 금지 —
+   또래 수치("78%")·우선순위 문구를 쓰면 맞춤을 껐다는 전제와 모순.
+   문구는 figma-ref/S1-14-보험메인-맞춤OFF.png 에서 옮겼다.
+   기준 행 문구는 INSURANCE_MAIN.basisOff. */
+export const INSURANCE_CUSTOM_OFF = {
+  /** 분리형 진단 카드 — 맨 아래로 내려간다 */
+  diagnosisTitle: '보장진단',
+  /** 2줄 중앙. "또래와 비교한"은 PNG 문구 그대로 — 수치 비교가 아니라 기능 안내 */
+  diagnosisInviteLine1: '항목별로 또래와 비교한',
+  diagnosisInviteLine2: '진단 결과를 볼 수 있어요',
+} as const
