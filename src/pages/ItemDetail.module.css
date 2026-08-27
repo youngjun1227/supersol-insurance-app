@@ -1,0 +1,179 @@
+/* S3-E 항목 상세. figma-ref 실측 (상태바 47 제외):
+     카드 x 20..372 (폭 353) = --gutter · 배경 흰색(서브 화면, 스펙 §1)
+     하단 버튼 h48(--h-btn) 2개 + 캡션 — 버튼독 안에 캡션이 같이 들어간다 */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--gutter) 0;
+}
+
+/* ── 에이전트 진입 배너 → S3-F ──────────────────────────────
+   figma-ref 실측 높이 50 · 틴트 --bg-tint */
+.agentBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+  text-align: left;
+}
+
+.agentIcon {
+  flex: none;
+  font-size: var(--fs-body);
+  line-height: 1;
+}
+
+.agentText {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+}
+
+/* ── 기준일 행 ─────────────────────────────────────────────── */
+.basisRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.basisText { color: var(--text-caption); }
+.basisAction { color: var(--text-caption); }
+
+/* ── 카드 ──────────────────────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--pad-card);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.itemName { color: var(--text-primary); }
+.itemSub  { color: var(--text-secondary); }
+
+/* 또래 비교 문장 — figma-ref 실측 틴트 --bg-tint */
+.peerBox {
+  padding: var(--space-4);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+  color: var(--text-secondary);
+}
+
+/* ── 아코디언 섹션 2개 ─────────────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.sectionLink {
+  flex: none;
+  color: var(--text-link);
+}
+
+/* 빈 상태 박스 — 가운데 정렬 회색 글씨.
+   ⚠️ figma-ref 실측색은 --bg-page 값과 같은데, 그 토큰은 "메인 페이지 배경만" 용도다.
+      스펙 §1 이 빈 상태 박스에 지정한 --bg-tint-alt 로 스냅했다 (변경로그 보고). */
+.emptyBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--h-btn);
+  padding: var(--space-4);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+  color: var(--text-disabled);
+  text-align: center;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-default);
+}
+
+/* 보장이 있는 항목에서만 — 계약 1건 행 */
+.policyRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+  text-align: left;
+}
+
+.policyText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.policyName  { color: var(--text-primary); }
+.policyValue { color: var(--text-caption); }
+
+/* ── 하단 버튼독 — 버튼 2분할 + 캡션 ───────────────────────
+   ⚠️ 공용 <BottomCTA>(h102)는 버튼만 담는 전제라 캡션이 들어갈 자리가 없다.
+      figma-ref 는 버튼 아래 캡션까지가 고정 영역이라 안에서 세로로 쌓는다. */
+.dock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.dockButtons {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* 2분할 — 두 칸 같은 폭 (figma-ref 실측 171 / 171) */
+.dockButtons > * { flex: 1; min-width: 0; }
+
+.disclaimer {
+  color: var(--text-caption);
+  text-align: center;
+}
+
+/* 보장이 있는 항목의 또래 값 행 — 빈 상태(.emptyBox)와 달리 실제 내용이라
+   회색·가운데가 아니라 본문 색으로 왼쪽 정렬한다 */
+.peerRow {
+  padding: var(--space-4);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+  color: var(--text-secondary);
+}

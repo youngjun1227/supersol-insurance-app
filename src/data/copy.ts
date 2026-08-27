@@ -31,6 +31,43 @@ export const DIAGNOSIS = {
   findProducts: '관련 보험 찾아보기',
 } as const
 
+/* ── S3-E 항목 상세 (Figma 540:340 · figma-ref/S3-E-항목상세-실손.png) ──
+   S3-C 의 항목 행에서 도착한다. 문구는 PNG 에서 옮겼다. */
+export const ITEM_DETAIL = {
+  /** 헤더 — PNG 는 "항목 상세"가 아니라 "보장 상세"다 */
+  title: '보장 상세',
+
+  /** 상단 에이전트 진입 배너 → S3-F */
+  agentBanner: '궁금한 점은 AI 에이전트에게 바로 물어봐요',
+
+  /** 기준일 행 — S3-C 와 같은 문구를 쓴다 */
+  basisRow: DIAGNOSIS.basisRow,
+  /** 기준일 행 오른쪽 — 아코디언 전체 펼치기.
+      ⚠️ figma-ref 는 두 섹션이 펼쳐진 상태에서도 이 라벨이 "모두 펼치기"다.
+         상태에 따라 "모두 접기"로 뒤집지 않는다 (PNG 그대로). */
+  expandAll: '모두 펼치기',
+
+  /** 섹션 2개 제목 */
+  byAgeTitle: '연령별로 이렇게 보장받아요',
+  byPolicyTitle: '이 보험에서 보장해요',
+  /** byAge 섹션 오른쪽 링크 → 상품 목록 */
+  byAgeLink: '관련 보험 찾아보기',
+
+  /* 빈 상태 — 가입된 보험이 없는 항목(실손 등). PNG 가 이 상태다 */
+  byAgeEmpty: '가입한 보험이 없어 표시할 보장이 없어요',
+  byPolicyEmpty: '조회 가능한 보험이 없어요',
+
+  /** 보장이 없는 항목의 부제 */
+  noCoverage: '가입된 보험 없음',
+
+  /** 하단 버튼 2개 */
+  myPolicies: '내 보험 목록',
+  findProducts: '관련 보험 찾아보기',
+
+  /** 하단 캡션 — ⚠️ PNG 어순 그대로. DIAGNOSIS.disclaimer 와 앞뒤가 반대라 따로 둔다 */
+  disclaimer: '수치는 전부 가상값이에요. 가입을 권하는 것이 아니에요.',
+} as const
+
 /* ── S1-7 내 보험 (변경로그 §4) ────────────────────────────── */
 export const MY_INSURANCE = {
   /** "보험거래내역 보기"에서 교체됨. 탭하면 S1 보험 메인으로 */
