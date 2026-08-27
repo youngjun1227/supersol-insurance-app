@@ -15,14 +15,10 @@ import { AppShell, Card, Header, IconAction } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { INSURANCE_MAIN as C, MY_INSURANCE as M } from '@/data/copy'
 import type { Policy } from '@/data/types'
+import { won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import styles from './MyInsurance.module.css'
-
-/** 원화 표기 — 35,000원 */
-function won(n: number): string {
-  return `${n.toLocaleString('ko-KR')}원`
-}
 
 export function MyInsurance() {
   const navigate = useNavigate()

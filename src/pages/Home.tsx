@@ -7,14 +7,10 @@ import { Bell, Gift, House, Info, List, MagnifyingGlass } from '@phosphor-icons/
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, Card, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
+import { won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import styles from './Home.module.css'
-
-/** 원화 표기 — 9,250,000원 */
-function won(n: number): string {
-  return `${n.toLocaleString('ko-KR')}원`
-}
 
 export function Home() {
   const navigate = useNavigate()
