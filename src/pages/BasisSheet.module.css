@@ -1,0 +1,144 @@
+/* S1-13 기준 시트. 393 프레임 안에서만 뜬다 — 데스크톱에서 화면 전체를 덮지 않게
+   AppShell 과 같은 max-width 로 가운데 정렬한다. */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: var(--viewport-w);
+  margin: 0 auto;
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  background: var(--dim);
+}
+
+/* [임시 ①] 공용 <BottomSheet> 로 교체될 부분 — 스펙 §5 딤 + r24 + 0.35s 올라옴 */
+.sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-6) var(--gutter) var(--space-8);
+  border-top-left-radius: var(--r-card-lg);
+  border-top-right-radius: var(--r-card-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-float);
+  padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  animation: rise var(--t-sheet) var(--ease);
+}
+
+@keyframes rise {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet { animation: none; }
+}
+
+.title {
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--text-caption);
+  text-align: center;
+}
+
+/* 기준 표 — 틴트 박스 */
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--r-card);
+  background: var(--bg-tint);
+}
+
+.factsTitle { color: var(--text-primary); }
+
+.factRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.factLabel {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-tertiary);
+}
+
+.factValue { color: var(--text-primary); }
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.toggleText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.toggleLabel { color: var(--text-primary); }
+.toggleHint  { color: var(--text-caption); }
+
+/* [임시 ②] 공용 <Toggle> 로 교체될 부분 — 51×31 iOS 스타일 (스펙 §5) */
+.switch {
+  position: relative;
+  flex: none;
+  width: 51px;
+  height: 31px;
+  border-radius: var(--r-pill);
+  background: var(--bg-segment-track);
+  transition: background var(--t-push) var(--ease);
+}
+
+.switch[data-on='true'] { background: var(--primary); }
+
+.knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: var(--r-pill);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--t-push) var(--ease);
+}
+
+.switch[data-on='true'] .knob { transform: translateX(20px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .switch,
+  .knob { transition: none; }
+}
+
+/* 하단 확인 버튼 — 스펙 §5 Button primary size=lg (h56 r16) */
+.confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--h-btn-lg);
+  margin-top: var(--space-2);
+  border-radius: var(--r-btn-lg);
+  background: var(--primary);
+  color: var(--on-primary);
+}
