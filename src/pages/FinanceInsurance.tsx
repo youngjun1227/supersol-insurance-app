@@ -248,10 +248,11 @@ export function FinanceInsurance() {
      변경로그 §1: 통합 카드는 상태 B 전용. 0건은 "내 보험이 채우는
      에너지"가 없어 통합형 문장이 성립하지 않아 분리형을 유지한다. */
 
-  /* 페이지 상단 큰 제목 — 카드 밖, 기준 행 위 */
+  /* 페이지 상단 큰 제목 — 카드 밖, 기준 행 위.
+     스펙 §2 display 28/700 "온보딩 헤드라인". figma-ref 글리프 실측 25px = 28 (h1 22 는 20px) */
   const emptyHeadline = (
     <div className={styles.emptyHead}>
-      <p className={`${styles.emptyTitle} t-h1`}>{E.headline}</p>
+      <p className={`${styles.emptyTitle} t-display`}>{E.headline}</p>
       <p className={`${styles.emptySub} t-body-sm`}>{E.headlineSub}</p>
     </div>
   )
