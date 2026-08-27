@@ -145,6 +145,26 @@ export function setCurrentAccountState(state: AccountState): void {
   currentState = state
 }
 
+/* 지금 보고 있는 화면 이름 — screen 이 'unknown' 으로 올 때 대신 채운다.
+
+   ⚠️ 화면 컴포넌트는 자기 <AppShell>(=<ScreenProvider>)을 "만드는" 쪽이라
+      React 트리에서 그 위에 있다. 그래서 화면 파일이 직접 useTrack() 을 부르면
+      ScreenContext 를 못 읽고 기본값 'unknown' 이 실려 온다 (#38).
+      공용 컴포넌트(Header·TabBar·Button…)는 Provider 안쪽이라 멀쩡했다.
+
+      화면 20개를 고치는 대신 여기서 받아준다 — 앞으로 만들 화면도 자동으로 커버된다.
+      useScreenView() 가 진입 때마다 갱신한다. */
+let currentScreen: string | null = null
+
+export function setCurrentScreen(name: string): void {
+  currentScreen = name
+}
+
+/** 테스트에서 모듈 상태를 되돌린다 */
+export function resetCurrentScreen(): void {
+  currentScreen = null
+}
+
 /* ── 기록 ──────────────────────────────────────────────────── */
 
 interface TrackInput {
@@ -164,7 +184,8 @@ export function track(input: TrackInput): AnalyticsEvent {
     type: input.type,
     taskId: input.taskId !== undefined ? input.taskId : currentTaskId,
     targetId: input.targetId,
-    screen: input.screen,
+    // 화면이 자기 AppShell 위에서 track 하면 'unknown' 이 온다 — setCurrentScreen 참고 (#38)
+    screen: input.screen === 'unknown' && currentScreen ? currentScreen : input.screen,
     timestamp: Date.now(),
     sessionId: getSessionId(),
     state: currentState,

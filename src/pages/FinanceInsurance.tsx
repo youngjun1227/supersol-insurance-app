@@ -17,15 +17,11 @@ import {
 } from '@/data/copy'
 import type { Policy, ServiceItem } from '@/data/types'
 import { batteryLevelFor, emptyPriorityItems } from '@/lib/coverage'
+import { won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import { BasisSheet } from './BasisSheet'
 import styles from './FinanceInsurance.module.css'
-
-/** 원화 표기 — 35,000원 */
-function won(n: number): string {
-  return `${n.toLocaleString('ko-KR')}원`
-}
 
 /** figma-ref 에 없는 서비스. 목데이터는 건드리지 않고 화면에서만 뺀다
     (2026-08-27 확인 — "정보" 묶음은 PNG 기준 2개가 맞다) */
@@ -263,13 +259,16 @@ export function FinanceInsurance() {
 
   /* 분리형 진단 카드 — S1-8 · S1-14 공용. 틴트 행도 면책도 없다.
      배터리는 PNG 대로 100(초록) — 진단 결과가 아니라 초대 카드라 수치 기준이 아님 (팀장 확인, 2026-08-27).
-     초대 문구는 h3 18/700 — figma-ref 글리프 16px (h2 20 → 19px · body-lg 16 → ~15px 보정). */
-  const inviteCard = (title: string, line1: string, line2: string) => (
+     초대 문구는 h3 18/700 — figma-ref 글리프 16px (h2 20 → 19px · body-lg 16 → ~15px 보정).
+
+     ⚠️ targetId 를 인자로 받는다 — S1-8 과 S1-14 가 같은 카드를 쓰지만 집계는 갈려야 한다.
+        한 라우트에 상태가 3개라 targetId 가 같으면 tap 행만으로 구분이 안 된다. */
+  const inviteCard = (targetId: string, title: string, line1: string, line2: string) => (
     <Card radius="lg" className={styles.diagCard}>
       <button
         type="button"
         className={styles.diagMain}
-        onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '보장진단'), '/diagnosis/briefing')}
+        onClick={() => go(targetId, '/diagnosis/briefing')}
       >
         <span className={styles.titleRow}>
           <span className={`${styles.title} t-h2`}>{title}</span>
@@ -286,9 +285,17 @@ export function FinanceInsurance() {
       </button>
     </Card>
   )
-  const diagnosisCardEmpty = inviteCard(E.diagnosisTitle, E.diagnosisInviteLine1, E.diagnosisInviteLine2)
+  /* S1-9(통합)는 `S1-카드-보장진단` 그대로 둔다 — 기본 상태라 기존 집계 기준선이다.
+     0건·맞춤OFF 만 접미사로 갈라 "맞춤을 꺼도 진단에 들어가는가"를 tap 행에서 바로 센다 */
+  const diagnosisCardEmpty = inviteCard(
+    tid(SCREEN.s1, ELEMENT.카드, '보장진단-0건'),
+    E.diagnosisTitle, E.diagnosisInviteLine1, E.diagnosisInviteLine2,
+  )
   /* S1-14 — 통합 카드 대신 분리형이 맨 아래로 내려간다 */
-  const diagnosisCardOff = inviteCard(O.diagnosisTitle, O.diagnosisInviteLine1, O.diagnosisInviteLine2)
+  const diagnosisCardOff = inviteCard(
+    tid(SCREEN.s1, ELEMENT.카드, '보장진단-맞춤OFF'),
+    O.diagnosisTitle, O.diagnosisInviteLine1, O.diagnosisInviteLine2,
+  )
 
   /* "20대가 많이 보는 보험" — 상품 2행 */
   const recommendCard = (

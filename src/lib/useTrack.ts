@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect } from 'react'
 import { useScreenName } from '@/app/AnalyticsProvider'
-import { track as rawTrack } from '@/lib/analytics'
+import { setCurrentScreen, track as rawTrack } from '@/lib/analytics'
 
 /** 탭 1회 기록. 클릭 수 지표의 원자료.
     targetId 는 lib/targetId.ts 의 tid() 로 만든다 — 이름이 갈리면 집계가 안 된다.
@@ -32,6 +32,10 @@ export function useScreenView(): void {
   const screen = useScreenName()
 
   useEffect(() => {
+    /* 진입 기록보다 먼저 — 같은 화면 재진입으로 아래에서 빠져나가도 이름은 갱신돼야 한다.
+       화면 파일이 직접 부르는 useTrack() 이 이 값을 쓴다 (#38) */
+    setCurrentScreen(screen)
+
     if (lastLoggedScreen === screen) return
     lastLoggedScreen = screen
     rawTrack({ type: 'screen_view', targetId: screen, screen })
