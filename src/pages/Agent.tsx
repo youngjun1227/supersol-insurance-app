@@ -17,8 +17,9 @@ import { PaperPlaneRight, X } from '@phosphor-icons/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AppShell } from '@/components'
 import { useMock } from '@/app/MockProvider'
-import { AGENT as C, AGENT_MATCHES, AGENT_NO_MATCH, AGENT_PRESETS } from '@/data/copy'
+import { AGENT as C, AGENT_MATCHES, AGENT_NO_MATCH, AGENT_PRESETS, AGENT_SCRIPTS } from '@/data/copy'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
+import { won } from '@/lib/format'
 import { useTrack } from '@/lib/useTrack'
 import styles from './Agent.module.css'
 
@@ -54,6 +55,14 @@ export function Agent() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [turns])
+
+  /* 답변 속 자리표시자를 목데이터로 채운다 — 수치를 문구에 박아두면
+     mock.ts 가 바뀔 때 여기만 남는다 (데이터 접근은 한 층으로) */
+  const fill = (text: string) =>
+    text
+      .replace('{name}', data.user.name)
+      .replace('{premium}', won(data.monthlyPremiumTotal))
+      .replace('{count}', String(data.policies.length))
 
   /** 입력한 문구에서 아는 질문을 찾는다. 못 찾으면 null */
   const matchPreset = (text: string): string | null => {
@@ -149,8 +158,10 @@ export function Agent() {
              화면에 두 벌을 만들지 않으려고 답변 렌더를 하나로 모은다 */
           const key = turn.kind === 'preset' ? turn.key : turn.to
           const preset = key ? AGENT_PRESETS[key] : undefined
+          const script = key ? AGENT_SCRIPTS[key] : undefined
           const question = turn.kind === 'preset' ? preset?.question : turn.text
-          const paragraphs = preset ? preset.paragraphs : AGENT_NO_MATCH.paragraphs
+          const paragraphs =
+            preset?.paragraphs ?? script?.paragraphs ?? AGENT_NO_MATCH.paragraphs
 
           return (
             <div key={`${turn.kind}-${i}`} className={styles.turn}>
@@ -169,9 +180,7 @@ export function Agent() {
                 {/* {name} 은 목데이터 사용자 이름으로 채운다 — 이름을 문구에 박아두면
                     mock.ts 가 바뀔 때 여기만 남는다 (데이터 접근은 한 층으로) */}
                 {paragraphs.map((text) => (
-                  <p key={text} className={`${styles.paragraph} t-body`}>
-                    {text.replace('{name}', data.user.name)}
-                  </p>
+                  <p key={text} className={`${styles.paragraph} t-body`}>{fill(text)}</p>
                 ))}
 
                 <p className={`${styles.aiNotice} t-caption`}>{C.aiNotice}</p>
