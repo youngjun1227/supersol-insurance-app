@@ -51,7 +51,9 @@ export function ProductRow({
       <span className={styles.itemText}>
         {/* 타사에 로고를 달지 않는다 — 회사명은 텍스트로만 (계열사 우대 리스크) */}
         <span className={`${styles.itemName} t-body-lg-bold`}>
-          {product.company} {product.name}
+          {/* 목록은 shortName — 전체명은 잘려서 뒤가 안 보인다.
+              법정 전체명은 상세(S6-A)에서 보여준다 (#48) */}
+          {product.company} {product.shortName}
         </span>
         <span className={`${styles.itemDesc} t-body-sm`}>{product.description}</span>
       </span>
