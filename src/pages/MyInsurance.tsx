@@ -36,7 +36,7 @@ export function MyInsurance() {
      S1 메인의 "내 보험" 카드 위쪽과 같은 두 칸이다. 단, 건수는 여기서
      --text-primary 다 (S1-9 는 --primary 파랑) — figma-ref 두 장이 서로 다르다. */
   const summary = (
-    <Card className={styles.summary}>
+    <Card bordered className={styles.summary}>
       <span className={styles.stat}>
         <span className={`${styles.statLabel} t-caption`}>{C.myCountLabel}</span>
         <span className={`${styles.statValue} t-h2`}>{data.policies.length}건</span>
@@ -58,7 +58,7 @@ export function MyInsurance() {
   )
 
   const policyCard = (policy: Policy) => (
-    <Card className={styles.policyCard} key={policy.id}>
+    <Card bordered className={styles.policyCard} key={policy.id}>
       {/* 뱃지는 "가족이 들어준 보험"에만 붙는다 — figma-ref 상 본인 계약(2번째)에는 없다.
           note 를 그냥 찍지 않고 계약자≠피보험자로 거르는 이유가 이것이다 */}
       {policy.policyholder !== policy.insured && policy.note ? (

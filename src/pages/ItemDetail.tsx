@@ -145,7 +145,7 @@ export function ItemDetail() {
           </button>
         </div>
 
-        <Card className={styles.card}>
+        <Card bordered className={styles.card}>
           {/* 제목 + 배터리 */}
           <div className={styles.head}>
             <div className={styles.headText}>
