@@ -85,11 +85,15 @@
 }
 
 /* 사용자 말풍선 — 오른쪽. figma-ref 는 오른쪽 끝이 카드와 같은 선(372)에 붙는다 */
+/* 사용자 말주머니 — figma-ref 실측 1줄 높이 45 (S3-F 사망).
+   ⚠️ 세로 패딩을 16(--space-4)으로 두면 56 이 된다 —
+      line-height 24 + 32 이라서다. 10 으로 줄여 45 에 맞춘다.
+      (figma 글자 잉크는 13px 이지만 line-height 없이 쓰면 줄바꿈에서 붙는다) */
 .question {
   align-self: flex-end;
   max-width: 88%;
   margin-bottom: var(--space-6);
-  padding: var(--space-4) var(--space-5);
+  padding: 10px var(--space-5);
   border-radius: var(--r-card-lg);
   background: var(--bg-surface);
   color: var(--text-primary);

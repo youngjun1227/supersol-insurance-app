@@ -24,6 +24,8 @@ import styles from './Agent.module.css'
 
 /** 대화 한 덩이 — 진입/추천칩으로 온 프리셋이거나, 직접 입력한 질문이다 */
 type Turn =
+  /** 진입 안내만 — "…에서 자동으로 물어봤어요" 한 줄. 질문·답변은 아직 없다 */
+  | { kind: 'note'; key: string }
   | { kind: 'preset'; key: string }
   | { kind: 'typed'; text: string; to: string | null }
 
@@ -39,9 +41,11 @@ export function Agent() {
 
   /* 대화는 쌓인다 — 진입 프리셋으로 시작해 직접 입력한 질문이 아래로 붙는다.
      추천 칩을 눌러도 새 라우트를 쌓지 않는다 (X 로 닫으면 원래 화면으로 한 번에) */
+  /* ⚠️ 진입 직후에는 **안내 한 줄만** 띄운다 — 질문·답변을 미리 채워두지 않는다.
+     사용자가 직접 물어봐야 대화가 시작된다 (팀장 결정 2026-08-28) */
   const first = params.get('ctx') ?? ''
   const [turns, setTurns] = useState<Turn[]>(() =>
-    AGENT_PRESETS[first] ? [{ kind: 'preset', key: first }] : [],
+    AGENT_PRESETS[first] ? [{ kind: 'note', key: first }] : [],
   )
   const [draft, setDraft] = useState('')
   const endRef = useRef<HTMLDivElement>(null)
@@ -133,6 +137,14 @@ export function Agent() {
         ) : null}
 
         {turns.map((turn, i) => {
+          /* 진입 안내는 칩 한 줄만 — 질문·답변 없이 여기서 끝난다 */
+          if (turn.kind === 'note') {
+            const note = AGENT_PRESETS[turn.key]?.systemNote
+            return note ? (
+              <p key={`note-${i}`} className={`${styles.systemNote} t-caption`}>{note}</p>
+            ) : null
+          }
+
           /* 직접 입력한 질문도 아는 것이면 같은 프리셋 답을 쓴다 —
              화면에 두 벌을 만들지 않으려고 답변 렌더를 하나로 모은다 */
           const key = turn.kind === 'preset' ? turn.key : turn.to
