@@ -87,8 +87,9 @@ export function AgentBubble({ label, labelSecond, resetKey, onTap }: AgentBubble
         className={`${styles.bubble} t-caption-medium`}
         data-hidden={text === null}
         aria-hidden={text === null}
-        /* 접힘은 0, 그 밖에는 잰 폭. CSS 로 고정하면 문구마다 폭이 안 변한다 */
-        style={{ maxWidth: text === null ? 0 : (width ?? undefined) }}
+        /* 접힘은 0, 그 밖에는 잰 폭. width 를 직접 줘야 폭 변화에 트랜지션이 걸린다
+           (max-width 는 상한이라 내용이 바뀌면 실제 폭이 한 프레임에 튄다) */
+        style={{ width: text === null ? 0 : (width ?? 'auto') }}
       >
         {/* 글자는 따로 페이드 — 말주머니가 늘었다 줄어드는 동안 부드럽게 바뀐다.
             key 를 문구로 두면 바뀔 때마다 다시 페이드인 한다 */}
