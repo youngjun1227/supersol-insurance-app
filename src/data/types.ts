@@ -57,6 +57,9 @@ export interface Product {
          괄호가 이름의 일부인 상품이 있고, 쏠한치아 일반/자녀는 구분이 사라진다. */
   shortName: string
   description: string
+  /** 월 보험료(원) — ⚠️ 가상값. figma-ref S1-8 추천 행 부제가
+      "매일 타는 대중교통 · 월 3,000원" 처럼 설명 뒤에 붙인다 (#48) */
+  monthlyPremium: number
 }
 
 /** 보장 진단 항목 (S3). 수치는 전부 가상값 */

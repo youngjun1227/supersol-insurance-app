@@ -326,7 +326,11 @@ export function FinanceInsurance() {
               <span className={styles.policyText}>
                 {/* 목록은 shortName (#48) — figma-ref 도 괄호 없는 짧은 이름이다 */}
                 <span className={`${styles.policyName} t-body-lg-medium`}>{product.shortName}</span>
-                <span className={`${styles.policyMeta} t-body-sm`}>{product.description}</span>
+                {/* figma-ref 부제는 "설명 · 월 N원" 이다 (#48).
+                    description 은 원본 §3 값 그대로 두고 보험료만 여기서 붙인다 */}
+                <span className={`${styles.policyMeta} t-body-sm`}>
+                  {product.description} · 월 {won(product.monthlyPremium)}
+                </span>
               </span>
               <span className={styles.chevron} aria-hidden="true">›</span>
             </button>

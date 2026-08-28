@@ -81,6 +81,19 @@ const details = [...src.matchAll(/'([\w-]+)': \{ pay: '([^']*)', age: '([^']*)',
 ok(`상품 상세 ${details.length}개 (상품 ${total}개 전부)`, details.length === total)
 ok('상세 값에 빈 칸 없음', details.every((m) => m[2] && m[3] && m[4] && m[5]))
 
+/* ── 4-3. 상품 월 보험료 (mock-data.md §3-2) ─────────────────
+   26개 전부 있어야 하고, 보유 계약과 같은 상품은 금액이 같아야 한다 —
+   S1-7 에서 본 금액과 상품 목록 금액이 다르면 참가자가 혼란스럽다. */
+const prodPremiums = [...src.matchAll(/monthlyPremium: ([\d_]+)/g)].map((m) => Number(m[1].replace(/_/g, '')))
+// 계약 2건 + 상품 26개
+ok(`월 보험료 ${prodPremiums.length}개 (계약 2 + 상품 ${total})`, prodPremiums.length === total + 2)
+const pair = (id) => {
+  const m = src.match(new RegExp(`id: '${id}'[\\s\\S]{0,400}?monthlyPremium: ([\\d_]+)`))
+  return m ? Number(m[1].replace(/_/g, '')) : null
+}
+ok('대중교통 mini 상품·계약 보험료 일치 (3,000)', pair('sp-transit-mini') === 3000)
+ok('통합건강 원(ONE)Core 상품·계약 보험료 일치 (32,000)', pair('sp-one-core') === 32000)
+
 /* ── 5. 금지 규칙 (실명·실번호·타사 실제 상품명) ─────────── */
 ok('타사는 가명만 (A~F생명·손해보험)', !/(삼성생명|한화생명|교보생명|KB손해|DB손해|메리츠)/.test(src))
 const phones = src.match(/010-\d{4}-\d{4}/g) ?? []
@@ -97,4 +110,4 @@ if (problems.length) {
 `)
   process.exit(1)
 }
-console.log('✓ 목데이터 정합성 통과 (상품 26 · shortName 26 · 상세 26 · 보장 10 · 티어 4 · 고정값 8)')
+console.log('✓ 목데이터 정합성 통과 (상품 26 · shortName 26 · 상세 26 · 보험료 26 · 보장 10 · 티어 4 · 고정값 8)')
