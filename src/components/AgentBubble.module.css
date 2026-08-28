@@ -39,6 +39,11 @@
 }
 
 .mascot {
+  display: flex;
+  flex: none;
+}
+
+.mascotImg {
   width: 48px;
   height: 48px;
   object-fit: contain;
@@ -65,4 +70,51 @@
 @keyframes fadeInText {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* ── 상호작용 (#53) ─────────────────────────────────────────
+   ⚠️ 폰에는 hover 가 없다 — 9/11 참가자도 발표 심사위원도 폰에서 QR 로 연다.
+      터치에서 실제로 보이는 건 :active 뿐이라 그쪽을 먼저 맞춘다.
+      hover 는 데스크톱 검수·발표 시연(노트북 화면 공유)에서만 보인다. */
+
+/* ⚠️ 상시 모션과 눌림/hover 가 둘 다 transform 을 쓰면 애니메이션이 이겨서
+      scale 이 안 먹는다. 떠다니는 건 감싼 span 에, 커지고 작아지는 건 이미지에 걸어 나눈다. */
+
+/* 눌림 — Button 의 opacity 0.85 와 같은 계열로 앱 전체와 맞춘다 */
+.wrap:active .mascotImg {
+  transform: scale(0.92);
+}
+
+.wrap:active .bubble {
+  opacity: 0.85;
+}
+
+.mascotImg {
+  transition: transform var(--t-push) var(--ease);
+}
+
+/* 접힌 뒤 상시 미세 모션 — "여기 누를 수 있어요" 를 계속 알린다.
+   ⚠️ 문구가 떠 있는 동안(data-idle=false)에는 돌지 않는다 — 읽는 걸 방해하지 않게.
+      진폭을 3px 로 작게 둔 것도 같은 이유다 (시선을 뺏지 않을 만큼만). */
+.wrap[data-idle='true'] .mascot {
+  animation: mascotFloat 2.8s var(--ease) infinite;
+}
+
+@keyframes mascotFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+/* 데스크톱에서 마우스를 올리면 살짝 커진다 — 누를 수 있다는 표시.
+   hover 가 실제로 되는 기기에서만 적용한다 (터치에서 hover 가 들러붙는 걸 막는다) */
+@media (hover: hover) {
+  .wrap:hover .mascotImg {
+    transform: scale(1.08);
+  }
+}
+
+/* 애니메이션을 줄이도록 설정했으면 상시 모션은 돌지 않는다.
+   전역 CSS 는 duration 만 줄여서 infinite 애니메이션은 계속 돈다 — 여기서 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  .wrap[data-idle='true'] .mascot { animation: none; }
 }

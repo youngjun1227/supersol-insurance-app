@@ -75,7 +75,14 @@ export function AgentBubble({ label, labelSecond, resetKey, onTap }: AgentBubble
   }, [text])
 
   return (
-    <button type="button" className={styles.wrap} onClick={onTap}>
+    /* data-idle — 문구가 다 지나가고 마스코트만 남은 상태.
+       이때만 상시 미세 모션이 돈다 (문구를 읽는 동안에는 방해하지 않는다) */
+    <button
+      type="button"
+      className={styles.wrap}
+      data-idle={text === null}
+      onClick={onTap}
+    >
       {/* 접힌 뒤에도 버튼은 남는다 — 마스코트가 진입점이다.
           aria-label 은 항상 첫 문구로 둬서 스크린리더 안내가 바뀌지 않게 한다 */}
       {/* 측정 전용 — 화면에 안 보이지만 실제 문구의 자연 폭을 갖는다 */}
@@ -96,13 +103,17 @@ export function AgentBubble({ label, labelSecond, resetKey, onTap }: AgentBubble
         <span key={text ?? 'end'} className={styles.text}>{text ?? label}</span>
       </span>
       {hasMascot ? (
-        <img
-          className={styles.mascot}
-          src={MASCOT_SRC}
-          alt=""
-          aria-hidden="true"
-          onError={() => setHasMascot(false)}
-        />
+        /* 감싼 span 이 떠다니고(animation), 이미지가 커지고 작아진다(transform) —
+           둘 다 이미지에 걸면 애니메이션이 transform 을 점유해 scale 이 안 먹는다 */
+        <span className={styles.mascot}>
+          <img
+            className={styles.mascotImg}
+            src={MASCOT_SRC}
+            alt=""
+            aria-hidden="true"
+            onError={() => setHasMascot(false)}
+          />
+        </span>
       ) : null}
       <span className="sr-only">{label}</span>
     </button>
