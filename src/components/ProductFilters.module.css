@@ -1,11 +1,27 @@
 /* S2 계열 필터. 상단(칩 영역) --bg-page → 목록부터 --bg-surface (§1 배경 규칙) */
 
+/* 카테고리 행 = 고정 '전체' + 스크롤 영역. 세로 여백은 여기서 준다 */
+.catRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--gutter-main) 0 var(--space-2) var(--gutter);
+  background: var(--bg-page);
+}
+
+/* '전체' — 스크롤 밖이라 항상 보이고, 지나가는 칩과 겹치지 않는다 */
+.chipAll {
+  flex: none;
+}
+
+/* 나머지 칩만 스크롤. 오른쪽 여백은 여기서 (마지막 칩이 화면 끝에 붙지 않게) */
 .chipRow {
   display: flex;
   gap: var(--space-2);
-  width: 100%;
-  padding: var(--gutter-main) var(--gutter) var(--space-2);
-  background: var(--bg-page);
+  min-width: 0;
+  flex: 1;
+  padding-right: var(--gutter);
   overflow-x: auto;
   overscroll-behavior-x: contain;
 }
@@ -32,43 +48,7 @@
   white-space: nowrap;
 }
 
-/* '전체' 는 왼쪽에 고정한다 — 카테고리를 고르면 선택 칩이 앞으로 스크롤되면서
-   '전체' 가 화면 밖으로 나가, 필터를 푸는 방법이 사라졌다.
-   스크롤 컨테이너 안이라 sticky 로 붙이면 나머지 칩만 그 뒤로 지나간다. */
-/* '전체' 는 왼쪽에 고정한다 — 카테고리를 고르면 선택 칩이 앞으로 스크롤되면서
-   '전체' 가 화면 밖으로 나가, 필터를 푸는 방법이 사라졌다.
 
-   ⚠️ 칩 자체를 sticky 로 두면 왼쪽 여백(--gutter)에 지나가는 칩이 비친다.
-      배경을 가진 래퍼로 감싸고 그 래퍼를 sticky 로 만든다 —
-      래퍼가 여백까지 덮어서 뒤 칩이 새지 않는다. */
-.chipAllWrap {
-  position: sticky;
-  /* ⚠️ left 는 0 이 아니라 음수 margin 을 상쇄한 값이어야 한다 —
-        0 으로 두면 margin-left:-20 과 상쇄돼 여백에 걸치지 못하고
-        지나가는 칩이 왼쪽 20px 에 비친다 */
-  left: calc(var(--gutter) * -1);
-  z-index: 1;
-  flex: none;
-  display: flex;
-  /* 행 왼쪽 패딩만큼 왼쪽으로 늘려 여백까지 덮는다 */
-  margin-left: calc(var(--gutter) * -1);
-  padding-left: var(--gutter);
-  background: var(--bg-page);
-}
-
-/* 래퍼 오른쪽 가림막 — padding 으로는 스크롤 위치에 따라 칩이 틈으로 비친다.
-   래퍼에 붙어 함께 sticky 로 움직이는 레이어를 둬서 그 구간을 확실히 덮는다. */
-.chipAllWrap::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  /* 칩 간격(gap 8)보다 넓어야 한다 — 8 로 두면 아이콘이 그 너머로 비쳤다.
-     20 이면 스크롤 위치와 무관하게 '전체' 옆이 항상 깨끗하다 */
-  width: var(--gutter);
-  background: var(--bg-page);
-}
 
 .chip[data-selected='true'] {
   background: var(--bg-chip-selected);
