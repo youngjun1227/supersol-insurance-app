@@ -93,7 +93,9 @@ export function ProductDetail() {
       <div className={styles.body}>
         {/* 에이전트 진입 버블 — 헤더 아래 우측 플로팅 */}
         <AgentBubble
-          label="상품에 대한 궁금한 점 물어보세요!"
+          label={PD.bubble}
+          labelSecond={PD.bubbleSecond}
+          resetKey={product.id}
           onTap={() => {
             track(tid(SCREEN.s6, ELEMENT.버튼, '에이전트'))
             navigate(`/agent?ctx=product&id=${product.id}`)
