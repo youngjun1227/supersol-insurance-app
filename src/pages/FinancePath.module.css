@@ -21,16 +21,21 @@
 .toggleLabel { color: var(--text-primary); }
 
 /* Off 상태 토글 (조작 안 함 — 경로 화면이라 정적) */
-.toggleOff {
+/* 금액 표시 토글 — figma-ref 는 OFF 상태만 그려져 있다(44×26).
+   공용 <Toggle>(51×31)보다 작아 이 화면 값을 유지한다. */
+.toggle {
   position: relative;
   flex-shrink: 0;
   width: 44px;
   height: 26px;
   border-radius: var(--r-pill);
   background: var(--bg-segment-track);
+  transition: background var(--t-push) var(--ease);
 }
 
-.toggleOff::after {
+.toggle[data-on='true'] { background: var(--primary); }
+
+.toggle::after {
   content: '';
   position: absolute;
   top: 3px;
@@ -39,7 +44,11 @@
   height: 20px;
   border-radius: var(--r-pill);
   background: var(--bg-surface);
+  transition: transform var(--t-push) var(--ease);
 }
+
+/* 44 - 20 - 3*2 = 18 */
+.toggle[data-on='true']::after { transform: translateX(18px); }
 
 .spacer { flex: 1; }
 .edit { color: var(--text-secondary); }
@@ -87,17 +96,22 @@
 .accountNo   { color: var(--text-caption); }
 
 /* "금액 숨김" — 실물의 큰 회색 글자 */
+/* 금액 자리 — 숨김일 때는 회색, 켜면 본문 색으로 실제 금액이 뜬다 */
 .hidden {
   color: var(--text-disabled);
   font-size: var(--fs-display);
   font-weight: var(--fw-bold);
 }
 
+.hidden[data-on='true'] { color: var(--text-primary); }
+
 .hiddenSm {
   width: 100%;
   text-align: right;
   color: var(--text-disabled);
 }
+
+.hiddenSm[data-on='true'] { color: var(--text-primary); }
 
 /* 이체 버튼 (정적) */
 .transferBtn {

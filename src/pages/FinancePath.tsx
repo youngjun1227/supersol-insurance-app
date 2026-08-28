@@ -4,10 +4,14 @@
 
    Figma: 은행 614:2768 / 카드 616:8864 / 증권 616:8983 */
 
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Bell, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { AppShell, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
 import { PathBanner, PathCard, PathGrid, PathIconRow, PathProvider } from '@/components/PathCard'
+import { useMock } from '@/app/MockProvider'
+import { FINANCE_PATH as F } from '@/data/copy'
+import { won } from '@/lib/format'
+import { useTrack } from '@/lib/useTrack'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import styles from './FinancePath.module.css'
 
@@ -52,11 +56,32 @@ function Shell({ name, tab, children }: {
 
 /* ── 은행 (기본) — 614:2768 ─────────────────────────────── */
 export function FinanceBank() {
+  const { data } = useMock()
+  const track = useTrack()
+
+  /* 금액 표시 토글 — figma-ref 는 OFF(금액 숨김) 상태만 그려져 있다.
+     켜면 계좌 잔액·카드 이용 금액이 뜬다. 값은 홈과 같은 목데이터를 쓴다 —
+     흐름을 타고 다닐 때 숫자가 튀면 안 된다 (mock-data §2-1) */
+  const [amountOn, setAmountOn] = useState(false)
+
+  const toggleAmount = () => {
+    track(tid(SCREEN.financePath, ELEMENT.토글, amountOn ? '금액-off' : '금액-on'))
+    setAmountOn((v) => !v)
+  }
+
   return (
     <Shell name="금융-은행" tab="bank">
       <div className={styles.toggleRow}>
-        <span className={`${styles.toggleLabel} t-body`}>금액</span>
-        <span className={styles.toggleOff} aria-hidden="true" />
+        <span className={`${styles.toggleLabel} t-body`}>{F.amountLabel}</span>
+        <button
+          type="button"
+          className={styles.toggle}
+          role="switch"
+          aria-checked={amountOn}
+          aria-label={F.amountLabel}
+          data-on={amountOn}
+          onClick={toggleAmount}
+        />
         <span className={styles.spacer} />
         <span className={`${styles.edit} t-body`}>편집 ›</span>
       </div>
@@ -73,7 +98,9 @@ export function FinanceBank() {
             <span className={`${styles.accountNo} t-caption`}>신한 110-•••-••••••</span>
           </div>
         </div>
-        <p className={styles.hidden}>금액 숨김</p>
+        <p className={styles.hidden} data-on={amountOn}>
+          {amountOn ? won(data.home.accountBalance) : F.amountHidden}
+        </p>
         <div className={`${styles.transferBtn} t-body`}>이체</div>
         <div className={styles.quickRow}>
           {[
@@ -169,16 +196,37 @@ export function FinanceStock() {
 
 /* ── 카드 — 616:8864 ────────────────────────────────────── */
 export function FinanceCard() {
+  const { data } = useMock()
+  const track = useTrack()
+
+  /* 은행 탭과 같은 토글 — 카드 탭에도 금액 자리가 두 곳 있다 */
+  const [amountOn, setAmountOn] = useState(false)
+
+  const toggleAmount = () => {
+    track(tid(SCREEN.financePath, ELEMENT.토글, amountOn ? '금액-off' : '금액-on'))
+    setAmountOn((v) => !v)
+  }
+
   return (
     <Shell name="금융-카드" tab="card">
       <div className={styles.toggleRow}>
-        <span className={`${styles.toggleLabel} t-body`}>금액</span>
-        <span className={styles.toggleOff} aria-hidden="true" />
+        <span className={`${styles.toggleLabel} t-body`}>{F.amountLabel}</span>
+        <button
+          type="button"
+          className={styles.toggle}
+          role="switch"
+          aria-checked={amountOn}
+          aria-label={F.amountLabel}
+          data-on={amountOn}
+          onClick={toggleAmount}
+        />
       </div>
 
       <PathCard>
         <span className={`${styles.headLink} t-caption`}>8월 결제금액</span>
-        <p className={styles.hidden}>금액보기</p>
+        <p className={styles.hidden} data-on={amountOn}>
+          {amountOn ? won(data.home.cardMonthlyUsage) : F.amountHiddenCard}
+        </p>
         <div className={styles.divider} />
         <PathGrid
           items={[
@@ -200,7 +248,9 @@ export function FinanceCard() {
             <span className={`${styles.accountNo} t-caption`}>26.08.01~26.08.26</span>
           </div>
         </div>
-        <p className={`${styles.hiddenSm} t-body`}>금액 숨김</p>
+        <p className={`${styles.hiddenSm} t-body`} data-on={amountOn}>
+          {amountOn ? won(data.home.cardMonthlyUsage) : F.amountHidden}
+        </p>
       </PathCard>
 
       <PathCard>
