@@ -43,13 +43,15 @@
 }
 
 /* 문구 폭 측정 전용 — 자리를 차지하지 않고 실제 폭만 갖는다.
-   visibility:hidden 이면 레이아웃에 남아 버블을 밀어내므로 absolute 로 뺀다 */
+   visibility:hidden 이면 레이아웃에 남아 버블을 밀어내므로 absolute 로 뺀다.
+   ⚠️ 버블과 같은 좌우 패딩(14px)을 줘야 한다 — 없으면 28px 좁게 재서 글자가 잘린다. */
 .measure {
   position: absolute;
   visibility: hidden;
   pointer-events: none;
   white-space: nowrap;
   max-width: none;
+  padding: 0 14px;
 }
 
 /* 글자 — 문구가 바뀔 때 페이드인. 말주머니 폭 변화와 겹쳐 자연스럽게 이어진다 */
