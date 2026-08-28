@@ -37,5 +37,5 @@ export function getMockData(state: AccountState): MockData {
 
 export * from './types'
 export {
-  PRODUCT_DETAIL, TERM_TOOLTIPS, COPY,
+  PRODUCT_DETAILS, TERM_TOOLTIPS, COPY,
 } from './mock'

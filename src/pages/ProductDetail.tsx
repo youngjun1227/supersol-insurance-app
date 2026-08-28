@@ -2,7 +2,7 @@
    S2-A·S2-D 에서 상품을 누르면 도착한다.
 
    하단은 고정 CTA (탭바 없음 — Figma 실측).
-   ⚠️ 상단 요약의 상품명·설명은 목데이터, 스탯·키값은 PRODUCT_DETAIL(가상값). */
+   ⚠️ 상단 요약의 상품명·설명은 목데이터, 스탯·키값은 PRODUCT_DETAILS(전부 가상값). */
 
 import { Clock, CreditCard, House, List, MagnifyingGlass, User } from '@phosphor-icons/react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -10,7 +10,7 @@ import {
   AgentBubble, AppShell, BottomCTA, Button, Header, IconAction, TermTooltip, TopTabs,
 } from '@/components'
 import { useMock } from '@/app/MockProvider'
-import { PRODUCT_DETAIL } from '@/data'
+import { PRODUCT_DETAILS } from '@/data'
 import { PRODUCT_DETAIL_COPY as PD } from '@/data/copy'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
@@ -36,12 +36,27 @@ export function ProductDetail() {
 
   const product = data.products.find((p) => p.id === productId)
 
-  /* 상세 가상값은 케어받는암보험 한 상품에만 있다 (mock-data §3-1).
-     ⚠️ 이 값을 다른 상품에 그대로 쓰면 치아보험 화면에 "갱신형 암보험"이 뜬다 —
-        9/11 과제 `product` 가 치아를 지정하므로 참가자가 반드시 만나는 자리다.
-        원본에 없는 값을 지어내지 않고(CLAUDE.md 데이터 규칙), 해당 상품이 아니면
-        스탯·키값 블록을 감춘다. 값이 채워지면 이 조건만 풀면 된다 (#49) */
-  const detail = product?.id === PRODUCT_DETAIL.productId ? PRODUCT_DETAIL : null
+  /* 상품별 상세 가상값 (mock-data §3-1). 26개 전부 있다.
+     제조사·판매 채널은 여기서 파생한다 — 목데이터에 중복 저장하지 않는다.
+     ⚠️ 전부 가상값이라 화면에 면책을 띄운다 (PRODUCT_DETAIL_COPY.detailNotice) */
+  const d = product ? PRODUCT_DETAILS[product.id] : undefined
+  const detail = product && d
+    ? {
+        stats: [
+          { label: '납입방법', value: d.pay },
+          { label: '가입나이', value: d.age },
+          { label: '보험기간', value: d.term },
+        ],
+        rows: [
+          { label: '보험종류', value: d.kind },
+          { label: '제조사', value: product.company },
+          {
+            label: '판매 채널',
+            value: product.issuer === 'own' ? '신한라이프 직접 판매' : '신한은행 판매',
+          },
+        ],
+      }
+    : null
 
   if (!product) {
     return (

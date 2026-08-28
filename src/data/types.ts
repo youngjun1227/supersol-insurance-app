@@ -194,3 +194,16 @@ export interface AgentAnswer {
   /** 답변 아래 추천 칩. 누르면 그 프리셋으로 갈아탄다 */
   suggestion?: { label: string; to: string }
 }
+
+/** S6-A 상품 상세 가상값 (mock-data.md §3-1) — ⚠️ 전부 가상값, 실제 조건 아님.
+    제조사·판매 채널은 `Product.company`·`issuer` 에서 파생하므로 여기 없다. */
+export interface ProductDetail {
+  /** 스탯 1 — 납입방법 (월납·일시납·연납) */
+  pay: string
+  /** 스탯 2 — 가입나이 */
+  age: string
+  /** 스탯 3 — 보험기간 */
+  term: string
+  /** 키-값 1 — 보험종류 */
+  kind: string
+}

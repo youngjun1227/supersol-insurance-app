@@ -9,8 +9,7 @@
    ───────────────────────────────────────────────────────────── */
 
 import type {
-  AccountData, AccountState, Category, Copy,
-  CoverageItem, Payment, Policy, Product, ServiceItem, TierMeta, User,
+  AccountData, AccountState, Category, Copy, CoverageItem, Payment, Policy, Product, ProductDetail, ServiceItem, TierMeta, User,
 } from './types'
 
 /* ── 1. 사용자 ─────────────────────────────────────────────── */
@@ -229,22 +228,45 @@ export const PRODUCTS: Product[] = [
   { id: 'op-c-taxsave',   category: 'pension',  company: 'C생명',    issuer: 'other', name: '(무)연금저축보험', shortName: '연금저축보험', description: '연말정산 세액공제 대상' },
 ]
 
-/* ── 3-1. 상품 상세 가상값 (S6 — 신한케어받는암보험) ───────── */
-export const PRODUCT_DETAIL = {
-  productId: 'sp-cancer-care',
-  /** 스탯 3열 */
-  stats: [
-    { label: '납입방법', value: '월납' },
-    { label: '가입나이', value: '만 15~70세' },
-    { label: '보험기간', value: '10년 (갱신형)' },
-  ],
-  /** 키-값 표 3행 (스탯·제목과 겹치는 항목은 뺐다) */
-  rows: [
-    { label: '보험종류', value: '갱신형 암보험 (무배당)' },
-    { label: '제조사', value: '신한라이프' },
-    { label: '판매 채널', value: '신한라이프 직접 판매' },
-  ],
+/* ── 3-1. 상품 상세 가상값 (S6-A) ───────────────────────────
+   ⚠️⚠️ **전부 가상값이다. 실제 상품 조건이 아니다.** (mock-data.md §3-1)
+        자사 9개는 실제 상품명을 쓰지만 조건은 시연용으로 지어낸 값이다 —
+        화면에도 면책을 띄운다(`PRODUCT_DETAIL_COPY.detailNotice`).
+        실제 조건은 수시로 바뀌고 검증할 방법이 없어 일부러 실값을 넣지 않는다.
+
+   값은 상품 유형에서 유도했다 — 암·치아는 갱신형, 여행·골프는 단기,
+   연금은 종신, 간편심사는 고연령대. 아무 숫자나 넣지 않았다.
+
+   제조사·판매 채널은 여기 두지 않는다 — `company`·`issuer` 에서 파생한다(중복 방지). */
+export const PRODUCT_DETAILS: Record<string, ProductDetail> = {
+  'sp-cancer-care': { pay: '월납', age: '만 15~70세', term: '20년 갱신', kind: '갱신형 암보험 (무배당)' },
+  'sp-one-more-care': { pay: '월납', age: '만 30~70세', term: '100세 만기', kind: '치매·간병보험 (무배당)' },
+  'sp-one-core': { pay: '월납', age: '만 15~70세', term: '20년 갱신', kind: '갱신형 종합건강보험 (무배당)' },
+  'sp-teeth-plus': { pay: '월납', age: '만 15~65세', term: '10년 갱신', kind: '갱신형 치아보험 (무배당)' },
+  'sp-sol-teeth': { pay: '월납', age: '만 20~60세', term: '10년 갱신', kind: '갱신형 치아보험 (무배당)' },
+  'sp-sol-teeth-kid': { pay: '월납', age: '만 0~19세', term: '10년 갱신', kind: '갱신형 치아보험 (무배당)' },
+  'sp-transit-mini': { pay: '월납', age: '만 15~70세', term: '1년 갱신', kind: '갱신형 상해보험 (무배당)' },
+  'sp-one-safe': { pay: '월납', age: '만 15~70세', term: '20년 만기', kind: '상해·생활보장보험 (무배당)' },
+  'sp-sol-pension': { pay: '월납', age: '만 15~65세', term: '종신 연금', kind: '연금보험 (무배당)' },
+  'op-a-care': { pay: '월납', age: '만 20~65세', term: '20년 갱신', kind: '갱신형 암보험 (무배당)' },
+  'op-b-checkup': { pay: '일시납', age: '만 20~60세', term: '1년', kind: '미니 건강보험 (무배당)' },
+  'op-c-better': { pay: '월납', age: '만 15~65세', term: '20년 만기', kind: '종합건강보험 (무배당)' },
+  'op-b-diabetes': { pay: '월납', age: '만 30~65세', term: '10년 갱신', kind: '갱신형 질병보험 (무배당)' },
+  'op-d-100friend': { pay: '월납', age: '만 40~75세', term: '100세 만기', kind: '간편심사 건강보험 (무배당)' },
+  'op-e-cancer': { pay: '월납', age: '만 20~60세', term: '20년 만기', kind: '비갱신형 암보험 (무배당)' },
+  'op-f-carer': { pay: '월납', age: '만 30~70세', term: '10년 갱신', kind: '갱신형 간병보험 (무배당)' },
+  'op-f-health': { pay: '월납', age: '만 30~70세', term: '10년 갱신', kind: '간편심사 건강보험 (무배당)' },
+  'op-a-injury': { pay: '월납', age: '만 15~70세', term: '20년 만기', kind: '상해보험 (무배당)' },
+  'op-d-teeth': { pay: '월납', age: '만 15~65세', term: '10년 갱신', kind: '갱신형 치아보험 (무배당)' },
+  'op-c-ltc': { pay: '월납', age: '만 30~70세', term: '100세 만기', kind: '장기요양보험 (무배당)' },
+  'op-f-travel': { pay: '일시납', age: '만 0~79세', term: '여행 기간', kind: '여행자보험 (무배당)' },
+  'op-a-loan': { pay: '월납', age: '만 20~65세', term: '대출 기간', kind: '신용생명보험 (무배당)' },
+  'op-f-golf': { pay: '연납', age: '만 15~75세', term: '1년', kind: '골프보험 (무배당)' },
+  'op-b-variable': { pay: '월납', age: '만 15~65세', term: '종신 연금', kind: '변액연금보험 (무배당)' },
+  'op-d-happy': { pay: '일시납', age: '만 20~75세', term: '종신 연금', kind: '거치형 연금보험 (무배당)' },
+  'op-c-taxsave': { pay: '월납', age: '만 15~65세', term: '종신 연금', kind: '연금저축보험 (무배당)' },
 }
+
 
 /** 용어 툴팁 (S2-12) */
 export const TERM_TOOLTIPS: Record<string, string> = {
