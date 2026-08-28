@@ -11,6 +11,7 @@ import {
 } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { PRODUCT_DETAIL } from '@/data'
+import { PRODUCT_DETAIL_COPY as PD } from '@/data/copy'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import { useState } from 'react'
@@ -35,14 +36,17 @@ export function ProductDetail() {
 
   const product = data.products.find((p) => p.id === productId)
 
-  /* 상세 가상값은 케어받는암보험 기준으로만 있다 (mock-data §3-1).
-     다른 상품이면 이름·설명만 바꿔 보여준다 — 값을 지어내지 않는다. */
-  const detail = PRODUCT_DETAIL
+  /* 상세 가상값은 케어받는암보험 한 상품에만 있다 (mock-data §3-1).
+     ⚠️ 이 값을 다른 상품에 그대로 쓰면 치아보험 화면에 "갱신형 암보험"이 뜬다 —
+        9/11 과제 `product` 가 치아를 지정하므로 참가자가 반드시 만나는 자리다.
+        원본에 없는 값을 지어내지 않고(CLAUDE.md 데이터 규칙), 해당 상품이 아니면
+        스탯·키값 블록을 감춘다. 값이 채워지면 이 조건만 풀면 된다 (#49) */
+  const detail = product?.id === PRODUCT_DETAIL.productId ? PRODUCT_DETAIL : null
 
   if (!product) {
     return (
       <AppShell name="S6-A-상품상세" header={<Header title="보험상세정보" variant="sub" />} footerType="none">
-        <p className={`${styles.empty} t-body`}>상품을 찾을 수 없어요</p>
+        <p className={`${styles.empty} t-body`}>{PD.notFound}</p>
       </AppShell>
     )
   }
@@ -119,6 +123,7 @@ export function ProductDetail() {
             ))}
           </div>
 
+          {detail ? (
           <div className={styles.stats}>
             {detail.stats.map((s, i) => {
               const Icon = STAT_ICONS[i] ?? CreditCard
@@ -133,6 +138,7 @@ export function ProductDetail() {
               )
             })}
           </div>
+          ) : null}
 
           <Button variant="tint" block targetId={tid(SCREEN.s6, ELEMENT.버튼, '보험료확인')}>
             내 보험료 확인
@@ -152,7 +158,7 @@ export function ProductDetail() {
         </div>
 
         {/* 키-값 표 — 상품안내 탭에만 */}
-        {tab === 'info' ? (
+        {tab === 'info' && detail ? (
           <dl className={styles.table}>
             {detail.rows.map((r) => (
               <div key={r.label} className={styles.row}>
@@ -162,7 +168,11 @@ export function ProductDetail() {
             ))}
           </dl>
         ) : (
-          <p className={`${styles.empty} t-body`}>준비 중이에요</p>
+          /* 상품안내 탭인데 값이 없는 경우와, 다른 탭(9/11 범위 밖)을 구분한다 —
+             둘 다 "준비 중"으로 뭉뚱그리면 참가자가 고장으로 읽는다 */
+          <p className={`${styles.empty} t-body`}>
+            {tab === 'info' ? PD.noDetail : PD.tabEmpty}
+          </p>
         )}
       </div>
     </AppShell>
