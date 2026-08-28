@@ -22,31 +22,40 @@ export function ProductFilters({
 }: ProductFiltersProps) {
   const rowRef = useRef<HTMLDivElement>(null)
 
-  /* 선택된 칩을 맨 앞(왼쪽)으로 스크롤한다 — 어떤 필터가 켜져 있는지 보이면서,
+  /* 선택된 칩을 앞쪽으로 스크롤한다 — 어떤 필터가 켜져 있는지 보이면서,
      그 뒤 칩들도 함께 노출돼 다음 선택으로 이어가기 쉽다.
-     ⚠️ 가운데 정렬(inline:'center')이 아니다 — 뒤 칩이 절반만 보여 탐색이 끊긴다 */
+     ⚠️ 가운데 정렬(inline:'center')이 아니다 — 뒤 칩이 절반만 보여 탐색이 끊긴다
+     ⚠️ '전체' 칩이 sticky 로 왼쪽에 떠 있으므로 그 폭만큼 더 밀어야
+        선택 칩이 '전체' 뒤에 가리지 않는다 */
   useEffect(() => {
     const row = rowRef.current
     if (!row || !activeCategory) return
     const chip = row.querySelector<HTMLElement>('[data-selected="true"]')
     if (!chip) return
-    // 행 왼쪽 패딩만큼 빼서 칩이 여백에 딱 붙게
     const pad = parseFloat(getComputedStyle(row).paddingLeft) || 0
-    row.scrollLeft = chip.offsetLeft - pad
+    // 첫 자식은 '전체' sticky 래퍼다
+    const all = row.firstElementChild as HTMLElement | null
+    const gap = parseFloat(getComputedStyle(row).gap) || 0
+    const stickyW = all ? all.offsetWidth + gap : 0
+    row.scrollLeft = chip.offsetLeft - pad - stickyW
   }, [activeCategory])
 
   return (
     <>
       {/* 카테고리 칩 — 가로 스크롤 */}
       <div className={`${styles.chipRow} no-scrollbar`} ref={rowRef}>
-        <button
-          type="button"
-          className={`${styles.chip} t-body-lg-medium`}
-          data-selected={activeCategory === null}
-          onClick={() => onCategory(null)}
-        >
-          전체
-        </button>
+        {/* '전체' 는 sticky 래퍼로 왼쪽에 고정 — 스크롤해도 남아 필터를 풀 수 있다.
+            래퍼가 왼쪽 여백까지 덮어서 지나가는 칩이 비치지 않는다 */}
+        <span className={styles.chipAllWrap}>
+          <button
+            type="button"
+            className={`${styles.chip} t-body-lg-medium`}
+            data-selected={activeCategory === null}
+            onClick={() => onCategory(null)}
+          >
+            전체
+          </button>
+        </span>
         {categories.map((c) => (
           <button
             key={c.id}
