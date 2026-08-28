@@ -1,11 +1,27 @@
 /* S2 계열 필터. 상단(칩 영역) --bg-page → 목록부터 --bg-surface (§1 배경 규칙) */
 
+/* 카테고리 행 = 고정 '전체' + 스크롤 영역. 세로 여백은 여기서 준다 */
+.catRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--gutter-main) 0 var(--space-2) var(--gutter);
+  background: var(--bg-page);
+}
+
+/* '전체' — 스크롤 밖이라 항상 보이고, 지나가는 칩과 겹치지 않는다 */
+.chipAll {
+  flex: none;
+}
+
+/* 나머지 칩만 스크롤. 오른쪽 여백은 여기서 (마지막 칩이 화면 끝에 붙지 않게) */
 .chipRow {
   display: flex;
   gap: var(--space-2);
-  width: 100%;
-  padding: var(--gutter-main) var(--gutter) var(--space-2);
-  background: var(--bg-page);
+  min-width: 0;
+  flex: 1;
+  padding-right: var(--gutter);
   overflow-x: auto;
   overscroll-behavior-x: contain;
 }
@@ -31,6 +47,8 @@
   color: var(--text-secondary);
   white-space: nowrap;
 }
+
+
 
 .chip[data-selected='true'] {
   background: var(--bg-chip-selected);
