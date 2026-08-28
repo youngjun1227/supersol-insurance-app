@@ -14,7 +14,10 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  /* 하단 여백은 입력 바 높이(84)보다 커야 한다 — 대화가 길어지면
+     마지막 답변이 입력 바에 가린다. AppShell 의 --pb-cta(126)로는 모자라다 */
   padding: var(--space-4) var(--gutter) var(--space-8);
+  padding-bottom: calc(var(--space-8) * 2);
 }
 
 .thread::before {
@@ -150,10 +153,39 @@
   min-width: 0;
   height: var(--h-btn);
   padding: 0 var(--space-5);
+  border: none;
   border-radius: var(--r-pill);
   background: var(--bg-surface);
   box-shadow: var(--shadow-card);
-  color: var(--text-disabled);
+  color: var(--text-primary);
   text-align: left;
   pointer-events: auto;
+}
+
+.input::placeholder { color: var(--text-disabled); }
+.input:focus { outline: none; }
+
+/* 보내기 — 입력이 있을 때만 진해진다 */
+.send {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--h-btn);
+  height: var(--h-btn);
+  margin-left: var(--space-2);
+  border-radius: var(--r-pill);
+  background: var(--primary);
+  box-shadow: var(--shadow-card);
+  pointer-events: auto;
+  transition: opacity var(--t-push) var(--ease);
+}
+
+.send:disabled { opacity: 0.35; }
+
+/* 대화 한 덩이 — 질문+답변이 한 묶음. 덩이 사이를 띄워 누가 물었는지 구분한다 */
+.turn {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-6);
 }
