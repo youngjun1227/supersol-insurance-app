@@ -324,7 +324,8 @@ export function FinanceInsurance() {
                 />
               ) : null}
               <span className={styles.policyText}>
-                <span className={`${styles.policyName} t-body-lg-medium`}>{product.name}</span>
+                {/* 목록은 shortName (#48) — figma-ref 도 괄호 없는 짧은 이름이다 */}
+                <span className={`${styles.policyName} t-body-lg-medium`}>{product.shortName}</span>
                 <span className={`${styles.policyMeta} t-body-sm`}>{product.description}</span>
               </span>
               <span className={styles.chevron} aria-hidden="true">›</span>

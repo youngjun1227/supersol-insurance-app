@@ -64,6 +64,16 @@ for (const [t, want] of Object.entries(EXPECTED_TIER)) {
   ok(`티어 ${t}: ${tiers[t] ?? 0}개 (문서 ${want}개)`, tiers[t] === want)
 }
 
+/* ── 4-1. shortName (mock-data.md §3-0) ──────────────────────
+   목록은 shortName, 상세는 전체 name 을 쓴다. 새 상품에 shortName 을 빠뜨리면
+   목록에서 빈 칸이 되므로 개수와 중복을 지킨다. */
+const shortNames = [...src.matchAll(/shortName: '([^']+)'/g)].map((m) => m[1])
+ok(`shortName ${shortNames.length}개 (상품 ${total}개 전부)`, shortNames.length === total)
+const dupShort = shortNames.filter((v, i) => shortNames.indexOf(v) !== i)
+ok(`shortName 중복 없음${dupShort.length ? ` — ${[...new Set(dupShort)].join(', ')}` : ''}`, dupShort.length === 0)
+// 괄호로 시작하면 규칙 적용이 잘못된 것 ((무)안심케어보험 → 빈 문자열이 되는 사고)
+ok('shortName 이 비거나 괄호로 시작하지 않음', shortNames.every((n) => n.trim() && !n.startsWith('(')))
+
 /* ── 5. 금지 규칙 (실명·실번호·타사 실제 상품명) ─────────── */
 ok('타사는 가명만 (A~F생명·손해보험)', !/(삼성생명|한화생명|교보생명|KB손해|DB손해|메리츠)/.test(src))
 const phones = src.match(/010-\d{4}-\d{4}/g) ?? []
@@ -80,4 +90,4 @@ if (problems.length) {
 `)
   process.exit(1)
 }
-console.log('✓ 목데이터 정합성 통과 (상품 26 · 보장 10 · 티어 4 · 고정값 8)')
+console.log('✓ 목데이터 정합성 통과 (상품 26 · shortName 26 · 보장 10 · 티어 4 · 고정값 8)')

@@ -50,7 +50,12 @@ export interface Product {
   /** 판매사 — 자사는 신한라이프, 타사는 가명(A생명 등) */
   company: string
   issuer: Issuer
+  /** 법정 상품명(전체). 상세 화면(S6-A)은 이걸 쓴다 — 임의로 줄이지 않는다 */
   name: string
+  /** 목록·카드용 짧은 이름. figma-ref 가 목록에서 괄호 이하를 뗀 형태로 그려져 있다.
+      ⚠️ 코드 규칙(괄호 제거)으로 만들지 않는다 — `(무)…`·`원(ONE)Core` 처럼
+         괄호가 이름의 일부인 상품이 있고, 쏠한치아 일반/자녀는 구분이 사라진다. */
+  shortName: string
   description: string
 }
 
