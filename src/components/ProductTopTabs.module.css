@@ -7,9 +7,13 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* ⚠️ 금융 탭(TopTabs)과 같은 높이·정렬이어야 한다 — figma-ref 상 두 탭은 완전히 같다
+      (S1-9 금융 · S2-D 상품 둘 다 글자 y117..131 · 언더라인 y143 · 간격 11px).
+      높이를 안 주면 탭이 글자만큼만 차지해 언더라인이 7px 로 붙는다. */
 .row {
   display: inline-flex;
-  align-items: flex-end;
+  align-items: stretch;
+  height: var(--h-toptabs);
   gap: var(--space-6);
   padding: 0 var(--gutter);
 }
@@ -19,7 +23,8 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  padding: 10px 0 4px;
+  /* ⚠️ padding 10px/4px 비대칭을 뺐다 — 글자가 3px 아래로 밀려 금융 탭과 어긋났다.
+     행에 높이(--h-toptabs)가 있으므로 align-items: center 가 세로 가운데를 잡는다 */
   color: var(--text-caption);
   white-space: nowrap;
 }
@@ -33,7 +38,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* 금융 탭과 같은 값 — 행 바닥이 아니라 글자에서 11px (figma 실측) */
+  bottom: 3px;
   height: 2px;
   background: var(--text-caption);
 }
