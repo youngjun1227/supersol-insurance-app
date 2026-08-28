@@ -279,3 +279,14 @@ export const PRODUCT_DETAIL_COPY = {
          사람이 있어 더 그렇다. 문구 톤은 기존 면책과 맞춘다. */
   detailNotice: '납입방법·가입나이·보험기간 등은 시연용 가상값이에요. 실제 가입 조건과 달라요.',
 } as const
+
+/* ── 금융 탭 경로 화면 (은행·카드·증권) ─────────────────────
+   보험 탭 밖이지만 9/11 과제가 홈에서 시작해 이 화면을 지난다. */
+export const FINANCE_PATH = {
+  /** 상단 금액 표시 토글 */
+  amountLabel: '금액',
+  /** 토글 OFF 일 때 금액 자리 (figma-ref 경로-09 그대로) */
+  amountHidden: '금액 숨김',
+  /** 카드 탭 8월 결제금액 자리는 문구가 다르다 (figma-ref 경로-10) */
+  amountHiddenCard: '금액보기',
+} as const
