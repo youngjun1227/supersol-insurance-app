@@ -88,7 +88,15 @@
   flex-direction: column;
   width: 100%;
   margin: 0;
-  padding: var(--space-2) var(--gutter) var(--space-8);
+  /* 아래 .notice 가 붙으므로 하단 여백은 그쪽에서 준다 */
+  padding: var(--space-2) var(--gutter) 0;
+}
+
+/* 상품안내 탭 하단 면책 — 스탯·키값이 가상값임을 밝힌다.
+   기존 면책(S1·S3-C)과 같은 13 caption 회색 */
+.notice {
+  padding: var(--space-4) var(--gutter) var(--space-8);
+  color: var(--text-caption);
 }
 
 .row {

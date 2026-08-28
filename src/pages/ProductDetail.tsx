@@ -93,7 +93,9 @@ export function ProductDetail() {
       <div className={styles.body}>
         {/* 에이전트 진입 버블 — 헤더 아래 우측 플로팅 */}
         <AgentBubble
-          label="상품에 대한 궁금한 점 물어보세요!"
+          label={PD.bubble}
+          labelSecond={PD.bubbleSecond}
+          resetKey={product.id}
           onTap={() => {
             track(tid(SCREEN.s6, ELEMENT.버튼, '에이전트'))
             navigate(`/agent?ctx=product&id=${product.id}`)
@@ -159,14 +161,20 @@ export function ProductDetail() {
 
         {/* 키-값 표 — 상품안내 탭에만 */}
         {tab === 'info' && detail ? (
-          <dl className={styles.table}>
-            {detail.rows.map((r) => (
-              <div key={r.label} className={styles.row}>
-                <dt className={`${styles.key} t-body`}>{r.label}</dt>
-                <dd className={`${styles.value} t-body`}>{r.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <>
+            <dl className={styles.table}>
+              {detail.rows.map((r) => (
+                <div key={r.label} className={styles.row}>
+                  <dt className={`${styles.key} t-body`}>{r.label}</dt>
+                  <dd className={`${styles.value} t-body`}>{r.value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {/* 면책 — 스탯 3열(탭 위)과 이 표의 값이 전부 가상값이다.
+                자사는 실제 상품명을 쓰므로 표시가 없으면 실제 조건으로 읽힌다 */}
+            <p className={`${styles.notice} t-caption`}>{PD.detailNotice}</p>
+          </>
         ) : (
           /* 상품안내 탭인데 값이 없는 경우와, 다른 탭(9/11 범위 밖)을 구분한다 —
              둘 다 "준비 중"으로 뭉뚱그리면 참가자가 고장으로 읽는다 */

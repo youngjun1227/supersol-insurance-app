@@ -15,10 +15,54 @@
   color: var(--on-primary);
   box-shadow: var(--shadow-float);
   white-space: nowrap;
+
+  /* 문구가 바뀔 때·접힐 때 부드럽게. 접히면 폭까지 0 이 돼야 마스코트가 제자리로 온다.
+     ⚠️ max-width 는 인라인으로 준다 — 여기서 고정하면 문구마다 폭이 안 변해
+        말주머니는 그대로인데 글자만 툭 바뀐다 (문구 폭이 202 vs 136 으로 다르다) */
+  /* ⚠️ max-width 만으로는 문구 교체가 안 부드럽다 — 실제 폭은 내용이 정하고
+        max-width 는 상한일 뿐이라, 글자가 바뀌면 폭이 한 프레임에 튄다.
+        width 를 직접 트랜지션해야 202 → 136 이 여러 프레임에 걸쳐 줄어든다. */
+  transition:
+    opacity var(--t-push) var(--ease),
+    width var(--t-push) var(--ease),
+    padding var(--t-push) var(--ease),
+    margin var(--t-push) var(--ease);
+  overflow: hidden;
+}
+
+/* 접힘 — 마스코트만 남는다. display:none 이 아니라 폭을 줄여야 트랜지션이 걸린다 */
+.bubble[data-hidden='true'] {
+  opacity: 0;
+  padding-left: 0;
+  padding-right: 0;
+  margin-right: calc(var(--space-1) * -1);
 }
 
 .mascot {
   width: 48px;
   height: 48px;
   object-fit: contain;
+}
+
+/* 문구 폭 측정 전용 — 자리를 차지하지 않고 실제 폭만 갖는다.
+   visibility:hidden 이면 레이아웃에 남아 버블을 밀어내므로 absolute 로 뺀다.
+   ⚠️ 버블과 같은 좌우 패딩(14px)을 줘야 한다 — 없으면 28px 좁게 재서 글자가 잘린다. */
+.measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: none;
+  padding: 0 14px;
+}
+
+/* 글자 — 문구가 바뀔 때 페이드인. 말주머니 폭 변화와 겹쳐 자연스럽게 이어진다 */
+.text {
+  display: inline-block;
+  animation: fadeInText var(--t-push) var(--ease);
+}
+
+@keyframes fadeInText {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
