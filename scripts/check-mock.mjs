@@ -74,6 +74,13 @@ ok(`shortName 중복 없음${dupShort.length ? ` — ${[...new Set(dupShort)].jo
 // 괄호로 시작하면 규칙 적용이 잘못된 것 ((무)안심케어보험 → 빈 문자열이 되는 사고)
 ok('shortName 이 비거나 괄호로 시작하지 않음', shortNames.every((n) => n.trim() && !n.startsWith('(')))
 
+/* ── 4-2. 상품 상세 가상값 (mock-data.md §3-1) ───────────────
+   26개 전부 있어야 한다 — 빠지면 그 상품 상세가 빈 화면이 된다.
+   발표에서 심사위원이 아무 상품이나 열어보므로 하나도 비면 안 된다. */
+const details = [...src.matchAll(/'([\w-]+)': \{ pay: '([^']*)', age: '([^']*)', term: '([^']*)', kind: '([^']*)' \}/g)]
+ok(`상품 상세 ${details.length}개 (상품 ${total}개 전부)`, details.length === total)
+ok('상세 값에 빈 칸 없음', details.every((m) => m[2] && m[3] && m[4] && m[5]))
+
 /* ── 5. 금지 규칙 (실명·실번호·타사 실제 상품명) ─────────── */
 ok('타사는 가명만 (A~F생명·손해보험)', !/(삼성생명|한화생명|교보생명|KB손해|DB손해|메리츠)/.test(src))
 const phones = src.match(/010-\d{4}-\d{4}/g) ?? []
@@ -90,4 +97,4 @@ if (problems.length) {
 `)
   process.exit(1)
 }
-console.log('✓ 목데이터 정합성 통과 (상품 26 · shortName 26 · 보장 10 · 티어 4 · 고정값 8)')
+console.log('✓ 목데이터 정합성 통과 (상품 26 · shortName 26 · 상세 26 · 보장 10 · 티어 4 · 고정값 8)')
