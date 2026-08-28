@@ -249,11 +249,12 @@ export function FinanceInsurance() {
      에너지"가 없어 통합형 문장이 성립하지 않아 분리형을 유지한다. */
 
   /* 페이지 상단 큰 제목 — 카드 밖, 기준 행 위.
-     스펙 §2 display 28/700 "온보딩 헤드라인". figma-ref 글리프 실측 25px = 28 (h1 22 는 20px) */
+     스펙 §2 display 28/700 "온보딩 헤드라인". figma-ref 글리프 실측 25px = 28 (h1 22 는 20px)
+     부제도 같은 방법으로 재봤다 — 글리프 14px = body-lg 16 (body-sm 14 는 글리프 12px) */
   const emptyHeadline = (
     <div className={styles.emptyHead}>
       <p className={`${styles.emptyTitle} t-display`}>{E.headline}</p>
-      <p className={`${styles.emptySub} t-body-sm`}>{E.headlineSub}</p>
+      <p className={`${styles.emptySub} t-body-lg`}>{E.headlineSub}</p>
     </div>
   )
 
