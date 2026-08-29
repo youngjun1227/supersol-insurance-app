@@ -26,6 +26,8 @@ export type EventType =
   | 'task_end'
   /** 어려웠나 7점 응답 */
   | 'difficulty'
+  /** 렌더 크래시 — 에러 바운더리가 잡았다 (#80). 어느 화면에서 터졌는지 진단용 */
+  | 'error'
 
 export type TaskOutcome = 'success' | 'fail' | 'giveup'
 

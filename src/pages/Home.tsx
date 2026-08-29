@@ -13,6 +13,7 @@ import { useTrack } from '@/lib/useTrack'
 import styles from './Home.module.css'
 
 export function Home() {
+
   const navigate = useNavigate()
   const location = useLocation()
   const track = useTrack()
