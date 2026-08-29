@@ -93,6 +93,23 @@ jobs:
       - name: 번들 크기 (gzip JS 200KB / CSS 40KB)
         run: npm run check:bundle
 
+  # ── 스모크 — 전 라우트가 throw·콘솔 에러 없이 뜨는가 (#81) ──
+  smoke:
+    name: 스모크 (전 라우트 렌더)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # ⚠️ 이 job 만 22 — jsdom 이 쓰는 undici 가 Node 20 과 비호환
+          #    (markAsUncloneable 없음 에러로 워커가 아예 못 뜬다). 다른 job 은
+          #    jsdom 을 안 쓰므로 20 유지 — 빌드 환경을 흔들지 않는다.
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: 라우트 27벌 렌더 (쿼리 상태 변형 포함)
+        run: npm run test
+
   # ── 관문 job ──────────────────────────────────────────────
   # ⚠️ 브랜치 보호의 required status check 는 이름으로 매칭된다.
   # job 을 쪼개면 'ci' 라는 이름이 사라져 체크가 영원히 pending → 병합 불가.
@@ -100,7 +117,7 @@ jobs:
   ci:
     name: ci
     runs-on: ubuntu-latest
-    needs: [tokens, copy, mock, build]
+    needs: [tokens, copy, mock, build, smoke]
     if: always()
     steps:
       - name: 앞 단계 결과 확인
@@ -109,6 +126,7 @@ jobs:
           echo "문구 컴플라이언스: ${{ needs.copy.result }}"
           echo "목데이터 정합성:   ${{ needs.mock.result }}"
           echo "빌드·타입·번들:   ${{ needs.build.result }}"
+          echo "스모크:          ${{ needs.smoke.result }}"
           if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "true" ]; then
             echo "❌ 실패한 단계가 있습니다 — 위 목록에서 확인하세요."
             exit 1
