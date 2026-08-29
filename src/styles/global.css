@@ -24,8 +24,11 @@ body {
   background: var(--bg-outside);
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
-  /* 폰에서 링크로 열었을 때 당겨서 새로고침·가로 흔들림 방지 */
-  overscroll-behavior-y: none;
+  /* 폰에서 링크로 열었을 때 당겨서 새로고침·가로 흔들림 방지.
+     ⚠️ 주석은 처음부터 "가로 흔들림 방지"였는데 속성이 -y 뿐이라 가로는 안 막혔다 —
+        내용이 안 넘쳐도(전 라우트 overflowX 0 실측) 옆으로 스와이프하면 화면 전체가
+        옆으로 튕겼다 왔다(iOS·Safari 러버밴드). 두 축 다 막는다. */
+  overscroll-behavior: none;
 }
 
 h1, h2, h3, h4, p, figure { margin: 0; }
