@@ -5,6 +5,7 @@
    그 밖(진단·청구·에이전트)은 Figma 실측상 탭바가 아예 없다. */
 
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { useScrollTop } from '@/lib/useScrollTop'
 import { AnalyticsProvider } from './AnalyticsProvider'
 import { MockProvider } from './MockProvider'
 import { Agent } from '@/pages/Agent'
@@ -24,6 +25,9 @@ import { Placeholder } from '@/pages/Placeholder'
 import { Skeleton } from '@/pages/Skeleton'
 
 export function App() {
+  /* 화면을 옮기면 맨 위에서 시작한다 — SPA 는 스크롤이 그대로 남는다 (#70) */
+  useScrollTop()
+
   return (
     <AnalyticsProvider>
       <MockProvider>
