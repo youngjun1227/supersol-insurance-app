@@ -21,8 +21,12 @@ export function FinanceTopTabs({ active }: { active: FinanceTabId }) {
       activeId={active}
       onChange={(id) => {
         const tab = FINANCE_TABS.find((t) => t.id === id)
-        if (!tab || tab.id === active) return
+        if (!tab) return
+        /* 활성 탭 재탭도 기록한다 (#88) — 이미 있는 탭을 또 누르는 건
+           길을 못 찾고 있다는 신호라, 계측을 조기 반환보다 먼저 둔다.
+           이동은 여전히 안 한다 (탭바와 같은 기준). */
         track(tid(SCREEN.financePath, ELEMENT.탭, tab.id))
+        if (tab.id === active) return
         // 쿼리(?state=A|B) 유지 — 조건이 풀리면 안 된다
         navigate({ pathname: tab.path, search: location.search })
       }}

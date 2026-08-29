@@ -40,8 +40,9 @@ export function ProductTopTabs({ active }: { active: ProductTabId }) {
               className={`${styles.tab} ${selected ? 't-body-lg-bold' : 't-body-lg'}`}
               data-selected={selected}
               onClick={() => {
-                if (selected) return
+                /* 활성 탭 재탭도 기록 (#88) — 헤맴 신호. 이동만 막는다 */
                 track(tid(SCREEN.productPath, ELEMENT.탭, tab.id))
+                if (selected) return
                 // 아직 안 만든 탭은 이동하지 않는다 (발견·보험만 화면이 있다)
                 if (tab.path) navigate({ pathname: tab.path, search: location.search })
               }}
