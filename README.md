@@ -21,8 +21,9 @@
 > 배포 URL 뒤에 아래 경로를 붙이면 바로 열립니다. 로그인·설치 없이 폰 브라우저에서 동작합니다.
 > 데스크톱에서 열어도 `max-width: 393px` 폰 프레임으로 중앙에 뜹니다.
 
-<!-- ⚠️ Vercel 연결 후 이 줄을 실제 URL로 교체 (CLAUDE.md 배포 항목) -->
-**배포 URL: _(Vercel 연결 예정)_** · 로컬은 `npm run dev` → http://localhost:5173
+**▶ <https://supersol-insurance-app.vercel.app>** · 로컬은 `npm run dev` → http://localhost:5173
+
+> 폰에서 QR 이나 링크로 바로 열립니다. 홈 화면에 추가하면 주소창 없이 전체화면으로 뜹니다.
 
 | # | 화면 | 여기서 확인할 것 |
 |---|---|---|
