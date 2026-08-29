@@ -28,7 +28,7 @@ export function Home() {
     <AppShell
       name="00-메인홈"
       background="page"
-      footer={<TabBar activeId="home" />}
+      footer={<TabBar activeId="home" screen={SCREEN.home} />}
       footerType="tabbar"
       header={
         <div className={styles.header}>

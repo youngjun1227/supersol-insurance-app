@@ -4,6 +4,7 @@
    ⚠️ "테스트 범위 밖" 같은 문구 금지 — 몰입이 깨진다. 그냥 비어 보이면 된다. */
 
 import { AppShell, Header, TabBar } from '@/components'
+import type { ScreenCode } from '@/lib/targetId'
 import styles from './Skeleton.module.css'
 
 interface SkeletonProps {
@@ -12,11 +13,13 @@ interface SkeletonProps {
   title: string
   /** 어느 탭을 켜둘지 */
   tabId: string
+  /** 탭바 계측용 화면 코드 (#75) */
+  screen: ScreenCode
   /** 상단 탭 행 (금융·상품 안에서 쓴다) */
   topTabs?: React.ReactNode
 }
 
-export function Skeleton({ name, title, tabId, topTabs }: SkeletonProps) {
+export function Skeleton({ name, title, tabId, screen, topTabs }: SkeletonProps) {
   return (
     <AppShell
       name={name}
@@ -26,7 +29,7 @@ export function Skeleton({ name, title, tabId, topTabs }: SkeletonProps) {
           {topTabs}
         </>
       }
-      footer={<TabBar activeId={tabId} />}
+      footer={<TabBar activeId={tabId} screen={screen} />}
       footerType="tabbar"
     >
       <div className={styles.body} aria-hidden="true">

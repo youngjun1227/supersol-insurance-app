@@ -5,6 +5,7 @@
    그 밖(진단·청구·에이전트)은 Figma 실측상 탭바가 아예 없다. */
 
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { SCREEN } from '@/lib/targetId'
 import { useScrollTop } from '@/lib/useScrollTop'
 import { AnalyticsProvider } from './AnalyticsProvider'
 import { MockProvider } from './MockProvider'
@@ -60,9 +61,9 @@ export function App() {
           <Route path="/agent" element={<Agent />} />
 
           {/* S4·S5 청구 흐름 */}
-          <Route path="/claim/settings" element={<Placeholder name="S5-A-알림설정" title="알림 설정" tabId="finance" />} />
-          <Route path="/claim/guide" element={<Placeholder name="S4-D-절차안내" title="청구 절차" tabId="finance" />} />
-          <Route path="/claim/done" element={<Placeholder name="청구완료" title="청구 완료" tabId="finance" />} />
+          <Route path="/claim/settings" element={<Placeholder name="S5-A-알림설정" title="알림 설정" tabId="finance" screen={SCREEN.s5Settings} />} />
+          <Route path="/claim/guide" element={<Placeholder name="S4-D-절차안내" title="청구 절차" tabId="finance" screen={SCREEN.s4Guide} />} />
+          <Route path="/claim/done" element={<Placeholder name="청구완료" title="청구 완료" tabId="finance" screen={SCREEN.s4Done} />} />
 
           {/* S2 상품 찾기 — 🔷 A/B/C 안 미정이라 구현 착수 금지. 자리만 잡아둔다 */}
           <Route path="/product/insurance" element={<ProductInsurance />} />
@@ -70,8 +71,8 @@ export function App() {
           <Route path="/product/insurance/:productId" element={<ProductDetail />} />
 
           {/* 비테스트 탭 — 이동은 되고 내용만 빈 화면 */}
-          <Route path="/benefit" element={<Skeleton name="혜택-자리표시" title="혜택" tabId="benefit" />} />
-          <Route path="/stock" element={<Skeleton name="주식-자리표시" title="주식" tabId="stock" />} />
+          <Route path="/benefit" element={<Skeleton name="혜택-자리표시" title="혜택" tabId="benefit" screen={SCREEN.skeleton} />} />
+          <Route path="/stock" element={<Skeleton name="주식-자리표시" title="주식" tabId="stock" screen={SCREEN.skeleton} />} />
 
           {/* 진행자용 — 참가자에게 노출하지 않는다 */}
           <Route path="/export" element={<Export />} />

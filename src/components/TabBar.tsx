@@ -9,6 +9,7 @@ import {
 } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ELEMENT, type ScreenCode, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import styles from './TabBar.module.css'
 
@@ -36,11 +37,16 @@ export const TABS: TabItem[] = [
 ]
 
 interface TabBarProps {
+  /** 계측용 화면 코드 — 필수다 (#75). 탭바는 화면 9개에 뜨는데 예전엔 전부
+      같은 `탭바-{id}` 를 찍었다. 어느 화면에서 탭바로 이탈했는지 targetId 만으로
+      갈리게 한다 (#44 헤더 뒤로와 같은 처리). 필수로 둬야 새 화면이 빠뜨리면
+      typecheck 가 잡는다. */
+  screen: ScreenCode
   /** 어느 탭을 선택 상태로 볼지. 없으면 현재 경로로 판단 */
   activeId?: string
 }
 
-export function TabBar({ activeId }: TabBarProps) {
+export function TabBar({ activeId, screen }: TabBarProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const track = useTrack()
@@ -65,7 +71,7 @@ export function TabBar({ activeId }: TabBarProps) {
             data-selected={selected}
             aria-current={selected ? 'page' : undefined}
             onClick={() => {
-              track(`탭바-${tab.id}`)
+              track(tid(screen, ELEMENT.탭, tab.id))
               // 쿼리(?state=A|B)를 유지해야 조건이 안 풀린다
               navigate({ pathname: tab.path, search: location.search })
             }}

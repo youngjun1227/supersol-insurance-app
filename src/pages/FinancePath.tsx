@@ -45,7 +45,7 @@ function Shell({ name, tab, children }: {
           <FinanceTopTabs active={tab} />
         </>
       }
-      footer={<TabBar activeId="finance" />}
+      footer={<TabBar activeId="finance" screen={SCREEN.financePath} />}
       footerType="tabbar"
       background="page"
     >

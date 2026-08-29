@@ -3,6 +3,7 @@
    셸·계측·목데이터가 붙어 도는지 확인하는 용도. */
 
 import { AppShell, FinanceTopTabs, Header, TabBar } from '@/components'
+import type { ScreenCode } from '@/lib/targetId'
 import { useMock } from '@/app/MockProvider'
 import styles from './Placeholder.module.css'
 
@@ -10,11 +11,13 @@ interface PlaceholderProps {
   name: string
   title: string
   tabId: string
+  /** 탭바 계측용 화면 코드 (#75) */
+  screen: ScreenCode
   /** 금융 상단 탭 행을 달지 — S1 계열. 팀원 A가 실제 화면을 만들 때까지 경로 유지 */
   financeTabs?: boolean
 }
 
-export function Placeholder({ name, title, tabId, financeTabs = false }: PlaceholderProps) {
+export function Placeholder({ name, title, tabId, screen, financeTabs = false }: PlaceholderProps) {
   const { data, state } = useMock()
 
   return (
@@ -26,7 +29,7 @@ export function Placeholder({ name, title, tabId, financeTabs = false }: Placeho
           {financeTabs ? <FinanceTopTabs active="insurance" /> : null}
         </>
       }
-      footer={<TabBar activeId={tabId} />}
+      footer={<TabBar activeId={tabId} screen={screen} />}
       background={tabId === 'finance' ? 'page' : 'surface'}
       footerType="tabbar"
     >
