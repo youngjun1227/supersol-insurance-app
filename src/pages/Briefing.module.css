@@ -1,6 +1,8 @@
 /* S3-D 브리핑. 내용 gap 16, p 20/20/40 (Figma 실측) */
 
 .body {
+  /* AgentBubble(absolute)의 기준 — S6-A 와 같은 배치 */
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -10,6 +12,9 @@
 
 /* ── 히어로 ──────────────────────────────────────────────── */
 .hero {
+  /* 버블(#77 후속)이 펼쳐진 동안 헤드라인 둘째 줄 위 3px 를 덮었다 (실측
+     버블 B112 vs 글자 T109) — 한 칸 내려 여유를 만든다. figma 대비 +8px. */
+  margin-top: var(--space-2);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -98,63 +103,3 @@
   text-align: center;
 }
 
-/* ── 에이전트 존 ─────────────────────────────────────────── */
-.agent {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  padding: var(--gutter-main) 10px var(--space-2);
-  border-radius: var(--r-card-sm);
-  background: var(--bg-tint);
-}
-
-.avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 38px;
-  height: 36px;
-  border-radius: var(--r-pill);
-  background: var(--bg-tint);
-}
-
-.avatarImg {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-}
-
-.agentBody {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.agentName {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--text-secondary);
-}
-
-.sparkle {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-}
-
-.bubble {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.bubbleText {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: var(--text-primary);
-}

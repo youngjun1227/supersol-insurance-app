@@ -485,3 +485,11 @@ export const ERROR_FALLBACK = {
   body: '잠시 후 다시 시도해 주세요. 처음 화면으로 돌아가면 이어서 이용할 수 있어요.',
   action: '처음으로',
 } as const
+
+/* ── S3-D 브리핑 (#77 후속) ──────────────────────────────────
+   하단 에이전트 존이 고정 독 뒤에 숨어 안 보였다 — S6-A 와 같은
+   우측 상단 버블로 대체 (팀장 결정 2026-08-29). */
+export const BRIEFING = {
+  bubble: '진단에서 궁금한 점 물어보세요!',
+  bubbleSecond: 'AI가 쉽게 설명해줘요',
+} as const

@@ -7,11 +7,13 @@
       버튼은 항상 보인다. S3-E·S6-A 와 같은 구조라 앱 안에서도 일관된다.
       Figma 는 팀장이 맞춘다 (변경로그가 우선). */
 
-import { ChatCircleDots, List, MagnifyingGlass } from '@phosphor-icons/react'
+import { List, MagnifyingGlass } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
-import { AppShell, BottomCTA, Button, Header, IconAction, RadarChart } from '@/components'
+import { AgentBubble, AppShell, BottomCTA, Button, Header, IconAction, RadarChart } from '@/components'
 import type { RadarAxis } from '@/components/RadarChart'
 import { useMock } from '@/app/MockProvider'
+import { BRIEFING as C } from '@/data/copy'
+import { useTrack } from '@/lib/useTrack'
 import { batteryAsset, batteryLevelFor } from '@/lib/coverage'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import styles from './Briefing.module.css'
@@ -29,6 +31,7 @@ const AXIS_ORDER: { id: string; short: string }[] = [
 
 export function Briefing() {
   const navigate = useNavigate()
+  const track = useTrack()
   const { data } = useMock()
 
   const axes: RadarAxis[] = AXIS_ORDER.map(({ id, short }) => {
@@ -76,6 +79,19 @@ export function Briefing() {
       }
     >
       <div className={styles.body}>
+        {/* 에이전트 진입 버블 — 헤더 아래 우측 플로팅 (S6-A 와 같은 패턴).
+            ⚠️ figma 원안의 하단 에이전트 존을 대체한다 (#77 후속, 팀장 결정) —
+               원안 자리는 고정 독 뒤에 완전히 숨어 안 보였다 (실측 top 740 > 독 684).
+               버블은 항상 보이고 그 자체가 에이전트 진입점이다. */}
+        <AgentBubble
+          label={C.bubble}
+          labelSecond={C.bubbleSecond}
+          onTap={() => {
+            track(tid(SCREEN.s3d, ELEMENT.버튼, '에이전트'))
+            navigate('/agent')
+          }}
+        />
+
         {/* 히어로 — 에너지 % + 배터리 */}
         <section className={styles.hero}>
           <h1 className={`${styles.headline} t-h2`}>
@@ -124,32 +140,6 @@ export function Briefing() {
           </p>
         </section>
 
-        {/* 에이전트 존 */}
-        <section className={styles.agent}>
-          <div className={styles.avatar}>
-            <img
-              className={styles.avatarImg}
-              src="/assets/logo/shinhan-symbol.png"
-              alt=""
-              aria-hidden="true"
-            />
-          </div>
-          <div className={styles.agentBody}>
-            <p className={`${styles.agentName} t-caption-medium`}>
-              보장 상담 에이전트
-              <img className={styles.sparkle} src="/assets/3d/반짝임.png" alt="" aria-hidden="true" />
-            </p>
-            <div className={styles.bubble}>
-              <p className={`${styles.bubbleText} t-body-sm`}>
-                자세한 진단을 보다가 궁금한 항목이 있으면
-              </p>
-              <p className={`${styles.bubbleText} t-body-sm`}>
-                <ChatCircleDots size={20} weight="regular" color="var(--text-secondary)" />
-                버튼을 눌러 저에게 물어보세요
-              </p>
-            </div>
-          </div>
-        </section>
 
       </div>
     </AppShell>
