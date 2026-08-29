@@ -98,6 +98,7 @@ export function MyInsurance() {
         <Header
           title={C.myTitle}
           variant="sub"
+          screen={SCREEN.s1My}
           actions={
             <>
               <IconAction targetId={tid(SCREEN.s1My, ELEMENT.버튼, '검색')} label="검색">
