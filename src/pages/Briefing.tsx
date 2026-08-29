@@ -1,11 +1,15 @@
 /* S3-D 보장 진단 브리핑 — Figma 540:174.
    S1 진단 카드 탭 / S3-C "진단 다시하기" 로 들어온다.
 
-   하단은 탭바도 고정 CTA도 없다 (Figma 실측) — "자세한 진단 보기"는 본문 흐름 끝 버튼. */
+   하단 "자세한 진단 보기"는 **고정 CTA** 다 (팀장 결정 2026-08-29, #77).
+   ⚠️ Figma 실측(934 프레임, 본문 끝 인라인)과 다르다 — 원안대로면 버튼이
+      첫 화면에서 6px 만 보여 참가자가 다음 단계를 못 찾는다. 내용은 스크롤,
+      버튼은 항상 보인다. S3-E·S6-A 와 같은 구조라 앱 안에서도 일관된다.
+      Figma 는 팀장이 맞춘다 (변경로그가 우선). */
 
 import { ChatCircleDots, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
-import { AppShell, Button, Header, IconAction, RadarChart } from '@/components'
+import { AppShell, BottomCTA, Button, Header, IconAction, RadarChart } from '@/components'
 import type { RadarAxis } from '@/components/RadarChart'
 import { useMock } from '@/app/MockProvider'
 import { batteryAsset, batteryLevelFor } from '@/lib/coverage'
@@ -40,7 +44,19 @@ export function Briefing() {
   return (
     <AppShell
       name="S3-D-브리핑"
-      footerType="none"
+      footerType="cta"
+      footer={
+        <BottomCTA>
+          <Button
+            block
+            size="lg"
+            targetId={tid(SCREEN.s3d, ELEMENT.버튼, '자세한진단')}
+            onClick={() => navigate('/diagnosis')}
+          >
+            자세한 진단 보기
+          </Button>
+        </BottomCTA>
+      }
       header={
         <Header
           title="보장 진단"
@@ -135,14 +151,6 @@ export function Briefing() {
           </div>
         </section>
 
-        {/* 본문 끝 버튼 — 고정 CTA 아님 */}
-        <Button
-          block
-          targetId={tid(SCREEN.s3d, ELEMENT.버튼, '자세한진단')}
-          onClick={() => navigate('/diagnosis')}
-        >
-          자세한 진단 보기
-        </Button>
       </div>
     </AppShell>
   )
