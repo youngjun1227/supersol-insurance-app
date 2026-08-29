@@ -70,7 +70,7 @@ export function ProductList() {
     <AppShell
       name="S2-D-카테고리선택후"
       background="page"
-      footer={<TabBar activeId="product" />}
+      footer={<TabBar activeId="product" screen={SCREEN.s2List} />}
       footerType="tabbar"
       header={
         <>

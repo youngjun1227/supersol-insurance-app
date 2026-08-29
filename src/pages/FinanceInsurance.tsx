@@ -422,7 +422,7 @@ export function FinanceInsurance() {
           <FinanceTopTabs active="insurance" />
         </>
       }
-      footer={<TabBar activeId="finance" />}
+      footer={<TabBar activeId="finance" screen={SCREEN.s1} />}
       background="page"
       footerType="tabbar"
     >

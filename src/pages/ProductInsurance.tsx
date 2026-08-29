@@ -57,7 +57,7 @@ export function ProductInsurance() {
     <AppShell
       name="S2-A-상품찾기"
       background="page"
-      footer={<TabBar activeId="product" />}
+      footer={<TabBar activeId="product" screen={SCREEN.s2} />}
       footerType="tabbar"
       header={
         <>
