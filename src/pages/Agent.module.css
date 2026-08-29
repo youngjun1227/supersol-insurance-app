@@ -66,13 +66,16 @@
   color: var(--text-primary);
 }
 
+/* 히트 영역 44 (#78) — 넓힌 절반을 좌우 음수 마진으로 되돌려
+   아이콘의 시각 위치와 제목까지의 간격을 그대로 둔다 */
 .close {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--hit-min);
+  height: var(--hit-min);
+  margin-inline: calc((var(--hit-min) - 24px) / -2);
 }
 
 /* ── 대화 ──────────────────────────────────────────────────── */

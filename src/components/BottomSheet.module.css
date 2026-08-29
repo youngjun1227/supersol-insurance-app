@@ -41,15 +41,17 @@
   animation: pop var(--t-sheet) var(--ease);
 }
 
+/* 히트 영역 44 (#78) — absolute 라 top/right 에서 넓힌 절반을 빼
+   아이콘의 시각 위치를 그대로 둔다 */
 .close {
   position: absolute;
-  top: var(--space-4);
-  right: var(--gutter);
+  top: calc(var(--space-4) - (var(--hit-min) - 24px) / 2);
+  right: calc(var(--gutter) - (var(--hit-min) - 24px) / 2);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--hit-min);
+  height: var(--hit-min);
 }
 
 @keyframes fade {

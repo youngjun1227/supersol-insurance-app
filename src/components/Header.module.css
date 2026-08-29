@@ -32,27 +32,40 @@
   white-space: nowrap;
 }
 
-/* 뒤로 화살표는 좌측 여백을 먹고 들어간다 — 아이콘 광학 정렬 */
+/* 뒤로 화살표는 좌측 여백을 먹고 들어간다 — 아이콘 광학 정렬.
+   히트 영역은 44 (HIG 최소치, #78) — 아이콘은 24 그대로 가운데 두고
+   음수 마진으로 넓힌 만큼 되돌려 시각 위치를 유지한다. */
 .back {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin-left: -2px;
-  margin-right: var(--space-2);
+  width: var(--hit-min);
+  height: var(--hit-min);
+  margin-left: calc(-2px - (var(--hit-min) - 24px) / 2);
+  margin-right: calc(var(--space-2) - (var(--hit-min) - 24px) / 2);
+  margin-block: calc((var(--hit-min) - 24px) / -2);
 }
 
+/* 히트 영역 44 (#78). 아이콘 간격(space-4=16)이 버튼 확장분(44-24=20)보다
+   작아 gap 으로는 못 맞춘다 — 음수 gap 은 CSS 가 허용하지 않는다.
+   그래서 gap 0 + 버튼끼리 겹치는 음수 마진으로 시각 간격을 만든다. */
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: 0;
+  margin-right: calc((var(--hit-min) - 24px) / -2);
 }
 
 .action {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--hit-min);
+  height: var(--hit-min);
+  margin-block: calc((var(--hit-min) - 24px) / -2);
+}
+
+/* 두 번째 버튼부터 앞 버튼과 겹쳐 아이콘 시각 간격을 space-4 로 되돌린다 */
+.action + .action {
+  margin-left: calc(var(--space-4) - (var(--hit-min) - 24px));
 }
