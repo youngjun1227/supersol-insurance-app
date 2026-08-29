@@ -12,6 +12,9 @@ import { MockProvider } from './MockProvider'
 import { Agent } from '@/pages/Agent'
 import { Export } from '@/pages/Export'
 import { Briefing } from '@/pages/Briefing'
+import { ClaimDone } from '@/pages/ClaimDone'
+import { ClaimGuide } from '@/pages/ClaimGuide'
+import { ClaimSettings } from '@/pages/ClaimSettings'
 import { Diagnosis } from '@/pages/Diagnosis'
 import { FinanceInsurance } from '@/pages/FinanceInsurance'
 import { FinanceBank, FinanceCard, FinanceStock } from '@/pages/FinancePath'
@@ -22,7 +25,6 @@ import { ProductDiscover } from '@/pages/ProductPath'
 import { ProductInsurance } from '@/pages/ProductInsurance'
 import { ProductList } from '@/pages/ProductList'
 import { ProductDetail } from '@/pages/ProductDetail'
-import { Placeholder } from '@/pages/Placeholder'
 import { Skeleton } from '@/pages/Skeleton'
 
 export function App() {
@@ -60,10 +62,10 @@ export function App() {
           {/* S3-F 에이전트 대화 — 진입 문맥은 쿼리로 (?ctx=). 프리셋 고정 응답 */}
           <Route path="/agent" element={<Agent />} />
 
-          {/* S4·S5 청구 흐름 */}
-          <Route path="/claim/settings" element={<Placeholder name="S5-A-알림설정" title="알림 설정" tabId="finance" screen={SCREEN.s5Settings} />} />
-          <Route path="/claim/guide" element={<Placeholder name="S4-D-절차안내" title="청구 절차" tabId="finance" screen={SCREEN.s4Guide} />} />
-          <Route path="/claim/done" element={<Placeholder name="청구완료" title="청구 완료" tabId="finance" screen={SCREEN.s4Done} />} />
+          {/* S4·S5 청구 흐름 — 탭바 없음 + 하단 고정 CTA. S4-A 팝업은 홈 위 오버레이(ClaimPopup) */}
+          <Route path="/claim/settings" element={<ClaimSettings />} />
+          <Route path="/claim/guide" element={<ClaimGuide />} />
+          <Route path="/claim/done" element={<ClaimDone />} />
 
           {/* S2 상품 찾기 — 🔷 A/B/C 안 미정이라 구현 착수 금지. 자리만 잡아둔다 */}
           <Route path="/product/insurance" element={<ProductInsurance />} />

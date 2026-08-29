@@ -1,0 +1,58 @@
+/* S5-A — 흰 배경 서브 화면. 좌우 --gutter · 하단 여백은 AppShell footerType='cta' */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--gutter) 0;
+}
+
+.headline {
+  color: var(--text-primary);
+  white-space: pre-line; /* copy 의 \n 그대로 두 줄 */
+}
+
+/* 동의 카드 — 흰 배경 위라 테두리를 켠다 (#46 규칙) */
+.consent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--pad-card);
+}
+
+.consentLabel { color: var(--text-primary); }
+
+.methods {
+  display: flex;
+  flex-direction: column;
+}
+
+.methodTitle {
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.hint {
+  color: var(--text-caption);
+  margin-top: var(--space-2);
+}
+
+/* 안내 박스 — §1 --bg-tint "안내 박스" · §3 r12 */
+.faqBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--pad-card);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+}
+
+.faqItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.q { color: var(--text-primary); }
+.a { color: var(--text-tertiary); }

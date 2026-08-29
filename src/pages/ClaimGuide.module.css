@@ -1,0 +1,57 @@
+/* S4-D — 흰 배경 서브 화면. 스텝 번호 원은 §1 --bg-tint-btn "스텝퍼 번호 원" */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-5) var(--gutter) 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sectionTitle { color: var(--text-primary); }
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.stepNo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  background: var(--bg-tint-btn);
+  color: var(--primary);
+}
+
+.stepText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.stepName { color: var(--text-primary); }
+.stepDesc { color: var(--text-caption); }
+
+.docs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.note { color: var(--text-caption); }
