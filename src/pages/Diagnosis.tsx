@@ -62,6 +62,7 @@ export function Diagnosis() {
         <Header
           title="보장 진단 결과"
           variant="sub"
+          screen={SCREEN.s3c}
           actions={
             <>
               <IconAction targetId={tid(SCREEN.s3c, ELEMENT.버튼, '검색')} label="검색">

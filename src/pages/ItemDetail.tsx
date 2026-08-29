@@ -89,6 +89,7 @@ export function ItemDetail() {
         <Header
           title={C.title}
           variant="sub"
+          screen={SCREEN.s3e}
           actions={
             <>
               <IconAction targetId={tid(SCREEN.s3e, ELEMENT.버튼, '검색')} label="검색">

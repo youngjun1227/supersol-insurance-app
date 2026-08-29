@@ -45,6 +45,7 @@ export function Briefing() {
         <Header
           title="보장 진단"
           variant="sub"
+          screen={SCREEN.s3d}
           actions={
             <>
               <IconAction targetId={tid(SCREEN.s3d, ELEMENT.버튼, '검색')} label="검색">

@@ -60,7 +60,7 @@ export function ProductDetail() {
 
   if (!product) {
     return (
-      <AppShell name="S6-A-상품상세" header={<Header title="보험상세정보" variant="sub" />} footerType="none">
+      <AppShell name="S6-A-상품상세" header={<Header title="보험상세정보" variant="sub" screen={SCREEN.s6} />} footerType="none">
         <p className={`${styles.empty} t-body`}>{PD.notFound}</p>
       </AppShell>
     )
@@ -74,6 +74,7 @@ export function ProductDetail() {
         <Header
           title="보험상세정보"
           variant="sub"
+          screen={SCREEN.s6}
           actions={
             <>
               <IconAction targetId={tid(SCREEN.s6, ELEMENT.버튼, '검색')} label="검색">
