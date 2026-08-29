@@ -15,9 +15,17 @@
   flex-direction: column;
   min-height: 100%;
   /* 하단 여백은 입력 바 높이(84)보다 커야 한다 — 대화가 길어지면
-     마지막 답변이 입력 바에 가린다. AppShell 의 --pb-cta(126)로는 모자라다 */
+     마지막 답변이 입력 바에 가린다. AppShell 의 --pb-cta(126)로는 모자라다.
+
+     ⚠️ 주석은 84 라고 적어놨는데 실제 값이 64 여서 실제로 가렸다 (#70).
+        입력 바와 같은 토큰으로 높이를 계산해 둘이 다시 어긋나지 않게 한다:
+          --h-btn(48) + 위 --space-3(12) + 아래 --space-6(24) = 84
+        여기에 한 칸(--space-4) 더 띄워 답변이 바에 닿지 않게 한다. */
   padding: var(--space-4) var(--gutter) var(--space-8);
-  padding-bottom: calc(var(--space-8) * 2);
+  padding-bottom: calc(
+    var(--h-btn) + var(--space-3) + var(--space-6) + var(--space-4) +
+      env(safe-area-inset-bottom, 0px)
+  );
 }
 
 .thread::before {
