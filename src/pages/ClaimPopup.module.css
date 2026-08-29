@@ -1,0 +1,42 @@
+/* 시트 내부 — 여백·gap 은 BottomSheet(sheet)가 준다 (p 32/20 · gap 16) */
+
+.illust {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.title   { color: var(--text-primary); }
+.payment { color: var(--text-secondary); }
+.notice  { color: var(--text-caption); }
+
+/* 서류 박스 — §1 --bg-tint "서류 박스" · §3 r12 */
+.docsBox {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) var(--pad-card);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint);
+}
+
+.docsTitle {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  padding-bottom: var(--space-2);
+}
+
+.link { color: var(--text-caption); }

@@ -1,0 +1,35 @@
+/* 체크박스 24 · r4(--r-check) — §1 "체크 On = --primary · Off 테두리 --border-default".
+   고정(fixed) 체크는 --bg-segment-track 채움 — S5-A "앱 알림 (기본)" PNG 실측 */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) 0;
+  text-align: left;
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-check);
+  background: var(--bg-surface);
+}
+
+.row[data-checked='true'] .box {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.row[data-fixed='true'][data-checked='true'] .box {
+  border-color: var(--bg-segment-track);
+  background: var(--bg-segment-track);
+}
+
+.label { color: var(--text-secondary); }

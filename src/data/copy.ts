@@ -19,6 +19,81 @@ export const CLAIM_COMPLIANCE = {
   pushNotice: '지급 여부·금액은 보험에 따라 다를 수 있어요',
 } as const
 
+/* ── S4·S5 청구 흐름 (변경로그 §8: figma-ref PNG 에서 읽어 옮김) ──
+   S4-A `317:6911` · S5-A `317:7126` · S4-D `317:7032` · 청구완료 `386:2481`.
+   ⚠️ 제목·고지는 위 CLAIM_COMPLIANCE 를 그대로 쓴다 — 여기 다시 적지 않는다. */
+
+/** S4-A 결제 감지 팝업 (figma-ref/S4-A-결제감지팝업.png) */
+export const CLAIM_POPUP = {
+  /** 결제 요약 뒤에 붙는 말 — "8월 17일 ○○내과의원 32,000원 결제" */
+  paymentSuffix: '결제',
+  docsTitle: '청구하려면 이 서류가 필요해요',
+  /** id 는 targetId 식별자 — 라벨이 길어 따로 둔다 */
+  docs: [
+    { id: '계산서영수증', label: '진료비 계산서·영수증' },
+    { id: '세부내역서', label: '진료비 세부내역서' },
+  ],
+  cta: '보험금 청구하기',
+  later: '나중에 하기',
+  optOut: '이 알림 받지 않기',
+} as const
+
+/** S5-A 알림 설정·동의 (figma-ref/S5-A-알림설정.png) */
+export const CLAIM_SETTINGS = {
+  title: '청구 알림 설정',
+  headline: '병원에서 결제하면\n알려드릴까요?',
+  toggleLabel: '청구 알림 받기',
+  methodTitle: '알림 받을 방법',
+  methodApp: '앱 알림 (기본)',
+  methodKakao: '카카오톡',
+  methodHint: '앱 알림을 꺼두셨다면 카카오톡으로 보내드려요.',
+  /* 안내 박스 3문답 — PNG 그대로. "가입을 권하는 알림이 아니에요"는
+     컴플라이언스 맥락 문장이라 임의로 줄이지 않는다 */
+  faq: [
+    { q: '무엇을 보나요?', a: '신한카드로 결제한 병원·약국 내역만 확인해요. 진료 내용은 보지 않아요.' },
+    { q: '왜 알려주나요?', a: '청구할 수 있는 건이 있다는 걸 알려드리려고요. 가입을 권하는 알림이 아니에요.' },
+    { q: '끄고 싶으면요?', a: '이 화면에서 언제든 끌 수 있어요.' },
+  ],
+  cta: '동의하고 알림 받기',
+} as const
+
+/** S4-D 청구 절차 안내 (figma-ref/S4-D-청구절차.png) */
+export const CLAIM_GUIDE = {
+  title: '보험금 청구',
+  stepsTitle: '청구는 이렇게 진행돼요',
+  steps: [
+    { name: '서류 준비', desc: '영수증·세부내역서를 사진으로 찍어두세요' },
+    { name: '청구 정보 입력', desc: '진료받은 사람과 병원, 금액을 확인해요' },
+    { name: '제출', desc: '서류 사진을 올리고 보내요' },
+    { name: '결과 확인', desc: '심사 결과를 알림으로 알려드려요' },
+  ],
+  docsTitle: '미리 준비할 서류',
+  docs: [
+    { id: '계산서영수증', label: '진료비 계산서·영수증' },
+    { id: '세부내역서', label: '진료비 세부내역서' },
+    { id: '진단서', label: '진단서 (금액이 크거나 입원한 경우)' },
+  ],
+  docsNote: '필요한 서류는 보험사와 진료 내용에 따라 달라질 수 있어요.',
+  cta: '청구 시작하기',
+} as const
+
+/** 청구 완료 (figma-ref/청구완료.png) */
+export const CLAIM_DONE = {
+  title: '보험금 청구',
+  headline: '청구 접수됐어요',
+  sub: '심사 결과는 영업일 기준 3일 안에\n알림으로 알려드려요',
+  receiptLabel: '접수번호',
+  hospitalLabel: '병원',
+  amountLabel: '진료비',
+  /* Figma 386:2481 그대로 — pay-1(08.17 결제) 접수의 가상값.
+     ⚠️ mock-data.md 에는 없는 값이라 목데이터가 아닌 화면 문구로 둔다
+        (S3-C 기준일 '2026.08.25'와 같은 취급). 결제 건이 바뀌면 같이 봐야 한다 */
+  receiptNo: '2026-0817-0001',
+  settingsTitle: '다음부터 자동으로 알려드릴까요?',
+  settingsSub: '병원에서 결제하면 청구할 수 있는지 알려드려요',
+  cta: '확인',
+} as const
+
 /* ── 진단 공통 (S1 카드·S3-C 동일 문구) ────────────────────── */
 export const DIAGNOSIS = {
   /** 면책 — S1·S3-C 공통 */

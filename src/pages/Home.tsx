@@ -10,6 +10,7 @@ import { useMock } from '@/app/MockProvider'
 import { won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { ClaimPopup } from './ClaimPopup'
 import styles from './Home.module.css'
 
 export function Home() {
@@ -122,6 +123,9 @@ export function Home() {
           </div>
         </Card>
       </div>
+
+      {/* S4-A 결제 감지 팝업 — ?popup=claim 일 때만 뜬다 (진행자 트리거, 팀원 B) */}
+      <ClaimPopup />
     </AppShell>
   )
 }
