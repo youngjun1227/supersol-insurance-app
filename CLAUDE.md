@@ -98,4 +98,4 @@ React 1차 구현 8/25~31 → 9/1~ 다듬기·배포 → 🔒 9/11 사용자 테
 - CI = 토큰 lint → 문구 컴플라이언스 스윕 → 목데이터 정합성 → typecheck → build → 번들 크기
   (`.github/workflows/ci.yml`). pre-commit 우회해도 CI가 막는다
 - **9/10부터 main 프리즈** (9/11 테스트 전날) — 핫픽스만
-- 배포: Vercel main=프로덕션 / PR=프리뷰 (⚠️ Vercel 연결은 팀장이 vercel.com에서 GitHub 연동 1회 필요 — 아직 미연결)
+- 배포: Vercel main=프로덕션 / PR=프리뷰 (✅ 연결 완료 — 프로덕션 https://supersol-insurance-app.vercel.app)
