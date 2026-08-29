@@ -12,7 +12,7 @@
 
    ⚠️ 뒤로가 아니라 X 로 닫는다 (figma-ref). 대화는 화면 위에 얹힌 것에 가깝다. */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PaperPlaneRight, X } from '@phosphor-icons/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AppShell } from '@/components'
@@ -49,11 +49,17 @@ export function Agent() {
     AGENT_PRESETS[first] ? [{ kind: 'note', key: first }] : [],
   )
   const [draft, setDraft] = useState('')
-  const endRef = useRef<HTMLDivElement>(null)
 
-  /* 새 대화가 붙으면 아래로 스크롤 — 카톡처럼 마지막 말이 보여야 한다 */
+  /* 새 대화가 붙으면 아래로 스크롤 — 카톡처럼 마지막 말이 보여야 한다.
+
+     ⚠️ 예전엔 대화 끝의 빈 div 에 scrollIntoView 를 걸었는데 안 됐다 (#70).
+        높이 0 인 그 점을 block:'end' 가 **창 아래 끝에 맞추는데**, 창 아래 끝은
+        입력 바가 떠 있는 자리다 (position:fixed 라 문서 높이에 안 잡힌다).
+        "맨 아래로 갔다"고 판단한 지점이 실제로는 입력 바 뒤였다.
+        문서 맨 아래로 직접 내린다 — 여백(.thread 의 padding-bottom)이
+        입력 바보다 크므로 마지막 답변이 가리지 않는다. */
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
   }, [turns])
 
   /* 답변 속 자리표시자를 목데이터로 채운다 — 수치를 문구에 박아두면
@@ -199,8 +205,6 @@ export function Agent() {
             </div>
           )
         })}
-
-        <div ref={endRef} />
       </div>
     </AppShell>
   )
