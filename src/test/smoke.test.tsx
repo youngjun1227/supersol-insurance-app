@@ -13,7 +13,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { readFileSync } from 'node:fs'
 import { App } from '@/app/App'
 
-/** 화면 23벌 + 쿼리 상태 변형. 데이터 상태가 갈리는 화면은 변형까지 돈다 */
+/** 라우트 29벌 + 쿼리 상태 변형. 데이터 상태가 갈리는 화면은 변형까지 돈다 */
 const ROUTES = [
   '/',
   '/finance', '/finance/card', '/finance/stock',
@@ -21,6 +21,7 @@ const ROUTES = [
   '/finance/insurance/my',
   '/diagnosis', '/diagnosis/briefing', '/diagnosis/c-actual', '/diagnosis/c-death',
   '/agent', '/agent?ctx=c-actual', '/agent?ctx=product&id=sp-cancer-care',
+  '/?popup=claim', '/?popup=claim&state=A',
   '/claim/settings', '/claim/guide', '/claim/done',
   '/product', '/product/insurance',
   '/product/insurance/list', '/product/insurance/list?cat=dental',
