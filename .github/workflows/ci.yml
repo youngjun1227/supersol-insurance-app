@@ -101,7 +101,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # ⚠️ 이 job 만 22 — jsdom 이 쓰는 undici 가 Node 20 과 비호환
+          #    (markAsUncloneable 없음 에러로 워커가 아예 못 뜬다). 다른 job 은
+          #    jsdom 을 안 쓰므로 20 유지 — 빌드 환경을 흔들지 않는다.
+          node-version: 22
           cache: npm
       - run: npm ci
       - name: 라우트 27벌 렌더 (쿼리 상태 변형 포함)
