@@ -80,13 +80,14 @@ export function Export() {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>과제</th><th>조건</th><th>결과</th><th>클릭</th><th>시간</th><th>난이도</th>
+                    <th>과제</th><th>회차</th><th>조건</th><th>결과</th><th>클릭</th><th>시간</th><th>난이도</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((r) => (
-                    <tr key={`${r.sessionId}-${r.taskId}`}>
+                    <tr key={`${r.sessionId}-${r.taskId}-${r.attempt}`}>
                       <td>{r.taskId}</td>
+                      <td>{r.attempt}</td>
                       <td>{r.state}</td>
                       <td>{r.outcome ?? '-'}</td>
                       <td>{r.taps}</td>
