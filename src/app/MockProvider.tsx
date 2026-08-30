@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { getMockData, isAccountState, DEFAULT_STATE } from '@/data'
+import { getMockData, readStateFromSearch } from '@/data'
 import type { AccountState, MockData } from '@/data/types'
 import { setCurrentAccountState } from '@/lib/analytics'
 
@@ -27,8 +27,9 @@ const MockContext = createContext<MockContextValue | null>(null)
 export function MockProvider({ children }: { children: ReactNode }) {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const raw = searchParams.get('state')?.toUpperCase()
-  const state: AccountState = isAccountState(raw) ? raw : DEFAULT_STATE
+  /* 파싱은 data/index.ts 한 곳에서 한다 (#109) — 예전엔 여기서 같은 규칙을
+     인라인으로 다시 구현해, 한쪽만 고치면 조용히 갈릴 수 있었다 */
+  const state: AccountState = readStateFromSearch(searchParams.toString())
   const customOn = searchParams.get('custom')?.toLowerCase() !== 'off'
 
   // 계측 이벤트에 조건(A|B)을 같이 남기기 위해

@@ -83,7 +83,7 @@ export function Diagnosis() {
           <div className={styles.headline}>
             <p className="t-h3">보장 에너지 {data.coverageTotal}%</p>
             <p className={`${styles.headlineSub} t-body-sm`}>
-              10개 항목 중 {filled}개를 내 보험이 채우고 있어요
+              {data.coverage.length}개 항목 중 {filled}개를 내 보험이 채우고 있어요
             </p>
           </div>
 

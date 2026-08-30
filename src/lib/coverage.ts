@@ -2,7 +2,7 @@
    화면이 직접 계산하지 않고 여기를 거친다 — 티어 순서·접기 규칙이
    여러 화면(S1·S3-C·S3-D)에 걸쳐 있어 한 곳에 모아야 어긋나지 않는다. */
 
-import { TIER_VISIBLE_MAX, TIERS } from '@/data/mock'
+import { TIER_VISIBLE_MAX, TIERS } from '@/data'
 import type { BatteryLevel, CoverageItem, CoverageTier, TierMeta } from '@/data/types'
 
 /** 배터리 3D 에셋 경로. 수치에 맞는 단계를 쓴다 (변경로그 §6) */
