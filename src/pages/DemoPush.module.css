@@ -118,4 +118,20 @@
   width: 120px;
   height: 120px;
   border-radius: var(--r-card-xl);
+  /* 로고가 살짝 떠오르며 나타난다 — 앱이 켜지는 느낌.
+     그냥 띄우면 화면이 툭 바뀌어 로딩으로 안 읽힌다 */
+  animation: logoIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes logoIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* 모션을 줄이라고 설정한 기기는 애니메이션을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  .banner,
+  .splashLogo {
+    animation: none;
+  }
 }

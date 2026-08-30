@@ -19,8 +19,11 @@ import styles from './DemoPush.module.css'
 
 /** 배너가 내려오기까지 — 참가자가 "폰을 보고 있는" 시간 */
 const BANNER_DELAY_MS = 2500
-/** 스플래시 — 디자인 레포 규정값 */
-const SPLASH_MS = 800
+/** 스플래시 — 앱이 켜지는 시간.
+    ⚠️ 디자인 레포 규정은 0.8초(438:10131, AFTER_TIMEOUT)인데 실제로 돌려 보니
+       너무 빨라 "앱이 켜졌다"는 느낌이 안 났다. 1.2초로 늘린다 —
+       Figma 프로토타입은 화면 전환만 보지만 여기선 참가자가 로딩을 인지해야 한다. */
+const SPLASH_MS = 1200
 
 type Stage = 'home' | 'banner' | 'splash'
 
