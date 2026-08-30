@@ -14,6 +14,16 @@
 .h { color: var(--text-primary); }
 .meta { color: var(--text-caption); }
 
+/* 계측 저장 불가 경고 (#99) — 진행자만 보는 화면이라 최소한으로.
+   경고색 토큰이 없어 굵은 본문색으로 세운다 (토큰 밖 색을 만들지 않는다) */
+.warn {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+  color: var(--text-primary);
+}
+
 .mono {
   color: var(--text-tertiary);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;

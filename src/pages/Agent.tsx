@@ -121,8 +121,11 @@ export function Agent() {
             send()
           }}
         >
+          {/* ⚠️ t-body(15px) 로 두면 iOS 사파리가 포커스 때 페이지를 강제 확대한다 (#103)
+              — 16px 미만 인풋의 고전 동작이고, user-scalable=no 는 iOS 10+ 에서 무시된다.
+              확대되면 393 고정 프레임이 깨지고 줌아웃도 안 된다. */}
           <input
-            className={`${styles.input} t-body`}
+            className={`${styles.input} t-body-lg`}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder={C.inputPlaceholder}

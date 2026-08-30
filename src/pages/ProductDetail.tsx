@@ -67,6 +67,9 @@ export function ProductDetail() {
     )
   }
 
+  /** 히어로 3D 아이콘 — 카테고리를 못 찾으면 그리지 않는다 */
+  const heroIcon = data.categories.find((c) => c.id === product.category)?.icon3d
+
   return (
     <AppShell
       name="S6-A-상품상세"
@@ -119,12 +122,16 @@ export function ProductDetail() {
 
         {/* 상단 요약 */}
         <section className={styles.summary}>
-          <img
-            className={styles.hero}
-            src={`/assets/3d/${data.categories.find((c) => c.id === product.category)?.icon3d}.png`}
-            alt=""
-            aria-hidden="true"
-          />
+          {/* 카테고리를 못 찾으면 /assets/3d/undefined.png 를 요청한다 —
+              S1 은 이미 방어하고 있어 여기만 무방비였다 (#109) */}
+          {heroIcon ? (
+            <img
+              className={styles.hero}
+              src={`/assets/3d/${heroIcon}.png`}
+              alt=""
+              aria-hidden="true"
+            />
+          ) : null}
           <h1 className={`${styles.name} t-h3`}>
             {product.company} {product.name}
           </h1>

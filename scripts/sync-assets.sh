@@ -29,10 +29,30 @@ echo "✓ 3D 일러스트 $(find "$DST_3D" -name '*.png' | wc -l | tr -d ' ')개
 SRC_LOGO="$DESIGN_REPO/00_reference/logo"
 DST_LOGO="$ROOT/public/assets/logo"
 mkdir -p "$DST_LOGO"
+# ⚠️ 먼저 다 있는지 보고 복사한다 (#107) — 중간에 죽으면 3D 만 갈아치우고
+#    로고는 옛 파일이 남은 어중간한 상태가 된다 (rsync --delete 는 이미 돌았다)
+copy_logo() { # 원본 → 대상
+  if [ ! -f "$SRC_LOGO/$1" ]; then
+    echo "✗ 디자인 레포에 $1 이 없습니다 — 로고를 건드리지 않고 멈춥니다" >&2
+    exit 1
+  fi
+}
+copy_logo "shc_symbol_ci_trim.png"
+copy_logo "shinhanlife_logo.png"
+copy_logo "슈퍼쏠앱아이콘_투명.png"
+
 cp "$SRC_LOGO/shc_symbol_ci_trim.png" "$DST_LOGO/shinhan-symbol.png"
 cp "$SRC_LOGO/shinhanlife_logo.png"   "$DST_LOGO/shinhanlife.png"
 cp "$SRC_LOGO/슈퍼쏠앱아이콘_투명.png"  "$DST_LOGO/app-icon.png"
 echo "✓ 로고 3개"
+
+# apple-touch-icon 은 app-icon 에서 만든다 (#107) — iOS 는 180×180 을 기대하고
+# 알파를 검정으로 합성하므로, 투명 원본을 그대로 주면 검은 사각형이 뜬다.
+if command -v sips >/dev/null 2>&1; then
+  node "$ROOT/scripts/make-apple-icon.mjs" 2>/dev/null \
+    && echo "✓ apple-touch-icon 180×180 (불투명)" \
+    || echo "⚠️ apple-touch-icon 생성 실패 — 기존 파일을 그대로 씁니다" >&2
+fi
 
 # 3) 디자인 스펙은 자동으로 덮어쓰지 않는다 — 차이만 알려준다.
 # (이쪽 문구 규칙으로 손본 부분이 있어 맹목적 cp는 위험)

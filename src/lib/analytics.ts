@@ -65,15 +65,28 @@ function makeId(): string {
   return `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-/** 참가자 1명 = 세션 1개. 진행자가 /export에서 새로 시작할 수 있다 */
+/* 저장이 막힌 브라우저에서 쓰는 메모리 세션 — 새로고침하면 사라진다.
+   그래도 track() 이 throw 하지 않는 것이 중요하다 (아래 주석 참고) */
+let memorySessionId: string | null = null
+
+/** 참가자 1명 = 세션 1개. 진행자가 /export에서 새로 시작할 수 있다.
+
+    ⚠️ 여기서 throw 하면 안 된다 (#99) — track() 이 이벤트를 만드는 도중 부르는데,
+       그 호출은 버튼 onClick 안이라 ErrorBoundary(렌더 에러만 잡는다)가 못 막는다.
+       사파리 시크릿·쿠키 차단에서는 localStorage 가 정의는 되어 있고 getItem 에서
+       SecurityError 를 던지므로 typeof 가드로는 부족하다. */
 export function getSessionId(): string {
-  if (typeof localStorage === 'undefined') return 'no-storage'
-  let id = localStorage.getItem(SESSION_KEY)
-  if (!id) {
-    id = makeId()
+  try {
+    const saved = localStorage.getItem(SESSION_KEY)
+    if (saved) return saved
+    const id = makeId()
     localStorage.setItem(SESSION_KEY, id)
+    return id
+  } catch {
+    storageBlocked = true
+    memorySessionId ??= makeId()
+    return memorySessionId
   }
-  return id
 }
 
 export function resetSession(): string {
@@ -99,11 +112,22 @@ export function readEvents(): AnalyticsEvent[] {
   }
 }
 
+/* 저장이 한 번이라도 막혔는지 — /export 가 배너로 알린다.
+   조용히 삼키면 진행자가 "이벤트 N개"가 안 늘어나는 걸 눈으로 세야만 안다 (#99) */
+let storageBlocked = false
+
+/** 계측 저장이 막힌 적이 있으면 true — 진행자 화면 경고용 */
+export function isStorageBlocked(): boolean {
+  return storageBlocked
+}
+
 function writeEvents(events: AnalyticsEvent[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events))
   } catch {
-    /* 용량 초과·저장 불가 — 화면은 계속 돌아가야 한다 */
+    /* 용량 초과·저장 불가 — 화면은 계속 돌아가야 한다.
+       대신 플래그를 세워 /export 에서 보이게 한다 */
+    storageBlocked = true
   }
 }
 
@@ -123,7 +147,10 @@ const listeners = new Set<Listener>()
 
 export function subscribe(fn: Listener): () => void {
   listeners.add(fn)
-  return () => listeners.delete(fn)
+  /* Set.delete 는 boolean 을 반환한다 — cleanup 시그니처와 맞추려고 블록으로 감싼다 */
+  return () => {
+    listeners.delete(fn)
+  }
 }
 
 function notify(): void {
@@ -214,6 +241,8 @@ export function track(input: TrackInput): AnalyticsEvent {
 export interface TaskSummary {
   taskId: TaskId
   sessionId: string
+  /** 같은 과제를 다시 돌린 회차 (1부터). 재시도를 한 줄로 합치지 않는다 (#101) */
+  attempt: number
   /** 과제 중 발생한 탭 수 — 클릭 수 지표 */
   taps: number
   /** 시작~종료 ms. 종료 안 됐으면 null */
@@ -224,55 +253,94 @@ export interface TaskSummary {
   state: AccountState
 }
 
-/** 세션·과제별로 묶어 지표 3종을 뽑는다 */
+type Row = TaskSummary & { startedAt: number | null }
+
+/** 세션·과제별로 묶어 지표를 뽑는다.
+
+    ⚠️ 같은 과제를 다시 돌리면 별도 행이 된다 (#101) — 진행자가 재시도하는 건
+       대본상 흔한데, 한 줄로 합치면 탭 수가 누적되고 1회차 소요시간이 사라지며
+       "1회차 실패 → 2회차 성공"이 성공 한 줄로만 남는다. */
 export function summarize(events: AnalyticsEvent[] = readEvents()): TaskSummary[] {
-  const byKey = new Map<string, TaskSummary & { startedAt: number | null }>()
+  const rows: Row[] = []
+  /** 세션::과제 → 지금 열려 있는 행 */
+  const open = new Map<string, Row>()
+  /** 세션::과제 → 지금까지 몇 회차인지 */
+  const attempts = new Map<string, number>()
+
+  const keyOf = (e: AnalyticsEvent) => `${e.sessionId}::${e.taskId}`
+
+  /** 열린 행이 없으면 만든다 — task_start 없이 이벤트가 먼저 와도 기록은 남긴다 */
+  const rowFor = (e: AnalyticsEvent): Row => {
+    const key = keyOf(e)
+    const existing = open.get(key)
+    if (existing) return existing
+    const attempt = (attempts.get(key) ?? 0) + 1
+    attempts.set(key, attempt)
+    const row: Row = {
+      taskId: e.taskId as TaskId,
+      sessionId: e.sessionId,
+      attempt,
+      taps: 0,
+      durationMs: null,
+      outcome: null,
+      difficulty: null,
+      state: e.state,
+      startedAt: null,
+    }
+    rows.push(row)
+    open.set(key, row)
+    return row
+  }
 
   for (const e of events) {
     if (!e.taskId) continue
-    const key = `${e.sessionId}::${e.taskId}`
-    let row = byKey.get(key)
-    if (!row) {
-      row = {
-        taskId: e.taskId,
-        sessionId: e.sessionId,
-        taps: 0,
-        durationMs: null,
-        outcome: null,
-        difficulty: null,
-        state: e.state,
-        startedAt: null,
-      }
-      byKey.set(key, row)
-    }
 
     switch (e.type) {
+      case 'task_start': {
+        // 이전 회차가 안 닫혔으면 버리고 새 회차를 연다
+        open.delete(keyOf(e))
+        rowFor(e).startedAt = e.timestamp
+        break
+      }
       case 'tap':
-        row.taps += 1
+        rowFor(e).taps += 1
         break
-      case 'task_start':
-        row.startedAt = e.timestamp
-        break
-      case 'task_end':
+      case 'task_end': {
+        const row = rowFor(e)
         row.outcome = e.outcome ?? null
         if (row.startedAt !== null) row.durationMs = e.timestamp - row.startedAt
+        /* 행은 열어 둔 채로 둔다 — 난이도는 과제가 끝난 뒤에 묻기 때문이다.
+           다음 task_start 가 오면 그때 새 회차로 넘어간다 (#101) */
         break
+      }
       case 'difficulty':
-        row.difficulty = e.score ?? null
+        rowFor(e).difficulty = e.score ?? null
         break
       default:
         break
     }
   }
 
-  return [...byKey.values()].map(({ startedAt: _startedAt, ...row }) => row)
+  return rows.map(({ startedAt: _startedAt, ...row }) => row)
+}
+
+/* CSV 한 칸 — 쉼표·따옴표·줄바꿈이 들어가면 열이 밀린다 (#101).
+   taskId 가 자유 문자열이라 진행자가 "과제1, 보험료 확인" 같은 이름을 쓰면
+   엑셀에서 조용히 어긋나고, 틀렸다는 걸 눈치채지 못한다. */
+function csvCell(value: string | number | null): string {
+  const text = value === null ? '' : String(value)
+  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
 }
 
 /** CSV — 엑셀에서 바로 열리게 BOM 포함 */
 export function toCsv(rows: TaskSummary[]): string {
-  const header = ['sessionId', 'state', 'taskId', 'outcome', 'taps', 'durationMs', 'difficulty']
+  const header = [
+    'sessionId', 'state', 'taskId', 'attempt', 'outcome', 'taps', 'durationMs', 'difficulty',
+  ]
   const body = rows.map((r) =>
-    [r.sessionId, r.state, r.taskId, r.outcome ?? '', r.taps, r.durationMs ?? '', r.difficulty ?? ''].join(','),
+    [r.sessionId, r.state, r.taskId, r.attempt, r.outcome, r.taps, r.durationMs, r.difficulty]
+      .map(csvCell)
+      .join(','),
   )
-  return '﻿' + [header.join(','), ...body].join('\n')
+  return '\ufeff' + [header.join(','), ...body].join('\n')
 }

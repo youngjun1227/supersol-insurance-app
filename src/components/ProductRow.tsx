@@ -42,7 +42,9 @@ export function ProductSectionHeader({
 export function ProductRow({
   product, categoryId, onTap,
 }: { product: Product; categoryId: CategoryId; onTap: () => void }) {
-  const Icon = CATEGORY_ICON[categoryId]
+  /* 매핑에 없는 카테고리가 오면 <undefined /> 로 렌더 크래시가 난다 —
+     ProductDetail 은 이미 폴백을 쓰고 있어 여기만 무방비였다 (#109) */
+  const Icon = CATEGORY_ICON[categoryId] ?? ShieldCheck
   return (
     <button type="button" className={styles.item} onClick={onTap}>
       <span className={styles.itemIcon}>

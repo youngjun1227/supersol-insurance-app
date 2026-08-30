@@ -49,22 +49,38 @@ for (const file of files) {
   }
   const lines = src.split('\n')
 
+  /* 블록 주석(/* … *\/) 안쪽인지 추적한다.
+     줄 시작만 보면 별(*) 없이 이어지는 설명 줄을 놓쳐 이슈 번호(#100)를
+     hex 색으로 오탐한다 — 실제로 두 번 겪었다 */
+  let inBlockComment = false
+
   lines.forEach((line, i) => {
     const n = i + 1
     const at = `${file}:${n}`
+
+    const startedBlock = /\/\*/.test(line)
+    const endedBlock = /\*\//.test(line)
+    // 주석 줄은 건너뛴다 — 설명에 hex를 적는 건 허용
+    const isComment =
+      inBlockComment || startedBlock || /^\s*(\/\/|\*)/.test(line)
+    if (startedBlock && !endedBlock) inBlockComment = true
+    if (endedBlock) inBlockComment = false
 
     /* 줄 단위 예외 — iOS·카톡 같은 **플랫폼 모사** 값만 허용한다.
        디자인 레포도 같은 예외를 둔다("우리 화면은 전부 §5 값,
        6·10·11·28 은 iOS/카톡 플랫폼 모사분" — figma-links.md).
        ⚠️ 파일째 면제하지 않는 이유: 그러면 같은 파일의 진짜 위반이 숨는다.
-          왜 예외인지 그 줄 옆에 적게 한다. */
+          왜 예외인지 그 줄 옆에 적게 한다.
+       ⚠️ 블록 주석 추적(위)보다 뒤에 둔다 — 먼저 return 하면 추적이 끊긴다. */
     if (/lint-tokens-ignore/.test(line)) return
-    // 주석 줄은 건너뛴다 — 설명에 hex를 적는 건 허용
-    const isComment = /^\s*(\/\/|\/\*|\*)/.test(line)
 
     // 1) 토큰 밖 hex
     if (norm(file) !== TOKENS_FILE && !isComment) {
-      const hex = line.match(/#[0-9A-Fa-f]{3,8}\b/g)
+      /* 뒤에 오는 코드에서 hex 만 고른다 — 이슈 번호(#100)·해시태그가 아니라
+         3·4·6·8 자리 hex 만. 줄 끝 주석(// …)은 잘라내고 본다 */
+      const code = line.replace(/\/\/.*$/, '')
+      const hex = code.match(/#(?:[0-9A-Fa-f]{8}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{3,4})\b/g)
+        ?.filter((h) => /[A-Fa-f]/.test(h) || h.length === 7 || h.length === 9)
       if (hex) {
         problems.push(`${at}  토큰 밖 색 ${hex.join(' ')} — tokens.css 의 var(--…) 를 쓰세요`)
       }

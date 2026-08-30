@@ -38,6 +38,8 @@
 /* §3 본문 하단 여백 — 변경로그 하단 처리 표 */
 .body[data-footer='tabbar'] { padding-bottom: var(--pb-tabbar); }
 .body[data-footer='cta']    { padding-bottom: var(--pb-cta); }
-.body[data-footer='input']  { padding-bottom: var(--pb-cta); }
+/* 입력 바가 있는 화면(S3-F)은 화면 쪽이 입력 바 높이로 직접 계산한다 (#103) —
+   여기서 --pb-cta 를 또 깔면 누적되어 대화 끝에 빈 공간이 100px 남는다 */
+.body[data-footer='input']  { padding-bottom: 0; }
 /* 'none' = 탭바도 CTA도 없음. 본문 끝 여백만 (S1-7·S3-D·S3-C) */
 .body[data-footer='none']   { padding-bottom: var(--space-8); }

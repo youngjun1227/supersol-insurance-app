@@ -38,4 +38,7 @@ export function getMockData(state: AccountState): MockData {
 export * from './types'
 export {
   PRODUCT_DETAILS, TERM_TOOLTIPS, COPY,
+  /* 계정 상태와 무관한 상수 — lib 가 mock 을 직접 열지 않게 여기서 내보낸다 (#109).
+     "데이터 접근은 한 층으로" 규칙의 유일한 구멍이었다 */
+  TIERS, TIER_VISIBLE_MAX,
 } from './mock'

@@ -16,6 +16,11 @@ export function TermTooltip({ term, onOpen }: TermTooltipProps) {
   const [open, setOpen] = useState(false)
   const text = TERM_TOOLTIPS[term]
 
+  /* 사전에 없는 용어면 버튼을 만들지 않는다 (#109) — 예전엔 [용어 ?] 가
+     그대로 뜨고 aria-expanded 만 토글되면서 말풍선은 영영 안 나왔다.
+     참가자에겐 "눌러도 아무 일 없는 버튼"이라 고장으로 읽힌다. */
+  if (!text) return <span className={`${styles.term} t-body-sm`}>{term}</span>
+
   return (
     <span className={styles.wrap}>
       <button
@@ -23,7 +28,9 @@ export function TermTooltip({ term, onOpen }: TermTooltipProps) {
         className={styles.row}
         aria-expanded={open}
         onClick={() => {
-          if (!open) onOpen?.(term)
+          /* 여는 것만이 아니라 닫는 것도 남긴다 — 용어를 열었다 닫았다 하는 건
+             헤맴 신호다 (#88 "활성 탭 재탭도 기록"과 같은 기준) */
+          onOpen?.(term)
           setOpen((v) => !v)
         }}
       >
@@ -31,7 +38,7 @@ export function TermTooltip({ term, onOpen }: TermTooltipProps) {
         <span className={`${styles.mark} t-label`} aria-hidden="true">?</span>
       </button>
 
-      {open && text ? (
+      {open ? (
         <span className={`${styles.bubble} t-caption`} role="tooltip">
           {text}
         </span>

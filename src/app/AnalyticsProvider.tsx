@@ -14,7 +14,7 @@ interface AnalyticsContextValue {
   taskId: TaskId | null
   startTask: (taskId: TaskId) => void
   endTask: (outcome: TaskOutcome) => void
-  rateDifficulty: (score: number) => void
+  rateDifficulty: (score: number, forTask?: TaskId) => void
 }
 
 const AnalyticsContext = createContext<AnalyticsContextValue | null>(null)
@@ -24,6 +24,8 @@ const ScreenContext = createContext<string>('unknown')
 
 export function AnalyticsProvider({ children }: { children: ReactNode }) {
   const [taskId, setTaskId] = useState<TaskId | null>(null)
+  /** 방금 끝난 과제 — 종료 뒤에 묻는 난이도 점수가 갈 곳 (#101) */
+  const [lastEnded, setLastEnded] = useState<TaskId | null>(null)
 
   const startTask = useCallback((next: TaskId) => {
     setTaskId(next)
@@ -37,15 +39,26 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
       track({ type: 'task_end', targetId: taskId, screen: 'moderator', taskId, outcome })
       setTaskId(null)
       setCurrentTask(null)
+      /* 난이도는 과제가 끝난 뒤에 묻는다 — 그때 taskId 는 이미 비어 있으므로
+         방금 끝난 과제를 따로 들고 있어야 점수가 제 행에 붙는다 (#101) */
+      setLastEnded(taskId)
     },
     [taskId],
   )
 
+  /** 어려웠나 7점. 대상 과제를 명시할 수 있고, 생략하면 방금 끝난 과제에 붙인다.
+
+      ⚠️ 예전엔 진행 중 taskId 로만 찍어서, 과제 종료 후 물으면 taskId 가 null 이라
+         집계에서 통째로 버려지고, 다음 과제를 먼저 시작했으면 그 과제에 붙었다 (#101) */
   const rateDifficulty = useCallback(
-    (score: number) => {
-      track({ type: 'difficulty', targetId: 'difficulty-7', screen: 'moderator', taskId, score })
+    (score: number, forTask?: TaskId) => {
+      const target = forTask ?? taskId ?? lastEnded
+      if (!target) return
+      track({
+        type: 'difficulty', targetId: 'difficulty-7', screen: 'moderator', taskId: target, score,
+      })
     },
-    [taskId],
+    [taskId, lastEnded],
   )
 
   const value = useMemo<AnalyticsContextValue>(

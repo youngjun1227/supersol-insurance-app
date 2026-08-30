@@ -17,6 +17,7 @@ import {
 import { useMock } from '@/app/MockProvider'
 import type { CompanyFilter } from '@/data/paths'
 import type { CategoryId, Product } from '@/data/types'
+import { filterByCompany } from '@/lib/productFilter'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import styles from './ProductList.module.css'
@@ -32,12 +33,10 @@ export function ProductList() {
   const activeCategory = (data.categories.find((c) => c.id === raw)?.id ?? null) as CategoryId | null
   const [company, setCompany] = useState<CompanyFilter>('all')
 
-  const byCompany = useMemo(() => {
-    if (company === 'all') return data.products
-    return data.products.filter((p) =>
-      company === 'life' ? p.issuer === 'own' : p.issuer === 'other',
-    )
-  }, [data.products, company])
+  const byCompany = useMemo(
+    () => filterByCompany(data.products, company),
+    [data.products, company],
+  )
 
   /** 선택된 카테고리만 (전체면 카테고리 순으로 전부) */
   const sections = data.categories
@@ -91,7 +90,7 @@ export function ProductList() {
               </>
             }
           />
-          <ProductTopTabs active="insurance" />
+          <ProductTopTabs active="insurance" screen={SCREEN.s2List} />
         </>
       }
     >

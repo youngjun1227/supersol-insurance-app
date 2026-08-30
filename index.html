@@ -2,11 +2,11 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <!-- §0: 393×852 고정. viewport-fit=cover + safe-area 로 상태바 겹침 처리 -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
-    />
+    <!-- §0: 393×852 고정. viewport-fit=cover + safe-area 로 상태바 겹침 처리.
+         user-scalable=no 는 뺐다 (#107) — iOS 10+ 는 무시하는 데다 접근성 위반이고,
+         고정 폭은 CSS(max-width: --viewport-w)가 이미 잡는다.
+         입력 포커스 시 확대는 인풋 16px 로 막는다 (#103) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>슈퍼SOL 보험</title>
 
     <!-- 홈 화면 추가 시 주소창 없는 전체화면 (§0) -->
@@ -16,7 +16,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="슈퍼SOL 보험" />
-    <link rel="apple-touch-icon" href="/assets/logo/app-icon.png" />
+    <!-- iOS 는 180×180 을 기대하고, 알파를 검정으로 합성한다 —
+         투명 PNG 를 주면 홈 화면에 검은 사각형이 뜬다 (#107) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png" />
     <link rel="icon" href="/assets/logo/app-icon.png" />
 
     <!-- 테스트용 프로토타입 — 검색에 잡히지 않게 -->

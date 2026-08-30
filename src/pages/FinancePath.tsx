@@ -42,7 +42,7 @@ function Shell({ name, tab, children }: {
               </>
             }
           />
-          <FinanceTopTabs active={tab} />
+          <FinanceTopTabs active={tab} screen={SCREEN.financePath} />
         </>
       }
       footer={<TabBar activeId="finance" screen={SCREEN.financePath} />}
