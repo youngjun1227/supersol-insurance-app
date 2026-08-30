@@ -8,12 +8,11 @@
       Figma 는 팀장이 맞춘다 (변경로그가 우선). */
 
 import { List, MagnifyingGlass } from '@phosphor-icons/react'
-import { useNavigate } from 'react-router-dom'
 import { AgentBubble, AppShell, BottomCTA, Button, Header, IconAction, RadarChart } from '@/components'
 import type { RadarAxis } from '@/components/RadarChart'
 import { useMock } from '@/app/MockProvider'
 import { BRIEFING as C } from '@/data/copy'
-import { useTrack } from '@/lib/useTrack'
+import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
 import { batteryAsset, batteryLevelFor } from '@/lib/coverage'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import styles from './Briefing.module.css'
@@ -30,8 +29,7 @@ const AXIS_ORDER: { id: string; short: string }[] = [
 ]
 
 export function Briefing() {
-  const navigate = useNavigate()
-  const track = useTrack()
+  const go = useTrackedNavigate()
   const { data } = useMock()
 
   const axes: RadarAxis[] = AXIS_ORDER.map(({ id, short }) => {
@@ -54,7 +52,7 @@ export function Briefing() {
             block
             size="lg"
             targetId={tid(SCREEN.s3d, ELEMENT.버튼, '자세한진단')}
-            onClick={() => navigate('/diagnosis')}
+            onClick={() => go(null, '/diagnosis')}
           >
             자세한 진단 보기
           </Button>
@@ -86,10 +84,7 @@ export function Briefing() {
         <AgentBubble
           label={C.bubble}
           labelSecond={C.bubbleSecond}
-          onTap={() => {
-            track(tid(SCREEN.s3d, ELEMENT.버튼, '에이전트'))
-            navigate('/agent')
-          }}
+          onTap={() => go(tid(SCREEN.s3d, ELEMENT.버튼, '에이전트'), '/agent')}
         />
 
         {/* 히어로 — 에너지 % + 배터리 */}

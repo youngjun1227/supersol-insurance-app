@@ -2,7 +2,6 @@
    탭바 없음, 하단 고정 CTA 없음 — "관련 보험 찾아보기"는 본문 스크롤 끝 버튼이다. */
 
 import { Fragment, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   AppShell, Badge, Battery, Button, Card,
   CoverageRow, Header, IconAction, MoreToggle, TierHeader,
@@ -14,6 +13,7 @@ import type { CoverageItem, CoverageTier } from '@/data/types'
 import { batteryLevelFor, filledCount, itemsFilledBy, toTierSections } from '@/lib/coverage'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
 import styles from './Diagnosis.module.css'
 
 /** 계약이 채우는 항목을 문장으로 — "암 진단·입원 에너지를 채우고 있어요" */
@@ -25,7 +25,7 @@ function fillSentence(items: CoverageItem[]): string {
 }
 
 export function Diagnosis() {
-  const navigate = useNavigate()
+  const go = useTrackedNavigate()
   const track = useTrack()
   const { data } = useMock()
 
@@ -36,13 +36,11 @@ export function Diagnosis() {
   const filled = filledCount(data.coverage)
 
   const openItem = (item: CoverageItem) => {
-    track(tid(SCREEN.s3c, ELEMENT.항목, item.id))
-    navigate(`/diagnosis/${item.id}`)
+    go(tid(SCREEN.s3c, ELEMENT.항목, item.id), `/diagnosis/${item.id}`)
   }
 
   const askItem = (item: CoverageItem) => {
-    track(tid(SCREEN.s3c, ELEMENT.물어보기, item.id))
-    navigate(`/agent?ctx=${item.id}`)
+    go(tid(SCREEN.s3c, ELEMENT.물어보기, item.id), `/agent?ctx=${item.id}`)
   }
 
   const toggleTier = (tier: CoverageTier) => {
@@ -160,7 +158,7 @@ export function Diagnosis() {
           variant="tint"
           block
           targetId={tid(SCREEN.s3c, ELEMENT.버튼, '관련보험')}
-          onClick={() => navigate('/product/insurance')}
+          onClick={() => go(null, '/product/insurance')}
         >
           {DIAGNOSIS.findProducts}
         </Button>

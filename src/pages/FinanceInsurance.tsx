@@ -9,7 +9,6 @@
 
 import { useState } from 'react'
 import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import {
@@ -20,6 +19,7 @@ import { batteryLevelFor, emptyPriorityItems } from '@/lib/coverage'
 import { won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
 import { BasisSheet } from './BasisSheet'
 import styles from './FinanceInsurance.module.css'
 
@@ -36,8 +36,6 @@ const SERVICE_GROUPS: ServiceItem['group'][] = ['조회·계약', '청구·신�
 const RECOMMENDED_IDS = ['sp-transit-mini', 'sp-sol-teeth']
 
 export function FinanceInsurance() {
-  const navigate = useNavigate()
-  const location = useLocation()
   const track = useTrack()
   const { data, state, customOn } = useMock()
 
@@ -49,11 +47,7 @@ export function FinanceInsurance() {
   /** S1-13 기준 시트 — 라우트가 아니라 이 화면 위 오버레이 */
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  /** 쿼리(?state=A|B&custom=off)를 유지한 채 이동 — 조건이 풀리면 계측이 갈린다 */
-  const go = (targetId: string, pathname: string) => {
-    track(targetId)
-    navigate({ pathname, search: location.search })
-  }
+  const go = useTrackedNavigate()
 
   const policyCount = data.policies.length
   /** 카드가 가리키는 항목 — 우선순위가 높은데 비어 있는 것 중 첫 번째 (상태 B = 실손의료비) */
