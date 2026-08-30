@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AppShell, Button, Header } from '@/components'
 import {
-  clearEvents, getSessionId, readEvents, resetSession,
+  clearEvents, getSessionId, isStorageBlocked, readEvents, resetSession,
   subscribe, summarize, toCsv,
   type AnalyticsEvent, type TaskSummary,
 } from '@/lib/analytics'
@@ -17,8 +17,12 @@ function download(filename: string, text: string, mime: string) {
   const a = document.createElement('a')
   a.href = url
   a.download = filename
+  /* 문서에 붙였다 떼고, revoke 는 다음 틱에 — click() 직후 동기 revoke 하면
+     iOS 사파리에서 다운로드가 조용히 실패한다 (이슈 109) */
+  document.body.appendChild(a)
   a.click()
-  URL.revokeObjectURL(url)
+  document.body.removeChild(a)
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 export function Export() {
@@ -57,6 +61,14 @@ export function Export() {
           <p className={`${styles.meta} t-caption`}>
             이벤트 {events.length}개 · 과제 {rows.length}건
           </p>
+          {/* 저장이 막힌 브라우저(시크릿·쿠키 차단)면 기록이 안 쌓인다 —
+              진행자가 모르고 진행하면 그 참가자 데이터가 통째로 빈다 (#99) */}
+          {isStorageBlocked() ? (
+            <p className={`${styles.warn} t-caption`}>
+              ⚠️ 이 브라우저는 계측 저장이 막혀 있어요. 시크릿 모드를 끄거나 다른 브라우저로
+              열어 주세요 — 지금 기록은 새로고침하면 사라져요.
+            </p>
+          ) : null}
         </section>
 
         <section className={styles.block}>

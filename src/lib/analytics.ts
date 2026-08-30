@@ -65,15 +65,28 @@ function makeId(): string {
   return `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-/** 참가자 1명 = 세션 1개. 진행자가 /export에서 새로 시작할 수 있다 */
+/* 저장이 막힌 브라우저에서 쓰는 메모리 세션 — 새로고침하면 사라진다.
+   그래도 track() 이 throw 하지 않는 것이 중요하다 (아래 주석 참고) */
+let memorySessionId: string | null = null
+
+/** 참가자 1명 = 세션 1개. 진행자가 /export에서 새로 시작할 수 있다.
+
+    ⚠️ 여기서 throw 하면 안 된다 (#99) — track() 이 이벤트를 만드는 도중 부르는데,
+       그 호출은 버튼 onClick 안이라 ErrorBoundary(렌더 에러만 잡는다)가 못 막는다.
+       사파리 시크릿·쿠키 차단에서는 localStorage 가 정의는 되어 있고 getItem 에서
+       SecurityError 를 던지므로 typeof 가드로는 부족하다. */
 export function getSessionId(): string {
-  if (typeof localStorage === 'undefined') return 'no-storage'
-  let id = localStorage.getItem(SESSION_KEY)
-  if (!id) {
-    id = makeId()
+  try {
+    const saved = localStorage.getItem(SESSION_KEY)
+    if (saved) return saved
+    const id = makeId()
     localStorage.setItem(SESSION_KEY, id)
+    return id
+  } catch {
+    storageBlocked = true
+    memorySessionId ??= makeId()
+    return memorySessionId
   }
-  return id
 }
 
 export function resetSession(): string {
@@ -99,11 +112,22 @@ export function readEvents(): AnalyticsEvent[] {
   }
 }
 
+/* 저장이 한 번이라도 막혔는지 — /export 가 배너로 알린다.
+   조용히 삼키면 진행자가 "이벤트 N개"가 안 늘어나는 걸 눈으로 세야만 안다 (#99) */
+let storageBlocked = false
+
+/** 계측 저장이 막힌 적이 있으면 true — 진행자 화면 경고용 */
+export function isStorageBlocked(): boolean {
+  return storageBlocked
+}
+
 function writeEvents(events: AnalyticsEvent[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events))
   } catch {
-    /* 용량 초과·저장 불가 — 화면은 계속 돌아가야 한다 */
+    /* 용량 초과·저장 불가 — 화면은 계속 돌아가야 한다.
+       대신 플래그를 세워 /export 에서 보이게 한다 */
+    storageBlocked = true
   }
 }
 
@@ -123,7 +147,10 @@ const listeners = new Set<Listener>()
 
 export function subscribe(fn: Listener): () => void {
   listeners.add(fn)
-  return () => listeners.delete(fn)
+  /* Set.delete 는 boolean 을 반환한다 — cleanup 시그니처와 맞추려고 블록으로 감싼다 */
+  return () => {
+    listeners.delete(fn)
+  }
 }
 
 function notify(): void {
