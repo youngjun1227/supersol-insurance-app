@@ -50,14 +50,12 @@ function DemoPushInner() {
   }, [stage, navigate])
 
   if (stage === 'splash') {
+    /* 스플래시는 Figma 원본(438:10131) 한 장이다 — 배경색+로고를 코드로 합치면
+       파랑도 로고 위치도 어긋난다 (실제로 한 번 틀렸다). 이미지를 그대로 깐다 */
     return (
       <div className={styles.splash}>
-        <img
-          className={styles.splashLogo}
-          src="/assets/logo/app-icon.png"
-          alt=""
-          aria-hidden="true"
-        />
+        <img className={styles.splashImg} src="/assets/demo/splash.jpg" alt="" aria-hidden="true" />
+        <p className="sr-only" role="status">앱을 여는 중이에요</p>
       </div>
     )
   }
