@@ -9,17 +9,19 @@
 
 import { useState } from 'react'
 import { CaretRight, List, MagnifyingGlass } from '@phosphor-icons/react'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { AppShell, Battery, BottomCTA, Button, Card, Header, IconAction } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { ITEM_DETAIL as C } from '@/data/copy'
 import type { CoverageItem } from '@/data/types'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
 import styles from './ItemDetail.module.css'
 
 export function ItemDetail() {
-  const navigate = useNavigate()
+  const go = useTrackedNavigate()
+  const location = useLocation()
   const track = useTrack()
   const { itemId } = useParams()
   const { data } = useMock()
@@ -34,17 +36,12 @@ export function ItemDetail() {
   /* 없는 itemId 로 직접 들어오면 진단 결과로 돌려보낸다 —
      빈 화면을 지어내는 것보다 원래 있던 화면으로 보내는 편이 덜 혼란스럽다.
      렌더 중 navigate() 는 경고가 나서 <Navigate> 로 선언해 돌린다 */
-  if (!item) return <Navigate to="/diagnosis" replace />
+  if (!item) return <Navigate to={{ pathname: '/diagnosis', search: location.search }} replace />
 
   /** 이 항목을 채우는 계약 — 없으면 빈 상태 (PNG 가 이 경우다) */
   const fromPolicy = item.fromPolicyId
     ? data.policies.find((p) => p.id === item.fromPolicyId)
     : undefined
-
-  const go = (targetId: string, path: string) => {
-    track(targetId)
-    navigate(path)
-  }
 
   const toggle = (key: string) => {
     track(tid(SCREEN.s3e, ELEMENT.토글, key))
@@ -110,13 +107,13 @@ export function ItemDetail() {
               <Button
                 variant="tint"
                 targetId={tid(SCREEN.s3e, ELEMENT.버튼, '내보험목록')}
-                onClick={() => navigate('/finance/insurance/my')}
+                onClick={() => go(null, '/finance/insurance/my')}
               >
                 {C.myPolicies}
               </Button>
               <Button
                 targetId={tid(SCREEN.s3e, ELEMENT.버튼, '관련보험')}
-                onClick={() => navigate('/product/insurance')}
+                onClick={() => go(null, '/product/insurance')}
               >
                 {C.findProducts}
               </Button>

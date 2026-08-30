@@ -18,10 +18,12 @@ import { SECTION_PREVIEW_MAX, type CompanyFilter } from '@/data/paths'
 import type { CategoryId, Product } from '@/data/types'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
 import styles from './ProductInsurance.module.css'
 
 export function ProductInsurance() {
   const navigate = useNavigate()
+  const go = useTrackedNavigate()
   const location = useLocation()
   const track = useTrack()
   const { data } = useMock()
@@ -45,7 +47,7 @@ export function ProductInsurance() {
     const cat = id ?? 'all'
     track(tid(SCREEN.s2, ELEMENT.칩, cat), { cat, company })
     if (!id) return // '전체'는 이미 이 화면이라 이동하지 않는다
-    navigate({ pathname: '/product/insurance/list', search: `?cat=${id}` })
+    go(null, `/product/insurance/list?cat=${id}`)
   }
 
   const goProduct = (p: Product) => {

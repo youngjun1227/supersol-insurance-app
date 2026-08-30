@@ -5,7 +5,7 @@
    ⚠️ 상단 요약의 상품명·설명은 목데이터, 스탯·키값은 PRODUCT_DETAILS(전부 가상값). */
 
 import { Clock, CreditCard, House, List, MagnifyingGlass, User } from '@phosphor-icons/react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
   AgentBubble, AppShell, BottomCTA, Button, Header, IconAction, TermTooltip, TopTabs,
 } from '@/components'
@@ -14,6 +14,7 @@ import { PRODUCT_DETAILS } from '@/data'
 import { PRODUCT_DETAIL_COPY as PD } from '@/data/copy'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
 import { useState } from 'react'
 import styles from './ProductDetail.module.css'
 
@@ -28,7 +29,7 @@ const TABS = [
 const STAT_ICONS = [CreditCard, User, Clock]
 
 export function ProductDetail() {
-  const navigate = useNavigate()
+  const go = useTrackedNavigate()
   const track = useTrack()
   const { productId } = useParams()
   const { data } = useMock()
@@ -94,8 +95,7 @@ export function ProductDetail() {
             className={styles.iconBtn}
             aria-label="홈"
             onClick={() => {
-              track(tid(SCREEN.s6, ELEMENT.버튼, '홈'))
-              navigate('/')
+              go(tid(SCREEN.s6, ELEMENT.버튼, '홈'), '/')
             }}
           >
             <House size={24} weight="regular" color="var(--primary)" />
@@ -113,8 +113,7 @@ export function ProductDetail() {
           labelSecond={PD.bubbleSecond}
           resetKey={product.id}
           onTap={() => {
-            track(tid(SCREEN.s6, ELEMENT.버튼, '에이전트'))
-            navigate(`/agent?ctx=product&id=${product.id}`)
+            go(tid(SCREEN.s6, ELEMENT.버튼, '에이전트'), `/agent?ctx=product&id=${product.id}`)
           }}
         />
 

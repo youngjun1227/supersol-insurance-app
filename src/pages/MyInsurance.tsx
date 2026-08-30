@@ -10,7 +10,6 @@
       x 12..380(폭 369)에 놓여 있다. */
 
 import { CaretRight, List, MagnifyingGlass } from '@phosphor-icons/react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, Card, Header, IconAction } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { INSURANCE_MAIN as C, MY_INSURANCE as M } from '@/data/copy'
@@ -18,19 +17,14 @@ import type { Policy } from '@/data/types'
 import { won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
 import styles from './MyInsurance.module.css'
 
 export function MyInsurance() {
-  const navigate = useNavigate()
-  const location = useLocation()
   const track = useTrack()
   const { data } = useMock()
 
-  /** 쿼리(?state=A|B&custom=off)를 유지한 채 이동 — 조건이 풀리면 계측이 갈린다 */
-  const go = (targetId: string, pathname: string) => {
-    track(targetId)
-    navigate({ pathname, search: location.search })
-  }
+  const go = useTrackedNavigate()
 
   /* ── 요약 카드 ────────────────────────────────────────────
      S1 메인의 "내 보험" 카드 위쪽과 같은 두 칸이다. 단, 건수는 여기서
