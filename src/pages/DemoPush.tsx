@@ -87,14 +87,16 @@ function DemoPushInner() {
           />
           <span className={styles.bannerText}>
             <span className={styles.bannerHead}>
-              <span className={`${styles.bannerTitle} t-body-sm-medium`}>
+              <span className={`${styles.bannerTitle} t-body-lg-bold`}>
                 {CLAIM_COMPLIANCE.title}
               </span>
               <span className={`${styles.bannerWhen} t-caption`}>{DEMO_PUSH.when}</span>
             </span>
-            <span className={`${styles.bannerBody} t-caption`}>{DEMO_PUSH.merchant}</span>
-            <span className={`${styles.bannerBody} t-caption`}>{DEMO_PUSH.action}</span>
-            <span className={`${styles.bannerBody} t-caption`}>{CLAIM_COMPLIANCE.pushNotice}</span>
+            {/* 시안은 결제 요약과 안내가 한 문단(줄바꿈 없이 흐른다), 면책만 따로 */}
+            <span className={`${styles.bannerBody} t-body-sm`}>
+              {DEMO_PUSH.merchant} {DEMO_PUSH.action}
+            </span>
+            <span className={`${styles.bannerBody} t-body-sm`}>{CLAIM_COMPLIANCE.pushNotice}</span>
           </span>
         </button>
       ) : null}

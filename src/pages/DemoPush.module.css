@@ -24,24 +24,35 @@
 
 /* ── 푸시 배너 (iOS 모사) ─────────────────────────────────── */
 
+/* 시안 실측 (394:3363) — 흰 판 · r24 · p16/14 · gap12 · 아이콘 44 */
 .banner {
   position: absolute;
-  top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
+  top: calc(60px - 47px + env(safe-area-inset-top, 0px));
   right: var(--space-3);
   left: var(--space-3);
   display: flex;
   gap: var(--space-3);
-  align-items: flex-start;
-  padding: 14px;
+  align-items: center;
+  padding: 14px var(--space-4);
   text-align: left;
-  /* iOS 알림 — 반투명 흰 판 + 블러. 플랫폼 모사라 토큰이 아니다 */
-  border-radius: 22px; /* lint-tokens-ignore — iOS 알림 라운드 (스펙 §5 아님) */
-  background: rgba(250, 250, 250, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  border-radius: var(--r-card-lg);
+  /* iOS 알림의 글래스 — 뒤 배경이 비쳐 보이고 흐려진다.
+     시안은 흰 판으로 그렸지만 실물 iOS 는 반투명이라, 치수·타이포는 시안대로 두고
+     배경만 실제 알림에 맞춘다. backdrop-filter 를 못 쓰는 브라우저는
+     아래 background 값(불투명에 가까운 흰색)으로 떨어져 시안과 같아진다. */
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14); /* lint-tokens-ignore — 시안 실측 */
   /* 위에서 내려오는 등장 — iOS 배너와 같은 방향 */
   animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 글래스가 되면 배경을 더 비치게 — 뒤 홈화면이 흐릿하게 보인다 */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .banner {
+    background: rgba(250, 250, 252, 0.72);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
 }
 
 @keyframes slideDown {
@@ -51,20 +62,23 @@
 
 .appIcon {
   flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 9px; /* lint-tokens-ignore — iOS 앱 아이콘 라운드 */
-  /* 원본이 투명 PNG 라 반투명 배너 위에서 비쳐 보인다 — 흰 바탕을 깐다 */
-  background: var(--bg-surface);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px; /* lint-tokens-ignore — iOS 앱 아이콘 라운드 */
 }
 
 .bannerText {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
 
+/* 제목 + "지금".
+   ⚠️ 시안 문구("가능해요")는 한 줄인데 우리는 규정 문구("가능할 수 있어요")라 길어
+      두 줄이 된다 (변경로그 §3: 단정 표현 금지 — 문구는 못 줄인다).
+      두 줄이 되더라도 "요" 한 글자만 떨어지지 않게 어절 단위로 끊는다. */
 .bannerHead {
   display: flex;
   align-items: baseline;
@@ -75,6 +89,8 @@
   flex: 1;
   min-width: 0;
   color: var(--text-primary);
+  /* 한글은 글자 단위로 끊겨 "요" 한 글자가 남는다 — 어절 단위로 넘긴다 */
+  word-break: keep-all;
 }
 
 .bannerWhen {
