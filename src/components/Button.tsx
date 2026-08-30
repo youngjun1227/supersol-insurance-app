@@ -11,8 +11,10 @@ import styles from './Button.module.css'
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
   variant?: 'primary' | 'tint'
   size?: 'md' | 'lg'
-  /** 계측용 이름. 없으면 버튼 글자를 쓴다 */
-  targetId?: string
+  /** 계측용 이름 — tid() 로 만든다.
+      ⚠️ 필수다 (#100). 예전엔 없으면 버튼 글자를 썼는데, 그러면 두 화면의
+         "확인" 버튼이 같은 targetId 로 뭉치고 tid() 규칙도 조용히 우회된다. */
+  targetId: string
   /** 폭 100% */
   block?: boolean
   children: ReactNode
@@ -37,7 +39,7 @@ export function Button({
       data-size={size}
       data-block={block}
       onClick={(e) => {
-        track(targetId ?? (typeof children === 'string' ? children : 'button'))
+        track(targetId)
         onClick?.(e)
       }}
       {...rest}

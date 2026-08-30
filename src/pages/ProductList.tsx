@@ -91,7 +91,7 @@ export function ProductList() {
               </>
             }
           />
-          <ProductTopTabs active="insurance" />
+          <ProductTopTabs active="insurance" screen={SCREEN.s2List} />
         </>
       }
     >

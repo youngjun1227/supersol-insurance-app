@@ -18,7 +18,7 @@ function download(filename: string, text: string, mime: string) {
   a.href = url
   a.download = filename
   /* 문서에 붙였다 떼고, revoke 는 다음 틱에 — click() 직후 동기 revoke 하면
-     iOS 사파리에서 다운로드가 조용히 실패한다 (이슈 109) */
+     iOS 사파리에서 다운로드가 조용히 실패한다 (#109) */
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)

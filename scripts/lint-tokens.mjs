@@ -49,15 +49,30 @@ for (const file of files) {
   }
   const lines = src.split('\n')
 
+  /* 블록 주석(/* … *\/) 안쪽인지 추적한다.
+     줄 시작만 보면 별(*) 없이 이어지는 설명 줄을 놓쳐 이슈 번호(#100)를
+     hex 색으로 오탐한다 — 실제로 두 번 겪었다 */
+  let inBlockComment = false
+
   lines.forEach((line, i) => {
     const n = i + 1
     const at = `${file}:${n}`
+
+    const startedBlock = /\/\*/.test(line)
+    const endedBlock = /\*\//.test(line)
     // 주석 줄은 건너뛴다 — 설명에 hex를 적는 건 허용
-    const isComment = /^\s*(\/\/|\/\*|\*)/.test(line)
+    const isComment =
+      inBlockComment || startedBlock || /^\s*(\/\/|\*)/.test(line)
+    if (startedBlock && !endedBlock) inBlockComment = true
+    if (endedBlock) inBlockComment = false
 
     // 1) 토큰 밖 hex
     if (norm(file) !== TOKENS_FILE && !isComment) {
-      const hex = line.match(/#[0-9A-Fa-f]{3,8}\b/g)
+      /* 뒤에 오는 코드에서 hex 만 고른다 — 이슈 번호(#100)·해시태그가 아니라
+         3·4·6·8 자리 hex 만. 줄 끝 주석(// …)은 잘라내고 본다 */
+      const code = line.replace(/\/\/.*$/, '')
+      const hex = code.match(/#(?:[0-9A-Fa-f]{8}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{3,4})\b/g)
+        ?.filter((h) => /[A-Fa-f]/.test(h) || h.length === 7 || h.length === 9)
       if (hex) {
         problems.push(`${at}  토큰 밖 색 ${hex.join(' ')} — tokens.css 의 var(--…) 를 쓰세요`)
       }
