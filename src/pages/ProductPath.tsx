@@ -38,7 +38,7 @@ export function ProductDiscover() {
               </>
             }
           />
-          <ProductTopTabs active="discover" />
+          <ProductTopTabs active="discover" screen={SCREEN.productPath} />
         </>
       }
       footer={<TabBar activeId="product" screen={SCREEN.productPath} />}

@@ -13,6 +13,30 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { X } from '@phosphor-icons/react'
 import styles from './BottomSheet.module.css'
 
+/* 열려 있는 시트를 쌓아 둔다 (#104).
+   ① 스크롤 잠금은 참조 카운트로 — 시트 A 위에 B 가 열렸다 A→B 순서로 닫히면
+      각자 캡처한 prev 로 복원하다 body 가 'hidden' 인 채 영영 남는다.
+   ② Esc 는 맨 위 시트만 닫는다 — document 리스너를 각자 달면 한 번에 다 닫힌다. */
+const sheetStack: { close: () => void }[] = []
+let savedBodyOverflow: string | null = null
+
+function pushSheet(entry: { close: () => void }) {
+  if (sheetStack.length === 0) {
+    savedBodyOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+  }
+  sheetStack.push(entry)
+}
+
+function popSheet(entry: { close: () => void }) {
+  const i = sheetStack.indexOf(entry)
+  if (i !== -1) sheetStack.splice(i, 1)
+  if (sheetStack.length === 0) {
+    document.body.style.overflow = savedBodyOverflow ?? ''
+    savedBodyOverflow = null
+  }
+}
+
 interface BottomSheetProps {
   open: boolean
   onClose: () => void
@@ -28,22 +52,37 @@ export function BottomSheet({
   open, onClose, variant = 'sheet', closable = false, label, children,
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null)
+  /** onClose 를 매 렌더 새로 만드는 호출부가 있어도 effect 가 다시 돌지 않게 */
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   /* Esc 로 닫기 + 열려 있는 동안 뒤 스크롤 막기.
      시트가 떠 있는데 뒤가 스크롤되면 어디를 보는지 알 수 없다 */
   useEffect(() => {
     if (!open) return
+
+    const entry = { close: () => onCloseRef.current() }
+    pushSheet(entry)
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      // 맨 위 시트만 닫는다 — 중첩 시 한 번에 다 닫히면 안 된다
+      if (e.key === 'Escape' && sheetStack[sheetStack.length - 1] === entry) {
+        entry.close()
+      }
     }
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     document.addEventListener('keydown', onKey)
+
+    /* 열릴 때 시트로 포커스를 옮기고, 닫히면 열었던 자리로 돌려준다.
+       aria-modal 만 선언하고 포커스를 안 옮기면 스크린리더가 시트가 뜬 걸 모른다 */
+    const opener = document.activeElement as HTMLElement | null
+    sheetRef.current?.focus()
+
     return () => {
-      document.body.style.overflow = prev
+      popSheet(entry)
       document.removeEventListener('keydown', onKey)
+      opener?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 
@@ -60,6 +99,8 @@ export function BottomSheet({
       <div
         className={styles.sheet}
         ref={sheetRef}
+        /* 포커스를 받되 탭 순서에는 끼지 않는다 (열릴 때 focus() 대상) */
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
       >
         {closable ? (

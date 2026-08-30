@@ -6,28 +6,7 @@
   gap: var(--space-5);
 }
 
+/* 탭 모양·언더라인은 공용 정의에서 가져온다 (#106) */
 .tab {
-  position: relative;
-  display: flex;
-  align-items: center;
-  color: var(--text-caption);
-}
-
-.tab[data-selected='true'] { color: var(--text-primary); }
-
-/* 선택 언더라인 2px — 회색(--text-caption).
- * ⚠️ 파랑(--primary)도 검정도 아니다. 캡처 3x 실측으로 정정 (스펙 §5 2026-08-26)
- *
- * ⚠️ bottom 은 0 이 아니다 — 행 바닥에 붙이면 글자와 14px 벌어진다.
- *    figma-ref 실측은 글자 아래끝에서 11px 이라 3px 올린다.
- *    (경로-09 금융-은행 · S1-9 보험메인 둘 다 글자 y131 / 언더라인 y143)
- *    행 높이(--h-toptabs)에 기대지 않고 고정값을 줘야 화면마다 같아진다. */
-.tab[data-selected='true']::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 3px;
-  height: 2px;
-  background: var(--text-caption);
+  composes: tab from './tabUnderline.module.css';
 }

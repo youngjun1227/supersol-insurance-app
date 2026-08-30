@@ -18,28 +18,11 @@
   padding: 0 var(--gutter);
 }
 
+/* 탭 모양·언더라인은 공용 정의에서 (#106) — 금융 탭과 같아야 한다.
+   ⚠️ padding 10px/4px 비대칭을 뺐다 — 글자가 3px 아래로 밀려 금융 탭과 어긋났다.
+      행에 높이(--h-toptabs)가 있으므로 align-items: center 가 세로 가운데를 잡는다 */
 .tab {
-  position: relative;
-  display: flex;
-  align-items: center;
+  composes: tab from './tabUnderline.module.css';
   flex-shrink: 0;
-  /* ⚠️ padding 10px/4px 비대칭을 뺐다 — 글자가 3px 아래로 밀려 금융 탭과 어긋났다.
-     행에 높이(--h-toptabs)가 있으므로 align-items: center 가 세로 가운데를 잡는다 */
-  color: var(--text-caption);
   white-space: nowrap;
-}
-
-.tab[data-selected='true'] { color: var(--text-primary); }
-
-/* 선택 언더라인 2px — 회색(--text-caption).
- * 캡처 3x 실측으로 정정 (스펙 §5 2026-08-26). 파랑도 검정도 아니다 */
-.tab[data-selected='true']::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  /* 금융 탭과 같은 값 — 행 바닥이 아니라 글자에서 11px (figma 실측) */
-  bottom: 3px;
-  height: 2px;
-  background: var(--text-caption);
 }

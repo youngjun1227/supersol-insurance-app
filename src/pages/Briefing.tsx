@@ -7,8 +7,7 @@
       버튼은 항상 보인다. S3-E·S6-A 와 같은 구조라 앱 안에서도 일관된다.
       Figma 는 팀장이 맞춘다 (변경로그가 우선). */
 
-import { List, MagnifyingGlass } from '@phosphor-icons/react'
-import { AgentBubble, AppShell, BottomCTA, Button, Header, IconAction, RadarChart } from '@/components'
+import { AgentBubble, AppShell, BottomCTA, Button, Header, HeaderActions, RadarChart } from '@/components'
 import type { RadarAxis } from '@/components/RadarChart'
 import { useMock } from '@/app/MockProvider'
 import { BRIEFING as C } from '@/data/copy'
@@ -63,16 +62,7 @@ export function Briefing() {
           title="보장 진단"
           variant="sub"
           screen={SCREEN.s3d}
-          actions={
-            <>
-              <IconAction targetId={tid(SCREEN.s3d, ELEMENT.버튼, '검색')} label="검색">
-                <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-              <IconAction targetId={tid(SCREEN.s3d, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                <List size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-            </>
-          }
+          actions={<HeaderActions screen={SCREEN.s3d} />}
         />
       }
     >

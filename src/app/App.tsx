@@ -1,8 +1,9 @@
 /* 라우터 — 변경로그 "화면 목록 v2" 기준.
    ⚠️ 화면을 추가하면 AppShell의 name(계측 화면 이름)도 같이 붙인다.
 
-   탭바가 뜨는 화면: / · /finance/insurance · /product/insurance · 스켈레톤
-   그 밖(진단·청구·에이전트)은 Figma 실측상 탭바가 아예 없다. */
+   탭바가 뜨는 화면: / · /finance · /finance/card · /finance/stock ·
+     /finance/insurance · /product · /product/insurance · /product/insurance/list · 스켈레톤
+   그 밖(진단·청구·에이전트·상품 상세)은 Figma 실측상 탭바가 아예 없다. */
 
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { SCREEN } from '@/lib/targetId'
@@ -67,7 +68,7 @@ export function App() {
           <Route path="/claim/guide" element={<ClaimGuide />} />
           <Route path="/claim/done" element={<ClaimDone />} />
 
-          {/* S2 상품 찾기 — 🔷 A/B/C 안 미정이라 구현 착수 금지. 자리만 잡아둔다 */}
+          {/* S2 상품 찾기 — A안 확정 후 구현 완료 (변경로그 "S2 = A안") */}
           <Route path="/product/insurance" element={<ProductInsurance />} />
           <Route path="/product/insurance/list" element={<ProductList />} />
           <Route path="/product/insurance/:productId" element={<ProductDetail />} />

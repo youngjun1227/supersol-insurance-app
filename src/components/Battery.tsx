@@ -18,15 +18,18 @@ const SIZES: Record<BatterySize, { w: number; h: number }> = {
 interface BatteryProps {
   level: BatteryLevel
   size?: BatterySize
-  /** 크기를 직접 줄 때 (S1 카드 72×96 등). 3:4를 지킬 것 */
+  /** 크기를 직접 줄 때 (S1 카드 72×96 등). 높이는 3:4 로 자동 계산된다 */
   width?: number
+  /** 비율을 벗어나야 할 때만. 보통은 width 만 준다 */
   height?: number
 }
 
 export function Battery({ level, size = 'row', width, height }: BatteryProps) {
   const preset = SIZES[size]
   const w = width ?? preset.w
-  const h = height ?? preset.h
+  /* height 를 안 주면 3:4 로 맞춘다 (#109) — 예전엔 preset 높이로 폴백해서
+     width 만 넘기면 비율이 깨졌다 (주석은 "3:4를 지킬 것"인데 코드가 강제하지 않았다) */
+  const h = height ?? (width !== undefined ? Math.round((width * 4) / 3) : preset.h)
 
   return (
     <img

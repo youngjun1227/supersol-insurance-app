@@ -5,7 +5,11 @@
                        이름 14/500, 라벨 13
 
    ⚠️ 탭 타깃이 2개다 — 행 전체(→S3-E)와 💬(→S3-F).
-      계측도 따로 잡아야 해서 💬 클릭은 전파를 막는다. */
+
+   ⚠️ 행 전체를 role="button" div 로 감싸면 안 된다 (#105) — 그 안의 💬 버튼이
+      접근성 트리에서 텍스트로 평탄화돼, 스크린리더 사용자는 💬 를 아예 못 누른다
+      (그 참가자에게서는 S3C-물어보기-* 이벤트가 절대 안 나온다).
+      배터리·텍스트·chevron 만 <button> 으로 묶고 💬 는 형제로 둔다. */
 
 import { CaretRight, ChatCircleDots } from '@phosphor-icons/react'
 import type { CoverageItem } from '@/data/types'
@@ -26,43 +30,36 @@ export function CoverageRow({ item, variant = 'compact', onOpen, onAsk }: Covera
   const isCard = variant === 'card'
 
   return (
-    <div
-      className={styles.row}
-      data-variant={variant}
-      role="button"
-      tabIndex={0}
-      onClick={() => onOpen?.(item)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onOpen?.(item)
-        }
-      }}
-    >
-      <Battery level={item.batteryLevel} size={isCard ? 'row' : 'compact'} />
+    <div className={styles.row} data-variant={variant}>
+      {/* 행 본문 = 항목 상세로 가는 버튼. 네이티브 <button> 이라
+          Enter·Space 동작이 브라우저 기본과 같다 (예전 keydown 처리는
+          키를 누르고 있으면 자동 반복해 탭이 여러 건 찍혔다) */}
+      <button
+        type="button"
+        className={styles.main}
+        onClick={() => onOpen?.(item)}
+      >
+        <Battery level={item.batteryLevel} size={isCard ? 'row' : 'compact'} />
 
-      <div className={styles.text}>
-        <div className={styles.nameRow}>
-          <span className={isCard ? 't-body-lg-bold' : 't-body-sm-medium'}>{item.label}</span>
-          {item.badge ? <Badge variant="primary">{item.badge}</Badge> : null}
-        </div>
+        <span className={styles.text}>
+          <span className={styles.nameRow}>
+            <span className={isCard ? 't-body-lg-bold' : 't-body-sm-medium'}>{item.label}</span>
+            {item.badge ? <Badge variant="primary">{item.badge}</Badge> : null}
+          </span>
 
-        <p className={`${styles.values} ${isCard ? 't-body-sm-medium' : 't-caption'}`}>
-          {item.mineLabel} · {item.peerLabel}
-        </p>
+          <span className={`${styles.values} ${isCard ? 't-body-sm-medium' : 't-caption'}`}>
+            {item.mineLabel} · {item.peerLabel}
+          </span>
 
-        {item.desc ? <p className={`${styles.desc} t-caption`}>{item.desc}</p> : null}
-      </div>
+          {item.desc ? <span className={`${styles.desc} t-caption`}>{item.desc}</span> : null}
+        </span>
+      </button>
 
       <button
         type="button"
         className={styles.ask}
         aria-label={`${item.label} 물어보기`}
-        onClick={(e) => {
-          // 행 전체 탭과 다른 타깃이라 전파를 막는다
-          e.stopPropagation()
-          onAsk?.(item)
-        }}
+        onClick={() => onAsk?.(item)}
       >
         <ChatCircleDots size={22} weight="regular" color="var(--text-secondary)" />
       </button>
