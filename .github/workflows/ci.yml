@@ -34,30 +34,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # 문구 스윕은 grep 뿐이라 node 설치가 필요 없다 — 그만큼 빨리 끝난다
-      - name: 금칙어·단정형 청구 표현·실명/실번호
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      # pre-commit 과 같은 스크립트를 쓴다 (#108) — 검사가 두 벌이면 갈린다
+      - name: 금칙어·실명·실번호
+        run: node scripts/check-copy.mjs
+
+      # 커밋 트레일러는 .githooks/commit-msg 가 막지만, 훅은 clone 후
+      # `git config core.hooksPath .githooks` 를 해야 붙는다. 새 팀원이 빠뜨리면
+      # 무방비라 CI 에서도 본다 (CLAUDE.md 최상위 규칙)
+      - name: Claude 트레일러 금지
         run: |
           set -e
-          FAIL=0
-          # 변경로그 §3: 청구는 "가능할 수 있어요"만 허용 (단정 표현 금지)
-          for term in "개선안" "솔루션" "노출 증대" "가입 전환" "청구할 수 있어요" "SOL:VE"; do
-            # 주석 줄 제외 — 경고 주석이 스스로 걸리지 않게
-            if grep -rn --include='*.ts' --include='*.tsx' --include='*.css' --include='*.html' "$term" src/ index.html 2>/dev/null | grep -vE ':[0-9]+:\s*(//|\*|/\*)'; then
-              echo "❌ 금지 문구 발견: '$term'"; FAIL=1
-            fi
-          done
-          # 목데이터 규칙: 김신한 / 010-0000-0000 만 허용
-          if grep -rnE --include='*.ts' --include='*.tsx' "010-[0-9]{4}-[0-9]{4}" src/ | grep -v "010-0000-0000"; then
-            echo "❌ 실전화번호 패턴 발견"; FAIL=1
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          if [ -z "$BASE" ]; then BASE="$(git rev-parse HEAD~1)"; HEAD="$(git rev-parse HEAD)"; fi
+          if git log --format='%B' "$BASE..$HEAD" | grep -iE 'Co-Authored-By: Claude|Generated with .*Claude Code'; then
+            echo "❌ 커밋 메시지에 Claude 트레일러가 있습니다 (CLAUDE.md 커밋 규칙)"
+            exit 1
           fi
-          # public 저장소 — 팀원 실명 금지, GitHub 계정명만 쓴다.
-          # docs 까지 검사한다 (디자인 레포에서 동기화된 문서에 실명이 섞여 들어온 적이 있다)
-          for name in "영준" "종광" "찬영"; do
-            if grep -rn --include='*.ts' --include='*.tsx' --include='*.md' "$name" src/ docs/ CLAUDE.md README.md 2>/dev/null; then
-              echo "❌ 실명 발견 — GitHub 계정명을 쓰세요 (public 저장소)"; FAIL=1
-            fi
-          done
-          exit $FAIL
+          echo "✓ 트레일러 없음"
 
   mock:
     name: 목데이터 정합성
@@ -107,7 +106,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: 라우트 27벌 렌더 (쿼리 상태 변형 포함)
+      - name: 라우트 29벌 렌더 (쿼리 상태 변형 포함)
         run: npm run test
 
   # ── 관문 job ──────────────────────────────────────────────

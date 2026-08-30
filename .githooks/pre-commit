@@ -21,7 +21,22 @@ if [ -n "$STAGED" ]; then
   fi
 fi
 
-# 3) 목데이터 정합성 — 원본 문서와 어긋나면 막는다
+# 3) 문구 규칙 — 금칙어·실명·실번호
+# ⚠️ public 저장소라 실명은 push 후에 잡으면 이미 늦다. CI 에도 같은 검사가 있지만
+#    커밋 시점에 한 번 더 막는다 (#108). 스테이징된 코드·문서만 본다.
+STAGED_COPY="$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|css|html|md)$' || true)"
+if [ -n "$STAGED_COPY" ]; then
+  if command -v node >/dev/null 2>&1; then
+    # shellcheck disable=SC2086
+    node scripts/check-copy.mjs $STAGED_COPY || {
+      echo "" >&2
+      echo "커밋을 중단했습니다. 문구 규칙은 CLAUDE.md 를 보세요." >&2
+      exit 1
+    }
+  fi
+fi
+
+# 4) 목데이터 정합성 — 원본 문서와 어긋나면 막는다
 if git diff --cached --name-only --diff-filter=ACM | grep -q '^src/data/mock\.ts$'; then
   if command -v node >/dev/null 2>&1; then
     node scripts/check-mock.mjs || {

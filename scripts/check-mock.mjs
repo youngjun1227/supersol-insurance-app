@@ -48,8 +48,10 @@ const EXPECTED_BATTERY = {
   심혈관질환진단: 0, 뇌혈관질환진단: 0, 치매진단: 0, 후유장해: 30, 사망: 0,
 }
 for (const [label, want] of Object.entries(EXPECTED_BATTERY)) {
+  /* ⚠️ 범위를 제한한다 (#108) — [\s\S]*? 로 두면 이 항목에 batteryLevel 이
+     없을 때 **다음 항목 값**을 잡아 조용히 통과한다. 한 항목은 400자를 넘지 않는다 */
   const m = src.match(
-    new RegExp(`label: '${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',[\\s\\S]*?batteryLevel: (\\d+)`),
+    new RegExp(`label: '${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',[\\s\\S]{0,400}?batteryLevel: (\\d+)`),
   )
   ok(`${label} 배터리 ${m?.[1] ?? '?'} (문서 ${want})`, m && Number(m[1]) === want)
 }
