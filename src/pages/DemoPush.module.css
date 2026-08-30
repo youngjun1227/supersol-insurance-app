@@ -1,0 +1,105 @@
+/* 시연 도입부 — iOS 홈화면 + 푸시 배너 + 스플래시.
+
+   ⚠️ 이 화면은 **우리 앱이 아니라 iOS 를 모사**한 것이다 (스펙 §7 플랫폼 모사 예외).
+      배너의 라운드·블러·반투명은 iOS 값이라 우리 토큰과 다르다 — 토큰으로 스냅하면
+      아이폰 알림처럼 안 보여서 연출이 깨진다. 우리 화면에는 이 값을 쓰지 않는다. */
+
+.phone {
+  position: relative;
+  width: 100%;
+  max-width: var(--viewport-w);
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #000; /* lint-tokens-ignore — 폰 화면 밖 여백. iOS 모사 */
+}
+
+/* 홈화면 PNG — 폰 화면을 꽉 채운다 */
+.wallpaper {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── 푸시 배너 (iOS 모사) ─────────────────────────────────── */
+
+.banner {
+  position: absolute;
+  top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
+  right: var(--space-3);
+  left: var(--space-3);
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: 14px;
+  text-align: left;
+  /* iOS 알림 — 반투명 흰 판 + 블러. 플랫폼 모사라 토큰이 아니다 */
+  border-radius: 22px; /* lint-tokens-ignore — iOS 알림 라운드 (스펙 §5 아님) */
+  background: rgba(250, 250, 250, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  /* 위에서 내려오는 등장 — iOS 배너와 같은 방향 */
+  animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.appIcon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px; /* lint-tokens-ignore — iOS 앱 아이콘 라운드 */
+  /* 원본이 투명 PNG 라 반투명 배너 위에서 비쳐 보인다 — 흰 바탕을 깐다 */
+  background: var(--bg-surface);
+}
+
+.bannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bannerHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.bannerTitle {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+}
+
+.bannerWhen {
+  flex: none;
+  color: var(--text-caption);
+}
+
+.bannerBody { color: var(--text-secondary); }
+
+/* ── 스플래시 (Figma `438:10131`) ──────────────────────────── */
+
+.splash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: var(--viewport-w);
+  height: 100dvh;
+  margin: 0 auto;
+  /* 앱 아이콘과 같은 파랑 — 로고 전용 신한 CI 블루가 아니라 스플래시 배경이다 */
+  background: var(--primary);
+}
+
+.splashLogo {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--r-card-xl);
+}

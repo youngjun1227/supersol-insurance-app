@@ -38,6 +38,20 @@ export const CLAIM_POPUP = {
   optOut: '이 알림 받지 않기',
 } as const
 
+/* ── 시연 도입부 (S5-D 상단 배너 · Figma 시연용 `394:3307`) ──
+   진행자가 /demo 에서 시나리오를 골라 시작한다. 참가자는 iOS 홈화면을 보다가
+   배너를 받고, 그걸 눌러 앱으로 들어온다 — 실제 푸시가 아니라 **연출**이다
+   (백엔드가 없어 진짜 알림은 못 보낸다).
+   ⚠️ 제목·면책은 CLAIM_COMPLIANCE 를 그대로 쓴다 — 여기 다시 적지 않는다. */
+export const DEMO_PUSH = {
+  /** 배너 우상단 시각 표기 — iOS 가 "지금"으로 보여 준다 */
+  when: '지금',
+  /** 결제 요약 (목데이터 pay-1 과 같은 건) */
+  merchant: '○○내과의원 32,000원',
+  /** 행동 안내 — 병원을 나오기 전이어야 서류를 받을 수 있다 */
+  action: '병원 나오기 전에 영수증·세부내역서를 받으세요',
+} as const
+
 /** S5-A 알림 설정·동의 (figma-ref/S5-A-알림설정.png) */
 export const CLAIM_SETTINGS = {
   title: '청구 알림 설정',

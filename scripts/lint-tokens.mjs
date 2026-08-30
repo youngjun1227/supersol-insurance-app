@@ -52,6 +52,13 @@ for (const file of files) {
   lines.forEach((line, i) => {
     const n = i + 1
     const at = `${file}:${n}`
+
+    /* 줄 단위 예외 — iOS·카톡 같은 **플랫폼 모사** 값만 허용한다.
+       디자인 레포도 같은 예외를 둔다("우리 화면은 전부 §5 값,
+       6·10·11·28 은 iOS/카톡 플랫폼 모사분" — figma-links.md).
+       ⚠️ 파일째 면제하지 않는 이유: 그러면 같은 파일의 진짜 위반이 숨는다.
+          왜 예외인지 그 줄 옆에 적게 한다. */
+    if (/lint-tokens-ignore/.test(line)) return
     // 주석 줄은 건너뛴다 — 설명에 hex를 적는 건 허용
     const isComment = /^\s*(\/\/|\/\*|\*)/.test(line)
 
