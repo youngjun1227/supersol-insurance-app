@@ -21,6 +21,18 @@
   padding: var(--space-2) var(--space-1);
 }
 
+/* 행 본문 버튼 — 배터리+텍스트+여백을 차지한다.
+   시각은 예전 .row 와 같게 두고(배경·테두리는 .row 가 그린다) 폭만 차지한다 */
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .text {
   flex: 1;
   min-width: 0;
