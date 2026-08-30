@@ -4,9 +4,8 @@
    figma-ref 기본 상태: 알림 토글 Off · 앱 알림만 고정 체크 · 카카오톡 해제. */
 
 import { useState } from 'react'
-import { List, MagnifyingGlass } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
-import { AppShell, BottomCTA, Button, Card, Header, IconAction, Toggle } from '@/components'
+import { AppShell, BottomCTA, Button, Card, Header, HeaderActions, Toggle } from '@/components'
 import { CLAIM_SETTINGS as C } from '@/data/copy'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
@@ -42,16 +41,7 @@ export function ClaimSettings() {
           title={C.title}
           variant="sub"
           screen={SCREEN.s5Settings}
-          actions={
-            <>
-              <IconAction targetId={tid(SCREEN.s5Settings, ELEMENT.버튼, '검색')} label="검색">
-                <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-              <IconAction targetId={tid(SCREEN.s5Settings, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                <List size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-            </>
-          }
+          actions={<HeaderActions screen={SCREEN.s5Settings} />}
         />
       }
     >

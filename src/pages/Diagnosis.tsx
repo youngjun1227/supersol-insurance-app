@@ -2,11 +2,7 @@
    탭바 없음, 하단 고정 CTA 없음 — "관련 보험 찾아보기"는 본문 스크롤 끝 버튼이다. */
 
 import { Fragment, useState } from 'react'
-import {
-  AppShell, Badge, Battery, Button, Card,
-  CoverageRow, Header, IconAction, MoreToggle, TierHeader,
-} from '@/components'
-import { List, MagnifyingGlass } from '@phosphor-icons/react'
+import { AppShell, Badge, Battery, Button, Card, CoverageRow, Header, HeaderActions, MoreToggle, TierHeader } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { DIAGNOSIS } from '@/data/copy'
 import type { CoverageItem, CoverageTier } from '@/data/types'
@@ -61,16 +57,7 @@ export function Diagnosis() {
           title="보장 진단 결과"
           variant="sub"
           screen={SCREEN.s3c}
-          actions={
-            <>
-              <IconAction targetId={tid(SCREEN.s3c, ELEMENT.버튼, '검색')} label="검색">
-                <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-              <IconAction targetId={tid(SCREEN.s3c, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                <List size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-            </>
-          }
+          actions={<HeaderActions screen={SCREEN.s3c} />}
         />
       }
       footerType="none"

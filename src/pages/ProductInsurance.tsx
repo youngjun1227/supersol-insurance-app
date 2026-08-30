@@ -16,6 +16,7 @@ import {
 import { useMock } from '@/app/MockProvider'
 import { SECTION_PREVIEW_MAX, type CompanyFilter } from '@/data/paths'
 import type { CategoryId, Product } from '@/data/types'
+import { filterByCompany } from '@/lib/productFilter'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
@@ -31,12 +32,10 @@ export function ProductInsurance() {
   /** 회사 필터만 상태로 둔다 — 카테고리는 선택 시 S2-D 로 나간다 */
   const [company, setCompany] = useState<CompanyFilter>('all')
 
-  const filtered = useMemo(() => {
-    if (company === 'all') return data.products
-    return data.products.filter((p) =>
-      company === 'life' ? p.issuer === 'own' : p.issuer === 'other',
-    )
-  }, [data.products, company])
+  const filtered = useMemo(
+    () => filterByCompany(data.products, company),
+    [data.products, company],
+  )
 
   const sections = data.categories
     .map((c) => ({ category: c, items: filtered.filter((p) => p.category === c.id) }))

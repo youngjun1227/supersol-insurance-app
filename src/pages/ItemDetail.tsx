@@ -8,9 +8,9 @@
    ⚠️ 헤더는 "항목 상세"가 아니라 **"보장 상세"** 다 (PNG). 라우터 Placeholder 이름과 다르다. */
 
 import { useEffect, useState } from 'react'
-import { CaretRight, List, MagnifyingGlass } from '@phosphor-icons/react'
+import { CaretRight } from '@phosphor-icons/react'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
-import { AppShell, Battery, BottomCTA, Button, Card, Header, IconAction } from '@/components'
+import { AppShell, Battery, BottomCTA, Button, Card, Header, HeaderActions } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { ITEM_DETAIL as C } from '@/data/copy'
 import type { CoverageItem } from '@/data/types'
@@ -94,16 +94,7 @@ export function ItemDetail() {
           title={C.title}
           variant="sub"
           screen={SCREEN.s3e}
-          actions={
-            <>
-              <IconAction targetId={tid(SCREEN.s3e, ELEMENT.버튼, '검색')} label="검색">
-                <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-              <IconAction targetId={tid(SCREEN.s3e, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                <List size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-            </>
-          }
+          actions={<HeaderActions screen={SCREEN.s3e} />}
         />
       }
       footerType="cta"
