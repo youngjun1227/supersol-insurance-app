@@ -24,14 +24,15 @@ const CATEGORY_ICON: Record<CategoryId, Icon> = {
 }
 
 /** 섹션 헤더 — 3D 아이콘(옵션) + 카테고리명 + 카운트 */
+/* 카테고리 섹션 헤더 — 3D 아이콘 + 이름 + 개수.
+   ⚠️ 아이콘은 옵션이 아니다. withIcon prop 이었을 때 S2-A 가 그걸 빠뜨려
+      같은 카테고리 줄이 두 화면에서 다르게 보였다 (figma-ref 는 둘 다 아이콘이 있다). */
 export function ProductSectionHeader({
-  category, count, withIcon = false,
-}: { category: Category; count: number; withIcon?: boolean }) {
+  category, count,
+}: { category: Category; count: number }) {
   return (
     <div className={styles.head}>
-      {withIcon ? (
-        <img className={styles.headIcon} src={`/assets/3d/${category.icon3d}.png`} alt="" aria-hidden="true" />
-      ) : null}
+      <img className={styles.headIcon} src={`/assets/3d/${category.icon3d}.png`} alt="" aria-hidden="true" />
       <h2 className={`${styles.headName} t-h2`}>{category.label}</h2>
       <span className={`${styles.headCount} t-h2`}>{count}</span>
     </div>

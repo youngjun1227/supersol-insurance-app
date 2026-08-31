@@ -11,19 +11,13 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Splash } from '@/components'
 import { ScreenProvider } from '@/app/AnalyticsProvider'
 import { CLAIM_COMPLIANCE, DEMO_PUSH } from '@/data/copy'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
+import { BANNER_DELAY_MS, SPLASH_MS } from '@/lib/timing'
 import { useScreenView, useTrack } from '@/lib/useTrack'
 import styles from './DemoPush.module.css'
-
-/** 배너가 내려오기까지 — 참가자가 "폰을 보고 있는" 시간 */
-const BANNER_DELAY_MS = 2500
-/** 스플래시 — 앱이 켜지는 시간.
-    ⚠️ 디자인 레포 규정은 0.8초(438:10131, AFTER_TIMEOUT)인데 실제로 돌려 보니
-       너무 빨라 "앱이 켜졌다"는 느낌이 안 났다. 1.2초로 늘린다 —
-       Figma 프로토타입은 화면 전환만 보지만 여기선 참가자가 로딩을 인지해야 한다. */
-const SPLASH_MS = 1200
 
 type Stage = 'home' | 'banner' | 'splash'
 
@@ -49,16 +43,8 @@ function DemoPushInner() {
     return () => clearTimeout(t)
   }, [stage, navigate])
 
-  if (stage === 'splash') {
-    /* 스플래시는 Figma 원본(438:10131) 한 장이다 — 배경색+로고를 코드로 합치면
-       파랑도 로고 위치도 어긋난다 (실제로 한 번 틀렸다). 이미지를 그대로 깐다 */
-    return (
-      <div className={styles.splash}>
-        <img className={styles.splashImg} src="/assets/demo/splash.jpg" alt="" aria-hidden="true" />
-        <p className="sr-only" role="status">앱을 여는 중이에요</p>
-      </div>
-    )
-  }
+  // 알림을 눌러 앱이 콜드 스타트하는 자리 — 앱 진입(/)과 같은 스플래시를 쓴다
+  if (stage === 'splash') return <Splash />
 
   return (
     <div className={styles.phone}>

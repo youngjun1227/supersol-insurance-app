@@ -108,7 +108,7 @@ export function ProductList() {
       <div className={styles.sections}>
         {sections.map(({ category, items }) => (
           <section key={category.id} className={styles.section}>
-            <ProductSectionHeader category={category} count={items.length} withIcon />
+            <ProductSectionHeader category={category} count={items.length} />
             {items.map((p) => (
               <ProductRow
                 key={p.id}

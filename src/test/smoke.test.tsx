@@ -8,10 +8,14 @@
       마지막 검사가 목록↔App.tsx 라우트 수를 대조해 그걸 잡는다. */
 
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
-import { cleanup, render } from '@testing-library/react'
+import { act, cleanup, render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { readFileSync } from 'node:fs'
 import { App } from '@/app/App'
+import { SPLASH_MS } from '@/lib/timing'
+
+/** 스플래시가 그리는 유일한 텍스트 — 이게 화면 전부면 아직 로딩 중이다 */
+const SPLASH_TEXT = '앱을 여는 중이에요'
 
 /** 라우트 31벌 + 쿼리 상태 변형. 데이터 상태가 갈리는 화면은 변형까지 돈다 */
 const ROUTES = [
@@ -35,6 +39,8 @@ let consoleErrors: string[]
 beforeEach(() => {
   consoleErrors = []
   localStorage.clear()
+  // 스플래시 타이머를 테스트가 직접 넘긴다
+  vi.useFakeTimers()
   vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
     consoleErrors.push(args.map(String).join(' '))
   })
@@ -42,6 +48,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup()
+  vi.useRealTimers()
   vi.restoreAllMocks()
 })
 
@@ -51,6 +58,15 @@ test.each(ROUTES)('%s 가 에러 없이 뜬다', (route) => {
       <App />
     </MemoryRouter>,
   )
+
+  /* 앱 진입 스플래시를 넘긴다 — 안 넘기면 모든 라우트가 스플래시만 보고
+     통과해서, 화면이 깨져도 CI 가 못 잡는다 (실제로 그럴 뻔했다). */
+  act(() => {
+    vi.advanceTimersByTime(SPLASH_MS + 100)
+  })
+
+  // 스플래시가 아니라 진짜 화면이어야 한다
+  expect(container.textContent).not.toBe(SPLASH_TEXT)
 
   // 뭔가 그려졌다 (빈 트리 = 라우트 미매칭이 조용히 지나가는 걸 막는다)
   expect(container.textContent?.length ?? 0).toBeGreaterThan(0)
