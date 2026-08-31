@@ -24,8 +24,13 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  /* standalone 모드 상태바 겹침 방지 (§0) */
-  padding-top: env(safe-area-inset-top, 0px);
+  /* ⚠️ safe-area-inset-top 패딩은 일부러 없다 (#107).
+     apple-mobile-web-app-status-bar-style 이 'default' 라 iOS 가 상태바 영역을
+     따로 잡아 주고, 그 모드에서는 env(safe-area-inset-top) 이 항상 0 이다
+     (실측 확인). 넣어 봐야 아무 일도 안 하는 줄이 남을 뿐이다.
+     상태바를 콘텐츠로 덮는 'black-translucent' 로 바꾸면 그때 다시 필요하다 —
+     다만 화면 위쪽 생김새가 바뀌므로 룩앤필 동결 대상이다.
+     하단은 다르다: 홈 인디케이터를 피해야 해서 safe-area-inset-bottom 은 쓴다. */
   background: inherit;
 }
 
