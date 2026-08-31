@@ -9,6 +9,7 @@ import { AppShell, Card, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
+import { useSecretTap } from '@/lib/useSecretTap'
 import { useTrack } from '@/lib/useTrack'
 import { ClaimPopup } from './ClaimPopup'
 import styles from './Home.module.css'
@@ -25,6 +26,8 @@ export function Home() {
     navigate({ pathname: '/finance', search: location.search })
   }
 
+  const openModerator = useSecretTap(() => navigate('/demo'))
+
   return (
     <AppShell
       name="00-메인홈"
@@ -33,7 +36,10 @@ export function Home() {
       footerType="tabbar"
       header={
         <div className={styles.header}>
-          <div className={styles.greeting}>
+          {/* 이름을 5번 연속 누르면 진행자 화면으로 (숨은 입구).
+              참가자가 실수로 누를 자리가 아니고, 진행자는 주소를 타이핑하지 않아도 된다.
+              ⚠️ 계측하지 않는다 — 진행자 조작이라 참가자 탭 수에 섞이면 안 된다 */}
+          <div className={styles.greeting} onClick={openModerator}>
             <Info size={24} weight="regular" color="var(--text-secondary)" />
             <span className={`${styles.name} t-h2`}>{data.user.name}님</span>
           </div>
