@@ -13,6 +13,8 @@ import { MockProvider } from './MockProvider'
 import { Agent } from '@/pages/Agent'
 import { Export } from '@/pages/Export'
 import { Briefing } from '@/pages/Briefing'
+import { DemoMenu } from '@/pages/DemoMenu'
+import { DemoPush } from '@/pages/DemoPush'
 import { ClaimDone } from '@/pages/ClaimDone'
 import { ClaimGuide } from '@/pages/ClaimGuide'
 import { ClaimSettings } from '@/pages/ClaimSettings'
@@ -76,6 +78,11 @@ export function App() {
           {/* 비테스트 탭 — 이동은 되고 내용만 빈 화면 */}
           <Route path="/benefit" element={<Skeleton name="혜택-자리표시" title="혜택" tabId="benefit" screen={SCREEN.skeleton} />} />
           <Route path="/stock" element={<Skeleton name="주식-자리표시" title="주식" tabId="stock" screen={SCREEN.skeleton} />} />
+
+          {/* 시연 도입부 — 앱 밖에서 알림을 받고 들어오는 흐름 (진행자가 연다).
+              /demo 시나리오 선택 → /demo/push 홈화면·배너 → 스플래시 → /?popup=claim */}
+          <Route path="/demo" element={<DemoMenu />} />
+          <Route path="/demo/push" element={<DemoPush />} />
 
           {/* 진행자용 — 참가자에게 노출하지 않는다 */}
           <Route path="/export" element={<Export />} />

@@ -1,0 +1,135 @@
+/* 시연 도입부 — iOS 홈화면 + 푸시 배너 + 스플래시.
+
+   ⚠️ 이 화면은 **우리 앱이 아니라 iOS 를 모사**한 것이다 (스펙 §7 플랫폼 모사 예외).
+      배너의 라운드·블러·반투명은 iOS 값이라 우리 토큰과 다르다 — 토큰으로 스냅하면
+      아이폰 알림처럼 안 보여서 연출이 깨진다. 우리 화면에는 이 값을 쓰지 않는다. */
+
+.phone {
+  position: relative;
+  width: 100%;
+  max-width: var(--viewport-w);
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #000; /* lint-tokens-ignore — 폰 화면 밖 여백. iOS 모사 */
+}
+
+/* 홈화면 PNG — 폰 화면을 꽉 채운다 */
+.wallpaper {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── 푸시 배너 (iOS 모사) ─────────────────────────────────── */
+
+/* 시안 실측 (394:3363) — 흰 판 · r24 · p16/14 · gap12 · 아이콘 44 */
+.banner {
+  position: absolute;
+  top: calc(60px - 47px + env(safe-area-inset-top, 0px));
+  right: var(--space-3);
+  left: var(--space-3);
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: 14px var(--space-4);
+  text-align: left;
+  border-radius: var(--r-card-lg);
+  /* iOS 알림의 글래스 — 뒤 배경이 비쳐 보이고 흐려진다.
+     시안은 흰 판으로 그렸지만 실물 iOS 는 반투명이라, 치수·타이포는 시안대로 두고
+     배경만 실제 알림에 맞춘다. backdrop-filter 를 못 쓰는 브라우저는
+     아래 background 값(불투명에 가까운 흰색)으로 떨어져 시안과 같아진다. */
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14); /* lint-tokens-ignore — 시안 실측 */
+  /* 위에서 내려오는 등장 — iOS 배너와 같은 방향 */
+  animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 글래스가 되면 배경을 더 비치게 — 뒤 홈화면이 흐릿하게 보인다 */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .banner {
+    background: rgba(250, 250, 252, 0.72);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.appIcon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px; /* lint-tokens-ignore — iOS 앱 아이콘 라운드 */
+}
+
+.bannerText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* 제목 + "지금".
+   ⚠️ 시안 문구("가능해요")는 한 줄인데 우리는 규정 문구("가능할 수 있어요")라 길어
+      두 줄이 된다 (변경로그 §3: 단정 표현 금지 — 문구는 못 줄인다).
+      두 줄이 되더라도 "요" 한 글자만 떨어지지 않게 어절 단위로 끊는다. */
+.bannerHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.bannerTitle {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-primary);
+  /* 한글은 글자 단위로 끊겨 "요" 한 글자가 남는다 — 어절 단위로 넘긴다 */
+  word-break: keep-all;
+}
+
+.bannerWhen {
+  flex: none;
+  color: var(--text-caption);
+}
+
+.bannerBody { color: var(--text-secondary); }
+
+/* ── 스플래시 (Figma `438:10131`) ──────────────────────────── */
+
+/* 스플래시 — Figma 원본 한 장(438:10131). 배경 파랑·로고 위치가 이미지에 들어 있다 */
+.splash {
+  position: relative;
+  width: 100%;
+  max-width: var(--viewport-w);
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.splashImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 툭 나타나면 화면이 끊긴 것처럼 보인다 — 짧게 페이드인 */
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 모션을 줄이라고 설정한 기기는 애니메이션을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  .banner,
+  .splashImg {
+    animation: none;
+  }
+}
