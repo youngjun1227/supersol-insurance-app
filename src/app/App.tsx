@@ -5,7 +5,10 @@
      /finance/insurance · /product · /product/insurance · /product/insurance/list · 스켈레톤
    그 밖(진단·청구·에이전트·상품 상세)은 Figma 실측상 탭바가 아예 없다. */
 
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Splash } from '@/components'
+import { SPLASH_MS } from '@/lib/timing'
 import { SCREEN } from '@/lib/targetId'
 import { useScrollTop } from '@/lib/useScrollTop'
 import { AnalyticsProvider } from './AnalyticsProvider'
@@ -30,9 +33,33 @@ import { ProductList } from '@/pages/ProductList'
 import { ProductDetail } from '@/pages/ProductDetail'
 import { Skeleton } from '@/pages/Skeleton'
 
+/** 앱 실행 스플래시를 건너뛰는 경로 — 진행자 화면과 시연 도입부.
+    /demo/push 는 자기 흐름 안에서 스플래시를 따로 띄우므로 여기서 또 띄우면 두 번 나온다. */
+const NO_SPLASH = ['/export', '/demo']
+
 export function App() {
   /* 화면을 옮기면 맨 위에서 시작한다 — SPA 는 스크롤이 그대로 남는다 (#70) */
   useScrollTop()
+
+  const { pathname } = useLocation()
+  const skipSplash = NO_SPLASH.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+
+  /* 앱을 켤 때 스플래시를 한 번 지난다 (2026-08-31 팀장 — "항상 보여준다").
+     ⚠️ 새로고침마다 다시 뜬다. 9/11 과제 3개가 홈에서 시작하므로 진행자가
+        화면을 리셋할 때마다 1.2초를 기다린다 — 실제 앱과 같은 감각을 위해 감수한다. */
+  const [booting, setBooting] = useState(!skipSplash)
+
+  /* ⚠️ 타이머를 한 번만 건다. StrictMode 는 개발 모드에서 effect 를 두 번 돌리는데,
+     booting 을 의존성에 넣으면 첫 타이머가 cleanup 으로 취소된 뒤 두 번째가
+     걸리면서 스플래시가 아예 안 보이는 일이 생겼다 (실제로 겪음). */
+  const bootTimer = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (!booting || bootTimer.current !== null) return
+    bootTimer.current = window.setTimeout(() => setBooting(false), SPLASH_MS)
+  }, [booting])
+
+  if (booting) return <Splash />
 
   return (
     <AnalyticsProvider>
