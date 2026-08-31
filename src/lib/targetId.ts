@@ -29,6 +29,10 @@ export const SCREEN = {
   s5Settings: 'S5A',
   s6: 'S6A',
   skeleton: 'SKEL',
+  /* 시연 도입부 (#S5-D) — 참가자가 앱에 들어오기 **전** 단계다.
+     앱 안에서 헤맨 것과 구분해야 해서 화면 코드를 따로 둔다 */
+  demoMenu: 'DEMO',
+  demoPush: 'DEMO-PUSH',
 } as const
 
 export type ScreenCode = (typeof SCREEN)[keyof typeof SCREEN]

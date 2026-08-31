@@ -1,0 +1,28 @@
+/* 진행자용 시연 메뉴 — 참가자에게 보여주는 화면이 아니라 꾸미지 않는다 */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--gutter) var(--space-8);
+}
+
+.note {
+  padding: var(--space-4);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-alt);
+  color: var(--text-secondary);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-card);
+  background: var(--bg-surface);
+}
+
+.h { color: var(--text-primary); }
+.desc { color: var(--text-caption); }
