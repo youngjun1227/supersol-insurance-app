@@ -5,11 +5,15 @@
      - 선택된 카테고리 칩이 활성화되고, 그 섹션만 전체 목록으로 펼쳐진다
      - 섹션 헤더에 3D 아이콘 24 가 붙는다
      - 미리보기 3개 제한이 없다 ("모두 보기" 행도 없다)
-     - 헤더가 드롭다운형("모든상품 ▾") */
+     - 헤더가 드롭다운형("모든상품 ▾")
+
+   ⚠️ 이 화면은 카테고리가 "선택된" 상태만 그린다 — '전체'(cat 없음·잘못된 cat)는
+      S2-A 로 돌려보낸다. 여기서 전체를 그리면 26개가 미리보기 제한 없이
+      다 펼쳐지는, Figma 어느 프레임에도 없는 상태가 된다. */
 
 import { useMemo, useState } from 'react'
 import { CaretDown, House, List, MagnifyingGlass } from '@phosphor-icons/react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   AppShell, Header, IconAction, ProductFilters, ProductRow,
   ProductSectionHeader, ProductTopTabs, TabBar,
@@ -20,6 +24,7 @@ import type { CategoryId, Product } from '@/data/types'
 import { filterByCompany } from '@/lib/productFilter'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
+import { mergeSearch } from '@/lib/useTrackedNavigate'
 import styles from './ProductList.module.css'
 
 export function ProductList() {
@@ -46,14 +51,27 @@ export function ProductList() {
 
   const snapshot = () => ({ cat: activeCategory ?? 'all', company })
 
+  /** '전체' 도착지 = S2-A. ?cat 만 떼고 나머지 쿼리(?state= 참가자 조건)는 유지한다 */
+  const toAll = () => {
+    const merged = mergeSearch('/product/insurance', location.search)
+    const p = new URLSearchParams(merged.search)
+    p.delete('cat')
+    const s = p.toString()
+    return { pathname: merged.pathname, search: s ? `?${s}` : '' }
+  }
+
   const selectCategory = (id: CategoryId | null) => {
     track(tid(SCREEN.s2List, ELEMENT.칩, id ?? 'all'), { cat: id ?? 'all', company })
-    // 같은 화면에서 카테고리만 교체 (S2-A 와 달리 이동하지 않는다)
+    // '전체' → S2-A 복귀 (미리보기 3개 + "모두 보기" 상태는 S2-A 만 그린다)
+    if (!id) {
+      navigate(toAll(), { replace: true })
+      return
+    }
+    // 카테고리끼리는 같은 화면에서 교체 (S2-A 와 달리 이동하지 않는다)
     setSearchParams(
       (prev) => {
         const p = new URLSearchParams(prev)
-        if (id) p.set('cat', id)
-        else p.delete('cat')
+        p.set('cat', id)
         return p
       },
       { replace: true },
@@ -64,6 +82,9 @@ export function ProductList() {
     track(tid(SCREEN.s2List, ELEMENT.행, p.id), snapshot())
     navigate({ pathname: `/product/insurance/${p.id}`, search: location.search })
   }
+
+  // cat 이 없거나 목록에 없는 값이면 (직접 진입·오타 URL 포함) S2-A 로
+  if (activeCategory === null) return <Navigate to={toAll()} replace />
 
   return (
     <AppShell
