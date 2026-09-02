@@ -70,3 +70,41 @@ export function itemsFilledBy(coverage: CoverageItem[], policyId: string): Cover
 export function tierOf(id: CoverageTier): TierMeta | undefined {
   return TIERS.find((t) => t.id === id)
 }
+
+/* ── S1 진단 연계 추천 (2026-09-02 팀장 — B안) ──────────────────
+   "왜 이게 보이는지"를 화면에 적기 위해, 추천은 반드시 진단 항목에서 출발한다.
+   광고가 아니라 진단 결과의 연장이라는 게 이 배너의 존재 이유다.
+   ⚠️ 맞춤 OFF 는 개인화를 끈 상태라 호출하지 않는다 — 배너 자체가 빠진다. */
+
+/** 보장 항목 → 상품 카테고리. 임의 매칭 금지라 데이터에 있는 id 로만 잇는다. */
+const COVERAGE_TO_CATEGORY: Record<string, string> = {
+  'c-actual': 'health',    // 실손의료비 → 건강
+  'c-hospital': 'health',  // 입원      → 건강
+  'c-surgery': 'health',   // 수술      → 건강
+  'c-dental': 'dental',    // 치과치료  → 치아
+  'c-heart': 'health',     // 심혈관질환 → 건강
+  'c-brain': 'health',     // 뇌혈관질환 → 건강
+  'c-dementia': 'dementia',// 치매      → 치매·간병
+  'c-disabled': 'injury',  // 후유장해  → 상해
+  'c-cancer': 'cancer',    // 암 진단   → 암
+  'c-death': 'etc',        // 사망      → 그 밖의 보장
+}
+
+export interface CoverageRecommendation {
+  /** 추천 근거가 된 진단 항목 — 배너 첫 줄에 그대로 적는다 */
+  item: CoverageItem
+  /** 이어지는 상품 카테고리 id */
+  categoryId: string
+}
+
+/** 지금 채우면 좋은 것 중 1순위 항목과 그 카테고리.
+    now 티어에 빈 항목이 없으면 추천하지 않는다(null) — 억지로 권하지 않는다. */
+export function topRecommendation(coverage: CoverageItem[]): CoverageRecommendation | null {
+  const [item] = emptyPriorityItems(coverage)
+  if (!item) return null
+
+  const categoryId = COVERAGE_TO_CATEGORY[item.id]
+  if (!categoryId) return null
+
+  return { item, categoryId }
+}

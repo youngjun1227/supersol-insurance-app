@@ -328,3 +328,54 @@
   flex-direction: column;
   gap: var(--space-1);
 }
+
+/* ══ 진단 연계 추천 배너 (2026-09-02 팀장 — B안) ═══════════════
+   내 보험 아래 · 보장진단 위. 근거 → 상품 순서로 읽히게 세로로 쌓는다.
+   ⚠️ 토큰 밖 값 금지 — 기존 카드와 같은 라운드·패딩을 쓴다. */
+.recoCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--pad-card);
+  border: 0;
+}
+
+.recoBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+}
+
+/* 근거 줄 — 배너가 광고가 아니라 진단의 연장임을 밝히는 자리 */
+.recoBasis { color: var(--primary); }
+
+.recoMain {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.recoIcon {
+  flex: none;
+  width: 48px;
+  height: 48px;
+}
+
+.recoText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.recoLead { color: var(--text-secondary); }
+.recoName { color: var(--text-primary); }
+.recoPremium { color: var(--text-secondary); }
+
+.recoNote { color: var(--text-caption); }
