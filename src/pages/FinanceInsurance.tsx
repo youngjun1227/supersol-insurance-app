@@ -14,7 +14,7 @@ import { useMock } from '@/app/MockProvider'
 import {
   DIAGNOSIS, INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
 } from '@/data/copy'
-import type { Policy, ServiceItem } from '@/data/types'
+import type { ServiceItem } from '@/data/types'
 import { batteryLevelFor, emptyPriorityItems, topRecommendation } from '@/lib/coverage'
 import { withJosa, won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
@@ -100,33 +100,12 @@ export function FinanceInsurance() {
   )
 
   /* ── 내 보험 카드 + 2분할 액션 ────────────────────────────── */
-  const policyRow = (policy: Policy) => (
-    <button
-      key={policy.id}
-      type="button"
-      className={styles.policyRow}
-      onClick={() => go(tid(SCREEN.s1, ELEMENT.행, policy.id), '/finance/insurance/my')}
-    >
-      {policy.issuer === 'own' ? (
-        <img
-          className={styles.policyLogo}
-          src="/assets/logo/shinhan-symbol.png"
-          alt=""
-          aria-hidden="true"
-        />
-      ) : (
-        <span className={styles.policyLogo} aria-hidden="true" />
-      )}
-      <span className={styles.policyText}>
-        <span className={`${styles.policyName} t-body-lg-medium`}>{policy.name}</span>
-        <span className={`${styles.policyMeta} t-body-sm`}>
-          {policy.startedAt} 가입 · 월 {won(policy.monthlyPremium)}
-        </span>
-      </span>
-      <span className={styles.chevron} aria-hidden="true">›</span>
-    </button>
-  )
-
+  /* ⚠️ 계약 목록을 카드에서 뺐다 (2026-09-02 팀장 · Figma 679:5622).
+     보험은 입출금계좌처럼 매일 변동되는 정보가 아니라, 가입 후에는
+     본인이 무엇을 들었는지 대체로 안다 — 상시 노출할 정보가 아니다.
+     첫 화면을 "맞춤 홈"으로 읽히게 하려면 추천·보장진단이 먼저 보여야 해서
+     그 자리를 내줬다. 계약 상세는 "내 보험 ›" → S1-7 에서 본다.
+     ⚠️ 0건(S1-8)의 추천 상품 행은 .policyRow 스타일을 계속 쓴다 — 지우지 말 것. */
   const myInsurance = (
     <div className={styles.myBlock}>
       <Card radius="lg" className={styles.myCard}>
@@ -150,9 +129,6 @@ export function FinanceInsurance() {
           </span>
         </div>
 
-        <div className={styles.divider} />
-
-        <div className={styles.policies}>{data.policies.map(policyRow)}</div>
       </Card>
 
       {/* 2분할 액션 — 내 보험 카드 아래 붙는 틴트 면 (스펙 §5 SplitButton) */}
