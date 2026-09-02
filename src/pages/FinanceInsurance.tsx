@@ -12,7 +12,7 @@ import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import {
-  DIAGNOSIS, INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
+  INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
 } from '@/data/copy'
 import type { ServiceItem } from '@/data/types'
 import {
@@ -261,7 +261,6 @@ export function FinanceInsurance() {
         </button>
       ) : null}
 
-      <p className={`${styles.diagDisclaimer} t-caption`}>{DIAGNOSIS.disclaimer}</p>
     </Card>
   )
 

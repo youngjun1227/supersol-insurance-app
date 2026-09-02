@@ -196,8 +196,6 @@
 .diagItemName { color: var(--text-primary); }
 .diagItemPeer { color: var(--text-caption); }
 
-.diagDisclaimer { color: var(--text-caption); }
-
 /* ── 서비스 그리드 3묶음 ─────────────────────────────────────── */
 .serviceCard {
   display: flex;

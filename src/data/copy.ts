@@ -217,8 +217,6 @@ export const INSURANCE_MAIN = {
   recoLead: '이런 보장을',
   /** 이어지는 카테고리. {category} = 이름, {n} = 상품 수 */
   recoCategory: '{category} 보험 {n}개로 채울 수 있어요',
-  /** 배너가 광고가 아님을 밝히는 꼬리말 */
-  recoNote: '가입을 권하는 것이 아니에요. 수치는 가상값이에요.',
 
   /** 하단 배너 2개 */
   bannerExpert: '보험이 어렵다면 전문가에게 물어보세요!',
