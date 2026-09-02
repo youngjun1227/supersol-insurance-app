@@ -12,11 +12,13 @@ import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import {
-  DIAGNOSIS, INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
+  INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
 } from '@/data/copy'
-import type { Policy, ServiceItem } from '@/data/types'
-import { batteryLevelFor, emptyPriorityItems } from '@/lib/coverage'
-import { won } from '@/lib/format'
+import type { ServiceItem } from '@/data/types'
+import {
+  batteryLevelFor, emptyPriorityItems, filledCount, topRecommendation,
+} from '@/lib/coverage'
+import { withJosa, won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
 import { useTrackedNavigate } from '@/lib/useTrackedNavigate'
@@ -100,33 +102,12 @@ export function FinanceInsurance() {
   )
 
   /* ── 내 보험 카드 + 2분할 액션 ────────────────────────────── */
-  const policyRow = (policy: Policy) => (
-    <button
-      key={policy.id}
-      type="button"
-      className={styles.policyRow}
-      onClick={() => go(tid(SCREEN.s1, ELEMENT.행, policy.id), '/finance/insurance/my')}
-    >
-      {policy.issuer === 'own' ? (
-        <img
-          className={styles.policyLogo}
-          src="/assets/logo/shinhan-symbol.png"
-          alt=""
-          aria-hidden="true"
-        />
-      ) : (
-        <span className={styles.policyLogo} aria-hidden="true" />
-      )}
-      <span className={styles.policyText}>
-        <span className={`${styles.policyName} t-body-lg-medium`}>{policy.name}</span>
-        <span className={`${styles.policyMeta} t-body-sm`}>
-          {policy.startedAt} 가입 · 월 {won(policy.monthlyPremium)}
-        </span>
-      </span>
-      <span className={styles.chevron} aria-hidden="true">›</span>
-    </button>
-  )
-
+  /* ⚠️ 계약 목록을 카드에서 뺐다 (2026-09-02 팀장 · Figma 679:5622).
+     보험은 입출금계좌처럼 매일 변동되는 정보가 아니라, 가입 후에는
+     본인이 무엇을 들었는지 대체로 안다 — 상시 노출할 정보가 아니다.
+     첫 화면을 "맞춤 홈"으로 읽히게 하려면 추천·보장진단이 먼저 보여야 해서
+     그 자리를 내줬다. 계약 상세는 "내 보험 ›" → S1-7 에서 본다.
+     ⚠️ 0건(S1-8)의 추천 상품 행은 .policyRow 스타일을 계속 쓴다 — 지우지 말 것. */
   const myInsurance = (
     <div className={styles.myBlock}>
       <Card radius="lg" className={styles.myCard}>
@@ -150,9 +131,6 @@ export function FinanceInsurance() {
           </span>
         </div>
 
-        <div className={styles.divider} />
-
-        <div className={styles.policies}>{data.policies.map(policyRow)}</div>
       </Card>
 
       {/* 2분할 액션 — 내 보험 카드 아래 붙는 틴트 면 (스펙 §5 SplitButton) */}
@@ -177,6 +155,65 @@ export function FinanceInsurance() {
     </div>
   )
 
+  /* ── 진단 연계 추천 배너 (2026-09-02 팀장 — B안) ────────────
+     Figma 679:5622 의 배너 자리. 시안은 이벤트 광고였으나 개인화 축을
+     드러내는 자리로 바꿨다 — 진단 1순위 빈 항목에서 상품을 잇는다.
+     ⚠️ 근거("진단 결과 · OO이 비어 있어요")를 먼저 적는 게 이 배너의 핵심이다.
+        근거 없이 상품만 놓으면 우리가 AS-IS 에서 비판한 광고 배너와 같아진다.
+     ⚠️ 맞춤 OFF 에서는 렌더하지 않는다 — 개인화를 끄면 추천도 사라진다. */
+  const reco = topRecommendation(data.coverage)
+  /* ⚠️ 특정 상품 하나를 콕 집지 않는다.
+     자사 상품이 4개 카테고리(암·치아·건강·상해)뿐이라 진단 항목마다
+     맞는 상품이 없고, 억지로 이으면 이미 보유한 상품을 권하게 된다
+     (실제로 실손의료비 → 보유 중인 원(ONE)Core 가 나왔다).
+     대신 해당 카테고리 목록으로 보낸다 — 고르는 건 사용자 몫이다. */
+  const recoProducts = reco
+    ? data.products.filter((p) => p.category === reco.categoryId)
+    : []
+  const recoCategory = reco
+    ? data.categories.find((c) => c.id === reco.categoryId)
+    : undefined
+
+  const recoBanner =
+    reco && recoCategory && recoProducts.length > 0 ? (
+      <button
+        type="button"
+        className={styles.recoBanner}
+        onClick={() =>
+          go(
+            tid(SCREEN.s1, ELEMENT.카드, `추천-${reco.item.id}`),
+            `/product/insurance/list?cat=${reco.categoryId}`,
+          )
+        }
+      >
+        <span className={styles.recoTexts}>
+          {/* 라벨 행 — 왜 보이는지. 시안의 파란 라벨 + chevron 한 줄 */}
+          <span className={styles.recoLabelRow}>
+            <span className={`${styles.recoLabel} t-caption-medium`}>
+              {C.recoBasis.replace('{item}', withJosa(reco.item.label, '이/가'))}
+            </span>
+            <span className={styles.recoChevron} aria-hidden="true">›</span>
+          </span>
+
+          {/* 본문 2줄 — 시안에서 가장 큰 요소 */}
+          <span className={`${styles.recoHeadline} t-h2`}>
+            {C.recoLead}
+            <br />
+            {C.recoCategory
+              .replace('{category}', recoCategory.label)
+              .replace('{n}', String(recoProducts.length))}
+          </span>
+        </span>
+
+        <img
+          className={styles.recoArt}
+          src={`/assets/3d/${recoCategory.icon3d}.png`}
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+    ) : null
+
   /* ── 보장진단 통합 카드 (변경로그 §1) ──────────────────────
      카드 전체 탭 → S3-D 브리핑 / 틴트 박스 탭 → S3-E 항목 상세.
      타깃이 2개라 버튼을 겹치지 않게 나눈다 (중첩 버튼은 HTML 위반). */
@@ -198,7 +235,9 @@ export function FinanceInsurance() {
           {C.diagnosisHeadline.replace('{n}', String(emptyPriority.length))}
         </span>
         <span className={`${styles.diagBasis} t-caption`}>
-          {C.diagnosisBasis.replace('{n}', String(policyCount))}
+          {C.diagnosisBasis
+            .replace('{total}', String(data.coverage.length))
+            .replace('{filled}', String(filledCount(data.coverage)))}
         </span>
       </button>
 
@@ -222,7 +261,6 @@ export function FinanceInsurance() {
         </button>
       ) : null}
 
-      <p className={`${styles.diagDisclaimer} t-caption`}>{DIAGNOSIS.disclaimer}</p>
     </Card>
   )
 
@@ -442,6 +480,7 @@ export function FinanceInsurance() {
           <>
             {basisRow}
             {myInsurance}
+            {recoBanner}
             {diagnosisCard}
             {serviceGroups}
           </>

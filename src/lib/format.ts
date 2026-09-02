@@ -14,3 +14,15 @@ export function monthDay(mmdd: string): string {
   const [m, d] = mmdd.split('.').map(Number)
   return `${m}월 ${d}일`
 }
+
+/** 받침 유무에 따른 조사 — '실손의료비가' · '입원이'.
+    ⚠️ 진단 항목 이름을 문장에 넣는 자리가 여러 곳이라(S1 추천 배너 등)
+       화면에서 직접 고르면 "실손의료비이" 같은 게 나온다. */
+export function withJosa(word: string, pair: '이/가' | '을/를' | '은/는'): string {
+  const last = word.charCodeAt(word.length - 1)
+  /* 한글 음절이 아니면 받침 없는 것으로 본다 */
+  const hasFinal =
+    last >= 0xac00 && last <= 0xd7a3 ? (last - 0xac00) % 28 !== 0 : false
+  const [withFinal, withoutFinal] = pair.split('/')
+  return `${word}${hasFinal ? withFinal : withoutFinal}`
+}
