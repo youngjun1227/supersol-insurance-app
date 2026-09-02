@@ -174,40 +174,42 @@ export function FinanceInsurance() {
 
   const recoBanner =
     reco && recoCategory && recoProducts.length > 0 ? (
-      <Card radius="lg" className={styles.recoCard}>
-        <button
-          type="button"
-          className={styles.recoBody}
-          onClick={() =>
-            go(
-              tid(SCREEN.s1, ELEMENT.카드, `추천-${reco.item.id}`),
-              `/product/insurance/list?cat=${reco.categoryId}`,
-            )
-          }
-        >
-          <span className={`${styles.recoBasis} t-caption`}>
-            {C.recoBasis.replace('{item}', withJosa(reco.item.label, '이/가'))}
-          </span>
-          <span className={styles.recoMain}>
-            <img
-              className={styles.recoIcon}
-              src={`/assets/3d/${recoCategory.icon3d}.png`}
-              alt=""
-              aria-hidden="true"
-            />
-            <span className={styles.recoText}>
-              <span className={`${styles.recoLead} t-body-sm`}>{C.recoLead}</span>
-              <span className={`${styles.recoName} t-body-lg-medium`}>
-                {C.recoCategory
-                  .replace('{category}', recoCategory.label)
-                  .replace('{n}', String(recoProducts.length))}
-              </span>
+      <button
+        type="button"
+        className={styles.recoBanner}
+        onClick={() =>
+          go(
+            tid(SCREEN.s1, ELEMENT.카드, `추천-${reco.item.id}`),
+            `/product/insurance/list?cat=${reco.categoryId}`,
+          )
+        }
+      >
+        <span className={styles.recoTexts}>
+          {/* 라벨 행 — 왜 보이는지. 시안의 파란 라벨 + chevron 한 줄 */}
+          <span className={styles.recoLabelRow}>
+            <span className={`${styles.recoLabel} t-caption-medium`}>
+              {C.recoBasis.replace('{item}', withJosa(reco.item.label, '이/가'))}
             </span>
-            <span className={styles.chevron} aria-hidden="true">›</span>
+            <span className={styles.recoChevron} aria-hidden="true">›</span>
           </span>
-        </button>
-        <span className={`${styles.recoNote} t-caption`}>{C.recoNote}</span>
-      </Card>
+
+          {/* 본문 2줄 — 시안에서 가장 큰 요소 */}
+          <span className={`${styles.recoHeadline} t-h2`}>
+            {C.recoLead}
+            <br />
+            {C.recoCategory
+              .replace('{category}', recoCategory.label)
+              .replace('{n}', String(recoProducts.length))}
+          </span>
+        </span>
+
+        <img
+          className={styles.recoArt}
+          src={`/assets/3d/${recoCategory.icon3d}.png`}
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
     ) : null
 
   /* ── 보장진단 통합 카드 (변경로그 §1) ──────────────────────

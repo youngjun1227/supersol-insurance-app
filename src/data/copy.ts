@@ -210,9 +210,9 @@ export const INSURANCE_MAIN = {
   /** 배너 첫 줄 = 왜 보이는지. {item} = 진단 1순위 빈 항목 */
   recoBasis: '진단 결과 · {item} 비어 있어요',
   /** 배너 안내 문구 — 권유가 아니라 안내 */
-  recoLead: '이런 보장을 채울 수 있어요',
+  recoLead: '이런 보장을',
   /** 이어지는 카테고리. {category} = 이름, {n} = 상품 수 */
-  recoCategory: '{category} 보험 {n}개 보기',
+  recoCategory: '{category} 보험 {n}개로 채울 수 있어요',
   /** 배너가 광고가 아님을 밝히는 꼬리말 */
   recoNote: '가입을 권하는 것이 아니에요. 수치는 가상값이에요.',
 
