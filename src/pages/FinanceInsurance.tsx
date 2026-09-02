@@ -15,7 +15,9 @@ import {
   DIAGNOSIS, INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
 } from '@/data/copy'
 import type { ServiceItem } from '@/data/types'
-import { batteryLevelFor, emptyPriorityItems, topRecommendation } from '@/lib/coverage'
+import {
+  batteryLevelFor, emptyPriorityItems, filledCount, topRecommendation,
+} from '@/lib/coverage'
 import { withJosa, won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
@@ -233,7 +235,9 @@ export function FinanceInsurance() {
           {C.diagnosisHeadline.replace('{n}', String(emptyPriority.length))}
         </span>
         <span className={`${styles.diagBasis} t-caption`}>
-          {C.diagnosisBasis.replace('{n}', String(policyCount))}
+          {C.diagnosisBasis
+            .replace('{total}', String(data.coverage.length))
+            .replace('{filled}', String(filledCount(data.coverage)))}
         </span>
       </button>
 
