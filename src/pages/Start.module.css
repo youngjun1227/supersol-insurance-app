@@ -1,0 +1,71 @@
+/* 진입 화면 — 스플래시 다음. 탭바 없는 단독 화면이라 세로 가운데로 모은다. */
+
+/* AppShell 본문은 높이를 안 주므로 여기서 뷰포트 기준으로 잡는다.
+   100dvh 에서 상단 여백만큼 뺀다 (100vh 금지 — 주소창이 움직인다) */
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100dvh - var(--space-8));
+  gap: var(--space-8);
+  padding: var(--space-6) var(--gutter-main);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0 var(--space-2);
+}
+
+.title { color: var(--text-black); }
+.subtitle { color: var(--text-secondary); }
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-card-main);
+}
+
+/* 카드 2장 — 크기가 같아야 한쪽이 권장안으로 읽히지 않는다 */
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-5);
+  border: 0;
+  border-radius: var(--r-card-lg);
+  background: var(--bg-surface);
+  text-align: left;
+}
+
+.icon {
+  flex: none;
+  width: 48px;
+  height: 48px;
+}
+
+.texts {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.choiceTitle { color: var(--text-primary); }
+.choiceDesc { color: var(--text-caption); }
+
+.chevron {
+  flex: none;
+  width: 24px;
+  text-align: center;
+  color: var(--text-disabled);
+  line-height: 1;
+}
+
+.footnote {
+  color: var(--text-caption);
+  text-align: center;
+}

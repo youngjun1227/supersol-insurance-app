@@ -2,7 +2,7 @@
   "name": "슈퍼SOL 보험",
   "short_name": "슈퍼SOL 보험",
   "lang": "ko",
-  "start_url": "/",
+  "start_url": "/start",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

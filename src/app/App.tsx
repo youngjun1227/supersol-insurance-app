@@ -16,6 +16,7 @@ import { MockProvider } from './MockProvider'
 import { Agent } from '@/pages/Agent'
 import { Export } from '@/pages/Export'
 import { Briefing } from '@/pages/Briefing'
+import { Start } from '@/pages/Start'
 import { DemoMenu } from '@/pages/DemoMenu'
 import { DemoPush } from '@/pages/DemoPush'
 import { ClaimDone } from '@/pages/ClaimDone'
@@ -65,6 +66,10 @@ export function App() {
     <AnalyticsProvider>
       <MockProvider>
         <Routes>
+          {/* 진입 화면 — 스플래시 다음 (#130).
+              ⚠️ NO_SPLASH 에 넣지 않는다. 스플래시 → /start → 홈 순서다 */}
+          <Route path="/start" element={<Start />} />
+
           {/* 00 메인홈 — S4-A 결제 감지 팝업은 이 위 오버레이 */}
           <Route path="/" element={<Home />} />
 
