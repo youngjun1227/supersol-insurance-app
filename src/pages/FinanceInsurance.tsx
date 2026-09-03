@@ -36,6 +36,9 @@ const SERVICE_GROUPS: ServiceItem['group'][] = ['조회·계약', '청구·신�
     ⚠️ mock.ts 에 추천 플래그가 없어 화면에서 id 로 고른다. 목데이터에
     필드를 추가할지는 팀장 확인 대기 (지금 mock 을 고치지 않는 이유). */
 const RECOMMENDED_IDS = ['sp-transit-mini', 'sp-sol-teeth']
+/* 맞춤 OFF 추천 — 또래 기준이 아니라 "많이 판매된" 기준. 자사 상품 중 암·치매.
+   2건 OFF 배너와 0건 OFF 카드가 같은 목록을 쓴다 (2026-09-03 팀장) */
+const RECOMMENDED_OFF_IDS = ['sp-cancer-care', 'sp-one-more-care']
 
 export function FinanceInsurance() {
   const track = useTrack()
@@ -44,7 +47,9 @@ export function FinanceInsurance() {
   /** 상태 A(0건) = S1-8 분리형 / 상태 B(2건) = S1-9 통합형 / B + custom=off = S1-14 분리형.
       0건 + custom=off 는 Figma 에 없다 — S1-8 그대로 둔다 */
   const isEmpty = state === 'A'
-  const isCustomOff = !isEmpty && !customOn
+  /* 0건도 맞춤을 끌 수 있다 — 전에는 !isEmpty 로 막아 0건은 토글을 꺼도 화면이
+     안 바뀌었다. OFF 면 "20대" 기준 문구·또래 추천이 판매량 기준으로 바뀐다 (2026-09-03) */
+  const isCustomOff = !customOn
 
   /** S1-13 기준 시트 — 라우트가 아니라 이 화면 위 오버레이 */
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -59,7 +64,8 @@ export function FinanceInsurance() {
   const services = data.services.filter((s) => !HIDDEN_SERVICES.includes(s.id))
 
   /** figma-ref 순서대로 (id 순이 아니라 화면 순서) */
-  const recommended = RECOMMENDED_IDS.map((id) => data.products.find((p) => p.id === id)).filter(
+  const recommended = (isCustomOff ? RECOMMENDED_OFF_IDS : RECOMMENDED_IDS)
+    .map((id) => data.products.find((p) => p.id === id)).filter(
     (p): p is NonNullable<typeof p> => Boolean(p),
   )
 
@@ -214,6 +220,36 @@ export function FinanceInsurance() {
       </button>
     ) : null
 
+  /* ── 맞춤 OFF 배너 (수정1, 2026-09-03 팀장) ────────────────
+     원래 OFF 에서는 배너를 아예 안 그렸다 — 개인화를 끄면 추천도 사라진다는
+     논리였다. 배너는 두되 근거를 바꾼다: 진단 결과(개인화) 대신 판매량(공통).
+     상품은 암·치매 2개(RECOMMENDED_OFF_IDS). 카테고리가 둘이라 한 목록으로
+     못 보내므로 상품 탭 보험 목록으로 간다. 일러스트는 첫 상품 카테고리 것. */
+  const recoOffArt = data.categories.find((c) => c.id === recommended[0]?.category)?.icon3d
+  const recoBannerOff =
+    recommended.length > 0 ? (
+      <button
+        type="button"
+        className={styles.recoBanner}
+        onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '추천-맞춤OFF'), '/product/insurance')}
+      >
+        <span className={styles.recoTexts}>
+          <span className={styles.recoLabelRow}>
+            <span className={`${styles.recoLabel} t-caption-medium`}>{C.recoOffBasis}</span>
+            <span className={styles.recoChevron} aria-hidden="true">›</span>
+          </span>
+          <span className={`${styles.recoHeadline} t-h2`}>
+            {C.recoOffLead}
+            <br />
+            {C.recoOffCategory}
+          </span>
+        </span>
+        {recoOffArt ? (
+          <img className={styles.recoArt} src={`/assets/3d/${recoOffArt}.png`} alt="" aria-hidden="true" />
+        ) : null}
+      </button>
+    ) : null
+
   /* ── 보장진단 통합 카드 (변경로그 §1) ──────────────────────
      카드 전체 탭 → S3-D 브리핑 / 틴트 박스 탭 → S3-E 항목 상세.
      타깃이 2개라 버튼을 겹치지 않게 나눈다 (중첩 버튼은 HTML 위반). */
@@ -286,7 +322,9 @@ export function FinanceInsurance() {
   const emptyHeadline = (
     <div className={styles.emptyHead}>
       <p className={`${styles.emptyTitle} t-display`}>{E.headline}</p>
-      <p className={`${styles.emptySub} t-body-lg`}>{E.headlineSub}</p>
+      <p className={`${styles.emptySub} t-body-lg`}>
+        {isCustomOff ? E.headlineSubOff : E.headlineSub}
+      </p>
     </div>
   )
 
@@ -333,7 +371,9 @@ export function FinanceInsurance() {
   /* "20대가 많이 보는 보험" — 상품 2행 */
   const recommendCard = (
     <Card radius="lg" className={styles.serviceCard}>
-      <p className={`${styles.title} t-h2`}>{E.recommendTitle}</p>
+      <p className={`${styles.title} t-h2`}>
+        {isCustomOff ? E.recommendTitleOff : E.recommendTitle}
+      </p>
 
       <div className={styles.recommends}>
         {recommended.map((product) => {
@@ -422,7 +462,7 @@ export function FinanceInsurance() {
       <button
         type="button"
         className={styles.banner}
-        onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '상담'), '/agent')}
+        onClick={() => track(tid(SCREEN.s1, ELEMENT.카드, '상담'))}
       >
         <img className={styles.bannerIcon} src="/assets/3d/상담.png" alt="" aria-hidden="true" />
         <span className={`${styles.bannerText} t-body`}>{C.bannerExpert}</span>
@@ -471,6 +511,7 @@ export function FinanceInsurance() {
           <>
             {basisRow}
             {myInsurance}
+            {recoBannerOff}
             {serviceGroups}
             {diagnosisCardOff}
           </>
