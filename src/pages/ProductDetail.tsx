@@ -7,7 +7,7 @@
 import { Clock, CreditCard, House, User } from '@phosphor-icons/react'
 import { useParams } from 'react-router-dom'
 import {
-  AgentBubble, AppShell, BottomCTA, Button, Header, TermTooltip, TopTabs,
+  AgentBubble, AppShell, BottomCTA, BottomSheet, Button, Header, TermTooltip, TopTabs,
   HeaderActions,
 } from '@/components'
 import { useMock } from '@/app/MockProvider'
@@ -33,8 +33,10 @@ export function ProductDetail() {
   const go = useTrackedNavigate()
   const track = useTrack()
   const { productId } = useParams()
-  const { data } = useMock()
+  const { data, state } = useMock()
   const [tab, setTab] = useState('info')
+  /* 하단 버튼이 띄우는 시트 (#122). 'apply' = 가입하기, 'noPolicy' = 미보유자가 보험료 확인 */
+  const [sheet, setSheet] = useState<'apply' | 'noPolicy' | null>(null)
 
   const product = data.products.find((p) => p.id === productId)
 
@@ -97,7 +99,12 @@ export function ProductDetail() {
           >
             <House size={24} weight="regular" color="var(--primary)" />
           </button>
-          <Button size="lg" block targetId={tid(SCREEN.s6, ELEMENT.버튼, '가입하기')}>
+          <Button
+            size="lg"
+            block
+            targetId={tid(SCREEN.s6, ELEMENT.버튼, '가입하기')}
+            onClick={() => setSheet('apply')}
+          >
             가입하기
           </Button>
         </BottomCTA>
@@ -158,7 +165,13 @@ export function ProductDetail() {
           </div>
           ) : null}
 
-          <Button variant="tint" block targetId={tid(SCREEN.s6, ELEMENT.버튼, '보험료확인')}>
+          {/* 보유자는 내 보험 목록(S1-7)으로, 미보유자는 볼 게 없어 시트 (#122) */}
+          <Button
+            variant="tint"
+            block
+            targetId={tid(SCREEN.s6, ELEMENT.버튼, '보험료확인')}
+            onClick={() => (state === 'A' ? setSheet('noPolicy') : go(null, '/finance/insurance/my'))}
+          >
             내 보험료 확인
           </Button>
         </section>
@@ -199,6 +212,23 @@ export function ProductDetail() {
           </p>
         )}
       </div>
+
+      {/* #122 — 두 하단 버튼의 안내 시트. 계측은 Button 이 targetId 로 남기므로 여기선 안 찍는다 */}
+      <BottomSheet
+        open={sheet !== null}
+        onClose={() => setSheet(null)}
+        label={sheet === 'noPolicy' ? PD.noPolicySheetTitle : PD.applySheetTitle}
+      >
+        <p className={`${styles.sheetTitle} t-h3`}>
+          {sheet === 'noPolicy' ? PD.noPolicySheetTitle : PD.applySheetTitle}
+        </p>
+        <p className={`${styles.sheetBody} t-body-sm`}>
+          {sheet === 'noPolicy' ? PD.noPolicySheetBody : PD.applySheetBody}
+        </p>
+        <Button block targetId={tid(SCREEN.s6, ELEMENT.버튼, '시트닫기')} onClick={() => setSheet(null)}>
+          {PD.sheetClose}
+        </Button>
+      </BottomSheet>
     </AppShell>
   )
 }

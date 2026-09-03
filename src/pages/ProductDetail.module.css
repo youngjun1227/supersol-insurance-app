@@ -138,3 +138,16 @@
   border-radius: var(--r-btn-lg);
   background: var(--bg-tint-btn);
 }
+
+/* ── #122 하단 버튼 안내 시트 — BasisSheet 의 title/subtitle 과 같은 배치 ── */
+.sheetTitle {
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: var(--space-2);
+}
+
+.sheetBody {
+  color: var(--text-caption);
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
