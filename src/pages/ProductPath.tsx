@@ -68,7 +68,7 @@ export function ProductDiscover() {
                   <span className={`${styles.rowName} t-body-lg-bold`}>{p.name}</span>
                   <span className={`${styles.rowDesc} t-body-sm`}>{p.desc}</span>
                 </div>
-                <span className={styles.chevron} aria-hidden="true">›</span>
+                <span className="u-chevron" aria-hidden="true">›</span>
               </div>
             ))}
           </div>

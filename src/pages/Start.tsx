@@ -61,7 +61,7 @@ export function Start() {
                 <span className={`${styles.choiceTitle} t-h3`}>{c.title}</span>
                 <span className={`${styles.choiceDesc} t-body-sm`}>{c.desc}</span>
               </span>
-              <span className={styles.chevron} aria-hidden="true">›</span>
+              <span className="u-chevron" aria-hidden="true">›</span>
             </button>
           ))}
         </div>

@@ -69,7 +69,7 @@ export function Home() {
         <Card radius="xl" className={styles.card}>
           <button type="button" className={styles.titleRow} onClick={goFinance}>
             <span className={`${styles.title} t-h2`}>계좌</span>
-            <span className={styles.chevron} aria-hidden="true">›</span>
+            <span className="u-chevron" aria-hidden="true">›</span>
           </button>
 
           <div className={styles.accountRow}>
@@ -104,7 +104,7 @@ export function Home() {
         <Card radius="xl" className={styles.card}>
           <div className={styles.titleRow}>
             <span className={`${styles.title} t-h2`}>땡겨요</span>
-            <span className={styles.chevron} aria-hidden="true">›</span>
+            <span className="u-chevron" aria-hidden="true">›</span>
           </div>
           <div className={styles.promoRow}>
             <Gift size={24} weight="regular" color="var(--text-secondary)" />

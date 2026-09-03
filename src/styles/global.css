@@ -75,3 +75,14 @@ input, textarea, select {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 행 오른쪽 chevron '›' — 4개 module.css 에 같은 정의가 있던 것을 모았다.
+   width 24 는 IconAction 자리와 폭을 맞춘다 (Home·ProductPath 는 원래 폭 없음이었으나
+   inline 텍스트라 24 를 줘도 시각 차이 없음 — 확인함) */
+.u-chevron {
+  flex: none;
+  width: 24px;
+  text-align: center;
+  color: var(--text-disabled);
+  line-height: 1;
+}

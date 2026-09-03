@@ -4,10 +4,11 @@
    하단은 고정 CTA (탭바 없음 — Figma 실측).
    ⚠️ 상단 요약의 상품명·설명은 목데이터, 스탯·키값은 PRODUCT_DETAILS(전부 가상값). */
 
-import { Clock, CreditCard, House, List, MagnifyingGlass, User } from '@phosphor-icons/react'
+import { Clock, CreditCard, House, User } from '@phosphor-icons/react'
 import { useParams } from 'react-router-dom'
 import {
-  AgentBubble, AppShell, BottomCTA, Button, Header, IconAction, TermTooltip, TopTabs,
+  AgentBubble, AppShell, BottomCTA, Button, Header, TermTooltip, TopTabs,
+  HeaderActions,
 } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { PRODUCT_DETAILS } from '@/data'
@@ -80,14 +81,7 @@ export function ProductDetail() {
           variant="sub"
           screen={SCREEN.s6}
           actions={
-            <>
-              <IconAction targetId={tid(SCREEN.s6, ELEMENT.버튼, '검색')} label="검색">
-                <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-              <IconAction targetId={tid(SCREEN.s6, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                <List size={24} weight="regular" color="var(--text-secondary)" />
-              </IconAction>
-            </>
+            <HeaderActions screen={SCREEN.s6} />
           }
         />
       }

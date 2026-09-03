@@ -7,10 +7,11 @@
    ⚠️ 계측: 경로가 갈리는 화면이라 탭 이벤트에 필터 상태 스냅샷(cat·company)을 남긴다. */
 
 import { useMemo, useState } from 'react'
-import { Bell, CaretRight, List, MagnifyingGlass } from '@phosphor-icons/react'
+import { CaretRight } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  AppShell, Header, IconAction, ProductFilters, ProductRow,
+  AppShell, Header, ProductFilters, ProductRow,
+  HeaderActions,
   ProductSectionHeader, ProductTopTabs, TabBar,
 } from '@/components'
 import { useMock } from '@/app/MockProvider'
@@ -65,17 +66,7 @@ export function ProductInsurance() {
           <Header
             title="모든상품"
             actions={
-              <>
-                <IconAction targetId={tid(SCREEN.s2, ELEMENT.버튼, '검색')} label="검색">
-                  <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-                <IconAction targetId={tid(SCREEN.s2, ELEMENT.버튼, '알림')} label="알림">
-                  <Bell size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-                <IconAction targetId={tid(SCREEN.s2, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                  <List size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-              </>
+              <HeaderActions screen={SCREEN.s2} withAlarm />
             }
           />
           <ProductTopTabs active="insurance" screen={SCREEN.s2} />

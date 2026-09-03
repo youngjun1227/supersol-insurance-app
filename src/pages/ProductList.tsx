@@ -12,10 +12,11 @@
       다 펼쳐지는, Figma 어느 프레임에도 없는 상태가 된다. */
 
 import { useMemo, useState } from 'react'
-import { CaretDown, House, List, MagnifyingGlass } from '@phosphor-icons/react'
+import { CaretDown } from '@phosphor-icons/react'
 import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  AppShell, Header, IconAction, ProductFilters, ProductRow,
+  AppShell, Header, ProductFilters, ProductRow,
+  HeaderActions,
   ProductSectionHeader, ProductTopTabs, TabBar,
 } from '@/components'
 import { useMock } from '@/app/MockProvider'
@@ -98,17 +99,7 @@ export function ProductList() {
             title="모든상품"
             titleAdornment={<CaretDown size={16} weight="regular" color="var(--text-black)" />}
             actions={
-              <>
-                <IconAction targetId={tid(SCREEN.s2List, ELEMENT.버튼, '검색')} label="검색">
-                  <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-                <IconAction targetId={tid(SCREEN.s2List, ELEMENT.버튼, '홈')} label="홈">
-                  <House size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-                <IconAction targetId={tid(SCREEN.s2List, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                  <List size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-              </>
+              <HeaderActions screen={SCREEN.s2List} withHome />
             }
           />
           <ProductTopTabs active="insurance" screen={SCREEN.s2List} />

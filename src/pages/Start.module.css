@@ -57,13 +57,6 @@
 .choiceTitle { color: var(--text-primary); }
 .choiceDesc { color: var(--text-caption); }
 
-.chevron {
-  flex: none;
-  width: 24px;
-  text-align: center;
-  color: var(--text-disabled);
-  line-height: 1;
-}
 
 .footnote {
   color: var(--text-caption);

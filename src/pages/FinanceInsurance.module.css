@@ -29,13 +29,6 @@
 }
 
 /* 리스트·카드 chevron — 24 자리를 차지하되 글자로 그린다 (§5 --text-disabled) */
-.chevron {
-  flex: none;
-  width: 24px;
-  text-align: center;
-  color: var(--text-disabled);
-  line-height: 1;
-}
 
 .basisAction .chevron {
   width: 16px;

@@ -62,10 +62,6 @@
   color: var(--text-primary);
 }
 
-.chevron {
-  flex-shrink: 0;
-  color: var(--text-disabled);
-}
 
 /* ── 계좌 행 ─────────────────────────────────────────────── */
 .accountRow,
