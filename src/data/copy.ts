@@ -247,6 +247,14 @@ export const INSURANCE_MAIN = {
   /** 이어지는 카테고리. {category} = 이름, {n} = 상품 수 */
   recoCategory: '{category} 보험 {n}개로 채울 수 있어요',
 
+  /* ── 맞춤 OFF 배너 (2026-09-03 팀장) ──
+     원래 OFF 에서는 배너를 아예 안 그렸다 — "개인화를 끄면 추천도 사라진다".
+     배너 자체는 두되 근거를 바꾼다: 진단 결과(개인화)가 아니라 판매량(공통).
+     OFF 상태에서 진단 결과를 근거로 쓰면 맞춤을 껐다는 전제와 모순이다. */
+  recoOffBasis: '신한라이프에서 많이 판매된 보험',
+  recoOffLead: '이런 보험이',
+  recoOffCategory: '많이 선택되고 있어요',
+
   /** 하단 배너 2개 */
   bannerExpert: '보험이 어렵다면 전문가에게 물어보세요!',
   bannerEvent: '슈퍼SOL 여름 이벤트 참여하기',
@@ -282,6 +290,8 @@ export const INSURANCE_EMPTY = {
   /** 페이지 상단 큰 제목 (카드 밖) */
   headline: '아직 준비된 보험이 없어요',
   headlineSub: '20대가 많이 찾는 것부터 보여드릴게요',
+  /** 맞춤 OFF — "20대" 라는 개인화 기준을 말하면 안 된다 (2026-09-03 팀장) */
+  headlineSubOff: '신한라이프 대표 보험부터 보여드릴게요',
 
   /** 분리형 진단 카드 — S1-9 의 "보장진단"과 달리 띄어쓰기가 있다 (PNG 그대로) */
   diagnosisTitle: '보장 진단',
@@ -290,6 +300,8 @@ export const INSURANCE_EMPTY = {
   diagnosisInviteLine2: '어느 정도인지 알아볼까요?',
 
   recommendTitle: '20대가 많이 보는 보험',
+  /** 맞춤 OFF — 또래 기준이 아니라 판매량 기준 (2026-09-03 팀장) */
+  recommendTitleOff: '신한라이프에서 많이 판매된 보험',
   /** 추천 카드 하단 고지 — S1-9 의 면책과 문장이 다르다 */
   recommendNotice: '가입을 권하는 것이 아니에요. 어떤 게 있는지 보여드릴 뿐이에요.',
 
