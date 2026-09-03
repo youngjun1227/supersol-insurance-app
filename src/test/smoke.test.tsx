@@ -20,13 +20,13 @@ const SPLASH_TEXT = '앱을 여는 중이에요'
 /** 라우트 31벌 + 쿼리 상태 변형. 데이터 상태가 갈리는 화면은 변형까지 돈다 */
 const ROUTES = [
   '/',
-  '/start',
+  '/home',
   '/finance', '/finance/card', '/finance/stock',
   '/finance/insurance', '/finance/insurance?state=A', '/finance/insurance?custom=off',
   '/finance/insurance/my',
   '/diagnosis', '/diagnosis/briefing', '/diagnosis/c-actual', '/diagnosis/c-death',
   '/agent', '/agent?ctx=c-actual', '/agent?ctx=product&id=sp-cancer-care',
-  '/?popup=claim', '/?popup=claim&state=A',
+  '/home?popup=claim', '/home?popup=claim&state=A',
   '/claim/settings', '/claim/guide', '/claim/done',
   '/product', '/product/insurance',
   '/product/insurance/list', '/product/insurance/list?cat=dental',

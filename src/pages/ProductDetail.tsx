@@ -94,7 +94,7 @@ export function ProductDetail() {
             className={styles.iconBtn}
             aria-label="홈"
             onClick={() => {
-              go(tid(SCREEN.s6, ELEMENT.버튼, '홈'), '/')
+              go(tid(SCREEN.s6, ELEMENT.버튼, '홈'), '/home')
             }}
           >
             <House size={24} weight="regular" color="var(--primary)" />

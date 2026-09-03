@@ -29,7 +29,7 @@ export interface TabItem {
    이 진입 마찰(클릭 1~2회)은 AS-IS 클릭 수의 일부라서, 건너뛰면 우리가 설계하지
    않은 이득으로 비교가 오염된다 (변경로그 라우팅 원칙 · 2026-08-26 정정). */
 export const TABS: TabItem[] = [
-  { id: 'home',    label: '홈',   path: '/',                   match: '/',         icon: House },
+  { id: 'home',    label: '홈',   path: '/home',               match: '/home',     icon: House },
   { id: 'finance', label: '금융', path: '/finance',            match: '/finance',  icon: Wallet },
   { id: 'product', label: '상품', path: '/product',            match: '/product',  icon: Storefront },
   { id: 'benefit', label: '혜택', path: '/benefit',            match: '/benefit',  icon: Gift },
@@ -55,7 +55,7 @@ export function TabBar({ activeId, screen }: TabBarProps) {
      여기 걸릴 일이 없다. 탭바가 뜨는 건 홈·금융·상품·스켈레톤뿐. */
   const current =
     activeId ??
-    TABS.find((t) => t.match !== '/' && location.pathname.startsWith(t.match))?.id ??
+    TABS.find((t) => location.pathname.startsWith(t.match))?.id ??
     'home'
 
   return (

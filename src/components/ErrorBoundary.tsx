@@ -50,7 +50,7 @@ export class ErrorBoundary extends Component<Props, State> {
           type="button"
           className={`${styles.action} t-body-lg-bold`}
           onClick={() => {
-            window.location.href = '/'
+            window.location.href = '/home'
           }}
         >
           {C.action}
