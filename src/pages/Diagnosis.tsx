@@ -90,6 +90,9 @@ export function Diagnosis() {
           </div>
 
           <p className={`${styles.caption} t-caption`}>{DIAGNOSIS.summaryCaption}</p>
+          {/* 면책은 여기 — 숫자를 보는 순간 알린다. CTA 앞에 두면 행동 직전에
+              신뢰를 꺾는 자리가 된다 (#118) */}
+          <p className={`${styles.caption} t-caption`}>{DIAGNOSIS.disclaimer}</p>
 
           <div className={styles.divider} />
 
@@ -153,7 +156,6 @@ export function Diagnosis() {
           )
         })}
 
-        <p className={`${styles.disclaimer} t-caption`}>{DIAGNOSIS.disclaimer}</p>
 
       </div>
     </AppShell>
