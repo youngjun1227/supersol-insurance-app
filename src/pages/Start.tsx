@@ -33,8 +33,8 @@ interface Choice {
    48px 로 줄이니 눈금이 뭉개져 두 장이 구분되지 않았다. 뜻이 바로 읽히는
    그림으로 바꾼다 */
 const CHOICES: Choice[] = [
-  { id: '보유', title: C.haveTitle, desc: C.haveDesc, icon: '건강', to: '/?state=B' },
-  { id: '미보유', title: C.emptyTitle, desc: C.emptyDesc, icon: '신규추천', to: '/?state=A' },
+  { id: '보유', title: C.haveTitle, desc: C.haveDesc, icon: '건강', to: '/home?state=B' },
+  { id: '미보유', title: C.emptyTitle, desc: C.emptyDesc, icon: '신규추천', to: '/home?state=A' },
 ]
 
 export function Start() {

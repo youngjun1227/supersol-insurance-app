@@ -22,7 +22,7 @@ afterEach(() => {
 /** 앱을 홈에서 띄우고 스플래시를 넘긴다 */
 function renderHome() {
   const view = render(
-    <MemoryRouter initialEntries={['/']}>
+    <MemoryRouter initialEntries={['/home']}>
       <App />
     </MemoryRouter>,
   )

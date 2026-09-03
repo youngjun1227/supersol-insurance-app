@@ -3,7 +3,7 @@
    아이디어 3 은 "앱 밖에서 알림을 받고 들어온다"가 핵심인데, S4-A 팝업부터
    시작하면 그 맥락이 빠진다. 백엔드가 없어 진짜 푸시는 못 보내므로 연출로 재현한다.
 
-   단계: home ─(2.5초)─▶ banner ─(탭)─▶ splash ─(0.8초)─▶ /?popup=claim
+   단계: home ─(2.5초)─▶ banner ─(탭)─▶ splash ─(0.8초)─▶ /home?popup=claim
 
    ⚠️ 홈화면은 Figma 원본을 PNG 로 내보낸 것이다 (아이콘 격자가 통짜 컴포넌트라
       분해가 안 된다). 우리 앱 화면이 아니므로 디자인 토큰 대상이 아니다.
@@ -38,7 +38,7 @@ function DemoPushInner() {
   useEffect(() => {
     if (stage !== 'splash') return
     const t = setTimeout(() => {
-      navigate('/?popup=claim', { replace: true })
+      navigate('/home?popup=claim', { replace: true })
     }, SPLASH_MS)
     return () => clearTimeout(t)
   }, [stage, navigate])

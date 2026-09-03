@@ -20,13 +20,13 @@ const SPLASH_TEXT = '앱을 여는 중이에요'
 /** 라우트 31벌 + 쿼리 상태 변형. 데이터 상태가 갈리는 화면은 변형까지 돈다 */
 const ROUTES = [
   '/',
-  '/start',
+  '/home',
   '/finance', '/finance/card', '/finance/stock',
   '/finance/insurance', '/finance/insurance?state=A', '/finance/insurance?custom=off',
   '/finance/insurance/my',
   '/diagnosis', '/diagnosis/briefing', '/diagnosis/c-actual', '/diagnosis/c-death',
   '/agent', '/agent?ctx=c-actual', '/agent?ctx=product&id=sp-cancer-care',
-  '/?popup=claim', '/?popup=claim&state=A',
+  '/home?popup=claim', '/home?popup=claim&state=A',
   '/claim/settings', '/claim/guide', '/claim/done',
   '/product', '/product/insurance',
   '/product/insurance/list', '/product/insurance/list?cat=dental',
@@ -83,6 +83,7 @@ test('라우트 목록이 App.tsx 와 같은 수다 (화면 추가 시 스모크
   const covered = new Set(
     ROUTES.map((r) => r.split('?')[0].replace(/\/(sp|op)-[\w-]+$/, '/:productId').replace(/\/(c-)[\w-]+$/, '/:itemId')),
   )
-  const missing = appRoutes.filter((r) => !covered.has(r))
+  /* /start 는 예전 주소를 / 로 넘기는 리다이렉트 전용이라 렌더 대상이 아니다 */
+  const missing = appRoutes.filter((r) => r !== '/start' && !covered.has(r))
   expect(missing).toEqual([])
 })

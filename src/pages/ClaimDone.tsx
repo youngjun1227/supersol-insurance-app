@@ -30,7 +30,7 @@ export function ClaimDone() {
             block
             size="lg"
             targetId={tid(SCREEN.s4Done, ELEMENT.버튼, '확인')}
-            onClick={() => navigate({ pathname: '/', search: location.search })}
+            onClick={() => navigate({ pathname: '/home', search: location.search })}
           >
             {C.cta}
           </Button>

@@ -66,12 +66,18 @@ export function App() {
     <AnalyticsProvider>
       <MockProvider>
         <Routes>
-          {/* 진입 화면 — 스플래시 다음 (#130).
-              ⚠️ NO_SPLASH 에 넣지 않는다. 스플래시 → /start → 홈 순서다 */}
-          <Route path="/start" element={<Start />} />
+          {/* 진입 화면 — 스플래시 다음, 앱의 첫 화면 (#130).
+              ⚠️ NO_SPLASH 에 넣지 않는다. 스플래시 → 진입 → 홈 순서다.
+
+              루트에 둔다: QR·주소 입력·PWA 어느 경로로 들어와도 상황을 고르고
+              시작해야 한다. start_url 만 바꿨더니 PWA 로 추가했을 때만 진입
+              화면이 뜨고, 링크를 그냥 열면 홈으로 갔다. */}
+          <Route path="/" element={<Start />} />
+          {/* 예전 주소 — 배포 링크·QR 이 돌아다닐 수 있어 남긴다 */}
+          <Route path="/start" element={<Navigate to="/" replace />} />
 
           {/* 00 메인홈 — S4-A 결제 감지 팝업은 이 위 오버레이 */}
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
 
           {/* 금융 탭 = 은행이 기본. 상단 탭에서 '보험'을 눌러야 S1 에 도착한다
               (AS-IS 진입 마찰 유지 — 건너뛰면 클릭 수 비교가 오염된다) */}
@@ -112,14 +118,15 @@ export function App() {
           <Route path="/stock" element={<Skeleton name="주식-자리표시" title="주식" tabId="stock" screen={SCREEN.skeleton} />} />
 
           {/* 시연 도입부 — 앱 밖에서 알림을 받고 들어오는 흐름 (진행자가 연다).
-              /demo 시나리오 선택 → /demo/push 홈화면·배너 → 스플래시 → /?popup=claim */}
+              /demo 시나리오 선택 → /demo/push 홈화면·배너 → 스플래시 → /home?popup=claim */}
           <Route path="/demo" element={<DemoMenu />} />
           <Route path="/demo/push" element={<DemoPush />} />
 
           {/* 진행자용 — 참가자에게 노출하지 않는다 */}
           <Route path="/export" element={<Export />} />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* 없는 주소는 홈으로 — 진입 화면으로 보내면 고른 상황이 풀린다 */}
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </MockProvider>
     </AnalyticsProvider>
