@@ -3,7 +3,7 @@
    여러 화면(S1·S3-C·S3-D)에 걸쳐 있어 한 곳에 모아야 어긋나지 않는다. */
 
 import { TIER_VISIBLE_MAX, TIERS } from '@/data'
-import type { BatteryLevel, CoverageItem, CoverageTier, TierMeta } from '@/data/types'
+import type { BatteryLevel, CoverageItem, TierMeta } from '@/data/types'
 
 /** 배터리 3D 에셋 경로. 수치에 맞는 단계를 쓴다 (변경로그 §6) */
 export function batteryAsset(level: BatteryLevel): string {
@@ -65,10 +65,6 @@ export function filledCount(coverage: CoverageItem[]): number {
 /** 특정 계약이 채우는 항목들 — S3-C 요약 카드의 내 보험 행 */
 export function itemsFilledBy(coverage: CoverageItem[], policyId: string): CoverageItem[] {
   return coverage.filter((c) => c.fromPolicyId === policyId).sort((a, b) => a.order - b.order)
-}
-
-export function tierOf(id: CoverageTier): TierMeta | undefined {
-  return TIERS.find((t) => t.id === id)
 }
 
 /* ── S1 진단 연계 추천 (2026-09-02 팀장 — B안) ──────────────────
