@@ -386,15 +386,23 @@ export function FinanceInsurance() {
     )
   })()
 
-  /* "가입하면 쓸 수 있어요 (9)" — 0건에서는 서비스 그리드가 한 줄로 접힌다 */
+  /* "가입하면 쓸 수 있어요 (9)" — 0건에서는 서비스 그리드가 한 줄로 접힌다.
+     누르면 그 자리에서 펼쳐진다 (#128) — 전에는 계측만 하고 아무 일도 없어서
+     9/11 미보유자 대체 과제("가입하면 뭘 할 수 있는지 확인")가 성립하지 않았다.
+     펼친 내용은 상태 B 가 쓰는 serviceGroups 그대로다 */
+  const [servicesOpen, setServicesOpen] = useState(false)
   const servicesCollapsed = (() => {
     const count = services.filter((s) => s.group !== '정보').length
+    if (servicesOpen) return serviceGroups
     return (
       <Card radius="lg" className={styles.serviceCard}>
         <button
           type="button"
           className={styles.collapsedRow}
-          onClick={() => track(tid(SCREEN.s1, ELEMENT.모두보기, '서비스'))}
+          onClick={() => {
+            track(tid(SCREEN.s1, ELEMENT.모두보기, '서비스'))
+            setServicesOpen(true)
+          }}
         >
           <span className={styles.collapsedText}>
             <span className={`${styles.title} t-h2`}>
