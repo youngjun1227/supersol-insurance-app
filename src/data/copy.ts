@@ -141,7 +141,7 @@ export const DIAGNOSIS = {
   basisRow: '2026.08.25 기준 · 진단 다시하기',
   /** 티어 접기 토글 — 펼친 상태 */
   collapseLabel: '접기',
-  /** S3-C 본문 끝 버튼 (고정 CTA 아님 — 스크롤 끝에 있는 버튼) */
+  /** S3-C 하단 고정 CTA (#117 — S3-D 와 같은 판단. 스크롤 끝 인라인이던 것을 올렸다) */
   findProducts: '관련 보험 찾아보기',
 } as const
 

@@ -2,7 +2,7 @@
    탭바 없음, 하단 고정 CTA 없음 — "관련 보험 찾아보기"는 본문 스크롤 끝 버튼이다. */
 
 import { Fragment, useState } from 'react'
-import { AppShell, Badge, Battery, Button, Card, CoverageRow, Header, HeaderActions, MoreToggle, TierHeader } from '@/components'
+import { AppShell, Badge, Battery, BottomCTA, Button, Card, CoverageRow, Header, HeaderActions, MoreToggle, TierHeader } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import { DIAGNOSIS } from '@/data/copy'
 import type { CoverageItem, CoverageTier } from '@/data/types'
@@ -60,7 +60,22 @@ export function Diagnosis() {
           actions={<HeaderActions screen={SCREEN.s3c} />}
         />
       }
-      footerType="none"
+      footerType="cta"
+      footer={
+        /* 고정 CTA (#117) — S3-D 와 같은 판단. 티어 4개에 항목 10개가 펼쳐지는
+           화면이라 본문 끝 인라인이면 스크롤 끝까지 안 간 참가자가 다음 단계를
+           못 만난다. Figma 실측(본문 끝)과 다르지만 S3-D 선례를 따른다 */
+        <BottomCTA>
+          <Button
+            block
+            size="lg"
+            targetId={tid(SCREEN.s3c, ELEMENT.버튼, '관련보험')}
+            onClick={() => go(null, '/product/insurance')}
+          >
+            {DIAGNOSIS.findProducts}
+          </Button>
+        </BottomCTA>
+      }
     >
       <div className={styles.content}>
         {/* 요약 히어로 + 내 보험 (합침) */}
@@ -140,15 +155,6 @@ export function Diagnosis() {
 
         <p className={`${styles.disclaimer} t-caption`}>{DIAGNOSIS.disclaimer}</p>
 
-        {/* 고정 CTA 아님 — 본문 끝 인라인 버튼 (Figma 실측) */}
-        <Button
-          variant="tint"
-          block
-          targetId={tid(SCREEN.s3c, ELEMENT.버튼, '관련보험')}
-          onClick={() => go(null, '/product/insurance')}
-        >
-          {DIAGNOSIS.findProducts}
-        </Button>
       </div>
     </AppShell>
   )
