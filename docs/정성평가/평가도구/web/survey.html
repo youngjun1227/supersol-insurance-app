@@ -1,0 +1,746 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>보험 탭 사용성 평가</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --surface:#fff; --surface-2:#f0f2f5; --line:#dfe3e8;
+    --text:#16202c; --text-2:#59636e; --text-3:#8a939d;
+    --accent:#0046ff; --accent-soft:#e8efff;
+    --mod:#fff8e6; --mod-line:#e8d9a8; --mod-text:#7a5c00;
+    --ok:#0a7d4b; --warn:#b3261e;
+    --r:12px; --r-sm:8px;
+    --fs-q:17px; --fs-body:15px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#12161c; --surface:#1a2028; --surface-2:#222a34; --line:#333d4a;
+      --text:#e9edf2; --text-2:#a3aeba; --text-3:#78838f;
+      --accent:#6f9dff; --accent-soft:#1e2a44;
+      --mod:#2b2618; --mod-line:#4d442a; --mod-text:#e0c876;
+      --ok:#4ade80; --warn:#ff8a80;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12161c; --surface:#1a2028; --surface-2:#222a34; --line:#333d4a;
+    --text:#e9edf2; --text-2:#a3aeba; --text-3:#78838f;
+    --accent:#6f9dff; --accent-soft:#1e2a44;
+    --mod:#2b2618; --mod-line:#4d442a; --mod-text:#e0c876;
+    --ok:#4ade80; --warn:#ff8a80;
+  }
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",Roboto,sans-serif;
+    font-size:var(--fs-body); line-height:1.6; margin:0;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:720px; margin:0 auto; padding:0 16px 120px}
+
+  /* ── 상단 진행 바 ── */
+  header{
+    position:sticky; top:0; z-index:10; background:var(--bg);
+    border-bottom:1px solid var(--line); margin:0 -16px; padding:10px 16px 8px;
+  }
+  .hrow{display:flex; align-items:center; gap:10px; justify-content:space-between}
+  .who{font-size:13px; color:var(--text-2); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .who b{color:var(--text); font-weight:600}
+  .bar{height:4px; background:var(--surface-2); border-radius:99px; overflow:hidden; margin-top:8px}
+  .bar>i{display:block; height:100%; background:var(--accent); border-radius:99px; transition:width .25s ease}
+  .steps{font-size:12px; color:var(--text-3); font-variant-numeric:tabular-nums}
+
+  /* ── 섹션/문항 ── */
+  .sec{margin:22px 0 10px}
+  .sec h2{font-size:13px; font-weight:700; color:var(--accent); margin:0 0 2px; letter-spacing:.02em}
+  .sec p{margin:0; font-size:13px; color:var(--text-2)}
+  .task{
+    background:var(--accent-soft); border:1px solid var(--line); border-radius:var(--r);
+    padding:14px 16px; margin:14px 0;
+  }
+  .task .lbl{font-size:12px; font-weight:700; color:var(--accent); margin-bottom:4px}
+  .task .txt{font-size:16px; font-weight:600; line-height:1.45}
+  .task .sub{font-size:13px; color:var(--text-2); margin-top:6px}
+
+  .q{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    padding:16px; margin:12px 0;
+  }
+  .q > .qh{display:flex; gap:8px; align-items:baseline; margin-bottom:12px}
+  .qn{font-size:13px; font-weight:700; color:var(--text-3); flex:none; font-variant-numeric:tabular-nums}
+  .qt{font-size:var(--fs-q); font-weight:600; line-height:1.45}
+  .qhint{font-size:13px; color:var(--text-2); margin:-6px 0 12px 28px}
+
+  /* ── 선택지 ── */
+  .opts{display:flex; flex-direction:column; gap:8px}
+  .opt{
+    display:flex; align-items:flex-start; gap:10px; width:100%; text-align:left;
+    background:var(--surface-2); border:1.5px solid transparent; border-radius:var(--r-sm);
+    padding:13px 14px; font:inherit; color:var(--text); cursor:pointer;
+    transition:background .12s, border-color .12s, transform .06s;
+  }
+  .opt:hover{background:var(--accent-soft)}
+  .opt:active{transform:scale(.99)}
+  .opt[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
+  .opt .mark{
+    flex:none; width:20px; height:20px; border-radius:50%; border:2px solid var(--line);
+    display:grid; place-items:center; margin-top:1px;
+  }
+  .opt[aria-pressed="true"] .mark{border-color:var(--accent); background:var(--accent)}
+  .opt[aria-pressed="true"] .mark::after{content:""; width:7px; height:7px; border-radius:50%; background:#fff}
+  .opt.multi .mark{border-radius:5px}
+  .opt.multi[aria-pressed="true"] .mark::after{
+    content:""; width:5px; height:9px; border:solid #fff; border-width:0 2px 2px 0;
+    transform:rotate(45deg) translateY(-1px); border-radius:0; background:none;
+  }
+
+  /* ── 척도 ── */
+  .scale{display:grid; grid-template-columns:repeat(5,1fr); gap:6px}
+  .scale button{
+    background:var(--surface-2); border:1.5px solid transparent; border-radius:var(--r-sm);
+    padding:12px 4px 10px; font:inherit; color:var(--text); cursor:pointer; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    transition:background .12s, border-color .12s, transform .06s;
+  }
+  .scale button:hover{background:var(--accent-soft)}
+  .scale button:active{transform:scale(.97)}
+  .scale button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
+  .scale .num{font-size:17px; font-weight:700; font-variant-numeric:tabular-nums}
+  .scale .cap{font-size:11px; line-height:1.25; color:var(--text-2); word-break:keep-all}
+  .scale button[aria-pressed="true"] .num,
+  .scale button[aria-pressed="true"] .cap{color:var(--accent)}
+  .pairlbl{font-size:13px; font-weight:600; margin:12px 0 6px; color:var(--text-2)}
+  .pairlbl:first-child{margin-top:0}
+
+  /* ── 주관식 ── */
+  textarea{
+    width:100%; min-height:96px; resize:vertical; font:inherit; font-size:15px;
+    background:var(--surface-2); color:var(--text);
+    border:1.5px solid var(--line); border-radius:var(--r-sm); padding:12px;
+    line-height:1.55;
+  }
+  textarea::placeholder{color:var(--text-3)}
+  textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .other-in{
+    width:100%; font:inherit; font-size:15px; margin-top:8px; padding:11px 12px;
+    background:var(--surface-2); color:var(--text);
+    border:1.5px solid var(--line); border-radius:var(--r-sm);
+  }
+  .other-in:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+
+  /* ── 진행자 칸 ── */
+  .mod{
+    background:var(--mod); border:1px dashed var(--mod-line); border-radius:var(--r-sm);
+    padding:13px 14px; margin-top:14px;
+  }
+  .mod .mh{
+    display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    color:var(--mod-text); margin-bottom:9px; letter-spacing:.02em;
+  }
+  .mod .mh svg{flex:none}
+  .mod .mrow{display:flex; flex-wrap:wrap; gap:7px}
+  .mod button{
+    background:var(--surface); border:1.5px solid var(--mod-line); border-radius:99px;
+    padding:8px 14px; font:inherit; font-size:14px; color:var(--text); cursor:pointer;
+    transition:background .12s, border-color .12s;
+  }
+  .mod button:hover{border-color:var(--mod-text)}
+  .mod button[aria-pressed="true"]{background:var(--mod-text); border-color:var(--mod-text); color:var(--mod)}
+  .mod .mnote{font-size:12px; color:var(--mod-text); margin-top:8px; opacity:.85}
+
+  /* ── 배지 ── */
+  .badge{
+    display:inline-block; font-size:11px; font-weight:700; padding:3px 8px;
+    border-radius:99px; margin-left:6px; vertical-align:middle; letter-spacing:.02em;
+  }
+  .b-own{background:var(--accent-soft); color:var(--accent)}
+  .b-split{background:var(--mod); color:var(--mod-text)}
+
+  /* ── 버튼 ── */
+  .nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:20;
+    background:var(--surface); border-top:1px solid var(--line);
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  .navin{max-width:720px; margin:0 auto; display:flex; gap:10px}
+  .btn{
+    flex:1; border:none; border-radius:var(--r-sm); padding:15px 16px;
+    font:inherit; font-size:16px; font-weight:700; cursor:pointer;
+    transition:filter .12s, transform .06s;
+  }
+  .btn:active{transform:scale(.99)}
+  .btn-p{background:var(--accent); color:#fff}
+  .btn-p:hover{filter:brightness(1.08)}
+  .btn-s{flex:0 0 96px; background:var(--surface-2); color:var(--text)}
+  .btn-s:hover{filter:brightness(.96)}
+  .btn:disabled{opacity:.45; cursor:not-allowed}
+
+  /* ── 시작/종료 화면 ── */
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:20px; margin:16px 0}
+  .card h1{font-size:22px; margin:0 0 6px; line-height:1.3}
+  .card .lead{color:var(--text-2); margin:0 0 20px; font-size:14px}
+  .field{margin-bottom:18px}
+  .field > label{display:block; font-size:14px; font-weight:600; margin-bottom:8px}
+  .field .req{color:var(--warn); margin-left:3px}
+  .seg{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .seg button{
+    background:var(--surface-2); border:1.5px solid transparent; border-radius:var(--r-sm);
+    padding:14px 10px; font:inherit; font-size:15px; color:var(--text); cursor:pointer;
+  }
+  .seg button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft); font-weight:700; color:var(--accent)}
+  .seg .sm{display:block; font-size:12px; color:var(--text-2); margin-top:2px; font-weight:400}
+  .seg button[aria-pressed="true"] .sm{color:var(--accent)}
+  input[type=text]{
+    width:100%; font:inherit; font-size:15px; padding:13px 12px;
+    background:var(--surface-2); color:var(--text);
+    border:1.5px solid var(--line); border-radius:var(--r-sm);
+  }
+  input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .warnbox{
+    background:var(--mod); border:1px solid var(--mod-line); border-radius:var(--r-sm);
+    padding:12px 14px; font-size:13px; color:var(--mod-text); margin-top:16px; line-height:1.55;
+  }
+  .savedrow{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:12px 0; border-bottom:1px solid var(--line); font-size:14px;
+  }
+  .savedrow:last-child{border-bottom:none}
+  .savedrow .meta{font-size:12px; color:var(--text-2); font-variant-numeric:tabular-nums}
+  .ghost{
+    background:none; border:1px solid var(--line); border-radius:var(--r-sm);
+    padding:10px 14px; font:inherit; font-size:14px; color:var(--text-2); cursor:pointer;
+  }
+  .ghost:hover{border-color:var(--accent); color:var(--accent)}
+  .done{text-align:center; padding:32px 0 8px}
+  .done .ic{width:56px; height:56px; border-radius:50%; background:var(--accent-soft); color:var(--accent);
+    display:grid; place-items:center; margin:0 auto 14px; font-size:28px}
+  .skipnote{
+    background:var(--surface-2); border-radius:var(--r-sm); padding:14px 16px;
+    color:var(--text-2); font-size:14px; margin:12px 0; text-align:center;
+  }
+  @media (max-width:420px){
+    .scale{gap:4px}
+    .scale .cap{font-size:10px}
+    .btn-s{flex:0 0 80px}
+  }
+</style>
+
+<div class="wrap">
+  <header id="hd" hidden>
+    <div class="hrow">
+      <div class="who" id="who"></div>
+      <div class="steps" id="steps"></div>
+    </div>
+    <div class="bar"><i id="prog" style="width:0%"></i></div>
+  </header>
+  <main id="main"></main>
+</div>
+<div class="nav" id="nav" hidden><div class="navin" id="navin"></div></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   문항 데이터 — docs/정성평가/평가도구/평가지.md 와 1:1
+   only:'B'      → 보유자만 (미보유는 N/A 로 건너뜀)
+   split:true    → A·B 분리 집계 (양쪽 다 답하되 합치지 않음)
+   flip:true     → 보기 순서를 참가자별로 뒤집는다
+   mod:{...}     → 진행자 판정 칸
+   ══════════════════════════════════════════════════════════ */
+const SC5 = ['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'];
+const SC5E = ['전혀 쉽지 않았다','쉽지 않았다','보통이다','쉬웠다','매우 쉬웠다'];
+
+const Q = [
+/* ── 도입 ── */
+{sec:'도입', secNote:'앱을 보기 전에 답해주세요', id:'D1', type:'text',
+ q:'마지막으로 보험금을 청구하신 게 언제인가요? 그때 어떻게 하셨는지 순서대로 말씀해 주세요.',
+ hint:'앱? 전화? 설계사? 안 했다면 왜 안 하셨는지도 좋습니다.',
+ ph:'예: 작년 가을에 병원비를 냈는데, 그냥 안 했어요. 서류 떼는 게 번거로워서…'},
+{sec:'도입', id:'D2', type:'text',
+ q:'이번 달 보험료가 얼마인지 알고 계세요? 마지막으로 확인한 게 언제, 어디서였나요?',
+ hintB:'', hintA:'가입한 보험이 없다면, 부모님이 들어준 보험이 있는지 아시나요?',
+ ph:'자유롭게 적어주세요'},
+{sec:'도입', id:'D3', type:'text',
+ q:'내 보험이 충분한지 궁금했던 적이 있나요? 그때 무엇을 하셨어요?',
+ hint:'아무것도 안 했다면 그것도 답입니다.', ph:'자유롭게 적어주세요'},
+
+/* ── 1부 청구 ── */
+{sec:'1부. 보험금 청구', secNote:'두 화면에서 같은 과제를 합니다',
+ task:{lbl:'과제 · 기존 슈퍼SOL', txt:'보험금을 청구하려고 합니다. 청구를 시작하는 화면까지 가주세요.'},
+ id:'Q1', type:'scale', labels:['전혀 간단하지 않았다','간단하지 않았다','보통이다','간단했다','매우 간단했다'],
+ q:'청구 화면까지 가는 과정이 얼마나 간단했나요?',
+ mod:{label:'과제 결과 · 기존', opts:['성공','실패','N/A'], note:'힌트를 줬으면 실패. 3분 초과도 실패.'}},
+{sec:'1부. 보험금 청구', id:'Q2', type:'text',
+ q:'찾으면서 불편하거나 헷갈렸던 부분이 있었다면 적어주세요.', ph:'없었다면 "없음"이라고 적어주세요'},
+{sec:'1부. 보험금 청구',
+ task:{lbl:'과제 · 두 번째 화면', txt:'보험금을 청구하려고 합니다. 청구를 시작하는 화면까지 가주세요.', sub:'같은 과제를 다른 화면에서 합니다.'},
+ id:'Q3', type:'scale', labels:['전혀 간단하지 않았다','간단하지 않았다','보통이다','간단했다','매우 간단했다'],
+ q:'청구 화면까지 가는 과정이 얼마나 간단했나요?',
+ mod:{label:'과제 결과 · 두 번째', opts:['성공','실패','N/A']}},
+{sec:'1부. 보험금 청구', id:'Q4', type:'text',
+ q:'찾으면서 불편하거나 헷갈렸던 부분이 있었다면 적어주세요.', ph:'없었다면 "없음"이라고 적어주세요'},
+{sec:'1부. 보험금 청구', secNote:'진행자가 팝업 화면을 보여드립니다', id:'Q5', type:'text',
+ q:'이 안내가 결제 직후에 뜬다면, 부담스럽거나 꺼려지는 부분이 있나요?',
+ hint:'결제 내역을 앱이 확인한다는 점도 포함해서 생각해주세요.',
+ ph:'솔직하게 적어주세요. 없으면 "없음"'},
+{sec:'1부. 보험금 청구', id:'Q6', type:'choice',
+ q:'결제 직후 이 안내가 떴을 때, 그 순간 어떻게 하셨을 것 같으세요?',
+ opts:['바로 눌러서 청구했을 것 같다','일단 닫고 나중에 했을 것 같다','닫고 잊었을 것 같다','광고인 줄 알고 닫았을 것 같다','잘 모르겠다']},
+{sec:'1부. 보험금 청구', id:'Q7', type:'multi',
+ q:'그 방식에 대해 어떻게 느꼈나요?', hint:'해당되는 것을 모두 골라주세요.',
+ opts:['필요한 정보를 먼저 알려줘서 편리했다','청구 시점을 놓치지 않을 것 같았다','상황에 따라 다를 것 같다',
+       '특별히 필요하지 않다고 느꼈다','오히려 불편하거나 부담스럽게 느껴졌다','알림이 많아지는 게 싫다'], other:true},
+
+/* ── 2부 메뉴 (보유만) ── */
+{sec:'2부. 보험 탭 메뉴 구조', secNote:'보험을 가지고 계신 분만 진행합니다', only:'B',
+ task:{lbl:'과제 · 양쪽 화면', txt:"보험 관련 기능 중에서 '보험료 납입' 화면을 찾아주세요.", sub:'기존 슈퍼SOL과 두 번째 화면에서 각각 해봅니다.'},
+ id:'Q8', type:'pair', labels:SC5E, q:'각 화면에서 그 기능을 찾기 얼마나 쉬웠나요?',
+ mod:{label:'과제 결과 · 보험료 납입 찾기', opts:['기존 성공','기존 실패','두번째 성공','두번째 실패'], multi:true}},
+{sec:'2부. 보험 탭 메뉴 구조', only:'B', id:'Q9', type:'text',
+ q:'두 번째 화면의 보험 메뉴가 몇 개 묶음으로 나뉘어 있었는지 기억나시나요?',
+ hint:'화면을 보지 않고, 기억나는 대로 적어주세요.', ph:'기억나는 대로 적어주세요',
+ mod:{label:'3분류 인지', opts:['인지함','인지 못함'], note:'참가자 답이 실제 3분류와 맞는지 판정합니다.'}},
+{sec:'2부. 보험 탭 메뉴 구조', only:'B', id:'Q10', type:'text',
+ q:'이 묶음 방식에 대해 어떻게 생각하세요?',
+ hint:'도움이 됐거나, 오히려 헷갈렸던 점이 있다면 적어주세요.', ph:'자유롭게 적어주세요'},
+
+/* ── 3부 보험료 ── */
+{sec:'3부. 내 보험 · 보험료', only:'B',
+ task:{lbl:'과제 · 양쪽 화면', txt:'이번 달 내는 보험료가 얼마인지 확인해주세요.'},
+ id:'Q11', type:'pair', labels:SC5E, q:'각 화면에서 보험료를 찾기 얼마나 쉬웠나요?',
+ mod:{label:'과제 결과 · 보험료 확인', opts:['기존 성공','기존 실패','두번째 성공','두번째 실패'], multi:true,
+      note:'"3만 5천 원 정도"까지 성공. "3만 원대"는 실패.'}},
+{sec:'3부. 내 보험 · 보험료', splitTask:true,
+ taskA:{lbl:'과제 · 미보유자용', txt:'보험에 가입하면 이 앱에서 뭘 할 수 있는지 확인해주세요.'},
+ id:'Q12', type:'choice', split:true,
+ q:'두 번째 화면의 첫 화면에서 가장 먼저 눈에 들어온 것은 무엇인가요?',
+ optsB:['내 보험 (보험 건수·보험료)','보장진단','추천 배너','보험금청구·보험찾기 버튼','아래쪽 서비스 메뉴'],
+ optsA:['"아직 준비된 보험이 없어요" 제목','보장진단 카드','20대가 많이 보는 보험','알아두면 좋은 것','가입하면 쓸 수 있어요'],
+ other:true,
+ mod:{label:'과제 결과 · 미보유 대체과제', opts:['성공','실패','N/A'], onlyA:true}},
+
+/* ── 4부 보장 ── */
+{sec:'4부. 보장 상태 확인', secNote:'두 화면에서 같은 과제를 합니다', split:true,
+ task:{lbl:'과제 · 양쪽 화면', txt:'내 보험 보장이 어떤 상태인지 확인해주세요.'},
+ id:'Q13', type:'choice', flip:true,
+ q:'그 화면이 무엇을 나타내는 정보라고 이해하셨나요?',
+ opts:['현재 가입한 보험의 보장 수준','보험 가입이 얼마나 충분한지','보험료 납부 또는 계약 상태','현재 건강 상태','무엇을 의미하는지 잘 모르겠다'],
+ other:true,
+ mod:{label:'과제 결과 · 보장 확인', opts:['성공','실패','N/A'], note:'부족 항목 이름을 1개 이상 말하면 성공.'}},
+{sec:'4부. 보장 상태 확인', split:true, id:'Q14', type:'pair', labels:SC5E,
+ pairLabels:['기존 보장에너지','두 번째 화면'],
+ q:'각 화면으로 내 보장 상태를 이해하기 얼마나 쉬웠나요?'},
+{sec:'4부. 보장 상태 확인', split:true, id:'Q15', type:'text',
+ q:'그렇게 이해한 이유는 무엇인가요? 화면에서 무엇을 보고 그렇게 생각하셨나요?', ph:'자유롭게 적어주세요'},
+{sec:'4부. 보장 상태 확인', split:true, id:'Q16', type:'text',
+ q:'방금 화면에 보장 에너지 퍼센트가 나왔는데요, 이 숫자가 무엇을 기준으로 나온 거라고 생각하세요?',
+ hint:'화면을 보지 않고 답해주세요.', ph:'생각하시는 대로 적어주세요',
+ mod:{label:'기준 이해', opts:['정답','오답'],
+      note:'정답 = "정해진 항목 중 내 보험이 채운 비율" 계열. 오답 = 보험료 대비·가입 건수·건강 점수·모르겠다.'}},
+{sec:'4부. 보장 상태 확인', secNote:'상세 브리핑 화면에 도달한 경우에만', split:true, id:'Q17', type:'text',
+ q:'이 그림에서 내 보장이 가장 부족한 영역은 어디인가요?',
+ qA:'이 그림이 무엇을 보여준다고 생각하세요?',
+ ph:'보이는 대로 답해주세요',
+ mod:{label:'방사형 차트 판정', opts:['정답','오답','답 못함','미도달'],
+      note:'미도달이면 Q17~Q19 는 건너뜁니다.'}},
+{sec:'4부. 보장 상태 확인', id:'Q18', type:'choice',
+ q:'방금 답을 찾을 때 그림을 보셨나요, 아래 글자를 보셨나요?',
+ opts:['그림을 봤다','글자를 봤다','둘 다 봤다','기억이 안 난다']},
+{sec:'4부. 보장 상태 확인', split:true, id:'Q19', type:'text',
+ q:'또래 가입 수준과 비교해 보여주는 정보를 보고 어떤 생각이 드셨어요?', ph:'자유롭게 적어주세요'},
+{sec:'4부. 보장 상태 확인', id:'Q20', type:'text',
+ q:'또래와 비교해서 보여주는 방식이 부담스럽거나 불편하지는 않았나요?', ph:'솔직하게 적어주세요'},
+
+/* ── 5부 상품 ── */
+{sec:'5부. 상품 찾기', secNote:'두 화면에서 같은 과제를 합니다',
+ task:{lbl:'과제 · 양쪽 화면', txt:'치아를 보장하는 보험을 찾아서 하나를 열어봐 주세요.'},
+ id:'Q21', type:'pair', labels:SC5E, q:'각 화면에서 원하는 보험 상품을 찾기 얼마나 쉬웠나요?',
+ mod:{label:'과제 결과 · 상품 찾기', opts:['기존 성공','기존 실패','두번째 성공','두번째 실패'], multi:true}},
+{sec:'5부. 상품 찾기', id:'Q22', type:'choice',
+ q:'상품을 탐색하기에 더 편리했던 쪽은 어디인가요?',
+ opts:['기존 슈퍼SOL','두 번째 화면','비슷했다','잘 모르겠다']},
+{sec:'5부. 상품 찾기', id:'Q23', type:'text',
+ q:'그렇게 느낀 이유를 적어주세요.', ph:'자유롭게 적어주세요'},
+
+/* ── 6부 전체 ── */
+{sec:'6부. 전체 비교', id:'Q24', type:'choice',
+ q:'전체적으로 보험 관련 이용 경험이 더 편리했던 쪽은 어디인가요?',
+ opts:['기존 슈퍼SOL','두 번째 화면','비슷했다','잘 모르겠다']},
+{sec:'6부. 전체 비교', id:'Q25', type:'choice',
+ q:'보험 관련해 무언가를 확인해야 할 때, 오늘 본 두 번째 화면이 있다면 어디서 하시겠어요?',
+ opts:['두 번째 화면에서 하겠다','원래 하던 방법으로 하겠다','상황에 따라 다르다'],
+ follow:{q:'왜 그렇게 하시겠어요?', ph:'이유를 꼭 적어주세요', required:true}},
+{sec:'6부. 전체 비교', id:'Q26', type:'compare',
+ q:'두 화면을 비교했을 때 차이가 느껴졌던 부분을 골라주세요.',
+ hint:'고른 항목마다 어느 쪽이 더 나았는지도 표시해주세요.',
+ rows:[{id:'청구찾기', label:'청구 기능 찾기'},{id:'청구안내', label:'청구 가능 안내'},
+       {id:'메뉴구조', label:'메뉴 구조', only:'B'},{id:'보장이해', label:'보장 상태 이해'},
+       {id:'보험료', label:'보험료 확인', only:'B'},{id:'상품찾기', label:'상품 찾기'}],
+ none:'차이를 느낀 부분이 없다'},
+{sec:'6부. 전체 비교', id:'Q27', type:'text',
+ q:'두 번째 화면에서 가장 불편하거나 개선이 필요하다고 느낀 부분은 무엇인가요?',
+ hint:'솔직하게 적어주실수록 도움이 됩니다.', ph:'자유롭게 적어주세요'},
+{sec:'6부. 전체 비교', id:'Q28', type:'text',
+ q:'반대로 기존 슈퍼SOL이 더 낫다고 느낀 부분이 있었나요?', ph:'있으면 적어주세요. 없으면 "없음"'},
+{sec:'6부. 전체 비교', id:'Q29', type:'text',
+ q:'두 번째 화면에서 이해가 안 되거나 낯설었던 표현이 있었나요?',
+ hint:'예: 화면에 나온 단어 중 무슨 뜻인지 바로 안 와닿았던 것', ph:'있으면 적어주세요. 없으면 "없음"'},
+];
+
+/* ══ 상태 ══ */
+const LS='sol_survey_v1';
+let S={p:'',state:'',order:'',moderator:'',started:'',ans:{},mod:{},i:0};
+let view='intro';
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* 참가자 번호 홀수면 보기 뒤집기 (P1·P3·P5·P7) */
+const flipFor=()=>{const n=parseInt(String(S.p).replace(/\D/g,''),10); return Number.isFinite(n)&&n%2===1;};
+const active=()=>Q.filter(q=>!(q.only&&q.only!==S.state));
+const load=()=>{try{return JSON.parse(localStorage.getItem(LS))||[]}catch(e){return[]}};
+const save=r=>{try{const a=load(); a.push(r); localStorage.setItem(LS,JSON.stringify(a)); return true}catch(e){return false}};
+
+/* ══ 렌더 ══ */
+function render(){
+  if(view==='intro') return intro();
+  if(view==='done')  return done();
+  quiz();
+}
+
+function intro(){
+  $('#hd').hidden=true; $('#nav').hidden=true;
+  const saved=load();
+  $('#main').innerHTML=`
+  <div class="card">
+    <h1>보험 탭 사용성 평가</h1>
+    <p class="lead">진행자가 참가자 정보를 먼저 입력합니다.</p>
+
+    <div class="field">
+      <label for="pin">참가자 번호<span class="req">*</span></label>
+      <input type="text" id="pin" placeholder="예: P1" value="${esc(S.p)}" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label>보험 보유 여부<span class="req">*</span></label>
+      <div class="seg" id="segState">
+        <button type="button" data-v="B" aria-pressed="${S.state==='B'}">보유<span class="sm">state=B</span></button>
+        <button type="button" data-v="A" aria-pressed="${S.state==='A'}">미보유<span class="sm">state=A</span></button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>앱 순서<span class="req">*</span></label>
+      <div class="seg" id="segOrder">
+        <button type="button" data-v="기존먼저" aria-pressed="${S.order==='기존먼저'}">기존 먼저<span class="sm">P1·P3·P5·P7</span></button>
+        <button type="button" data-v="우리먼저" aria-pressed="${S.order==='우리먼저'}">두 번째 먼저<span class="sm">P2·P4·P6·P8</span></button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="modin">진행자</label>
+      <input type="text" id="modin" placeholder="이름 또는 이니셜" value="${esc(S.moderator)}" autocomplete="off">
+    </div>
+
+    <div class="warnbox">
+      이 세 가지를 채우지 않으면 나중에 보유·미보유를 나눠서 집계할 수 없습니다.
+      응답은 이 브라우저에만 저장되니, 참가자 한 명이 끝날 때마다 CSV로 내려받으세요.
+    </div>
+  </div>
+
+  ${saved.length?`<div class="card">
+    <h1 style="font-size:16px">저장된 응답 ${saved.length}건</h1>
+    ${saved.map((r,i)=>`<div class="savedrow">
+      <span><b>${esc(r.p||'?')}</b> · ${r.state==='B'?'보유':'미보유'} · ${esc(r.order||'')}</span>
+      <span class="meta">${esc((r.started||'').slice(5,16).replace('T',' '))}</span>
+    </div>`).join('')}
+    <div style="display:flex; gap:8px; margin-top:14px">
+      <button class="ghost" style="flex:1" id="csv">CSV 내려받기</button>
+      <button class="ghost" id="clr">전체 삭제</button>
+    </div>
+  </div>`:''}
+  `;
+
+  $('#nav').hidden=false;
+  $('#navin').innerHTML=`<button class="btn btn-p" id="go">시작하기</button>`;
+
+  const sync=()=>{ $('#go').disabled = !($('#pin').value.trim() && S.state && S.order); };
+  $('#pin').oninput=e=>{S.p=e.target.value.trim(); sync()};
+  $('#modin').oninput=e=>{S.moderator=e.target.value.trim()};
+  $('#segState').onclick=e=>{const b=e.target.closest('button'); if(!b)return;
+    S.state=b.dataset.v; [...e.currentTarget.children].forEach(c=>c.setAttribute('aria-pressed',c===b)); sync()};
+  $('#segOrder').onclick=e=>{const b=e.target.closest('button'); if(!b)return;
+    S.order=b.dataset.v; [...e.currentTarget.children].forEach(c=>c.setAttribute('aria-pressed',c===b)); sync()};
+  if($('#csv')) $('#csv').onclick=csv;
+  if($('#clr')) $('#clr').onclick=()=>{ if(confirm('저장된 응답을 모두 지웁니다. CSV를 먼저 받으셨나요?')){localStorage.removeItem(LS); render()} };
+  $('#go').onclick=()=>{ S.started=new Date().toISOString(); S.i=0; view='quiz'; render(); window.scrollTo(0,0) };
+  sync();
+}
+
+function quiz(){
+  const list=active(), q=list[S.i];
+  $('#hd').hidden=false; $('#nav').hidden=false;
+  $('#who').innerHTML=`<b>${esc(S.p)}</b> · ${S.state==='B'?'보유':'미보유'} · ${esc(S.order)}`;
+  $('#steps').textContent=`${S.i+1} / ${list.length}`;
+  $('#prog').style.width=((S.i+1)/list.length*100)+'%';
+
+  const prev=list[S.i-1];
+  const newSec=!prev||prev.sec!==q.sec;
+  let h='';
+  if(newSec) h+=`<div class="sec"><h2>${esc(q.sec)}</h2>${q.secNote?`<p>${esc(q.secNote)}</p>`:''}</div>`;
+  else if(q.secNote) h+=`<div class="sec"><p>${esc(q.secNote)}</p></div>`;
+
+  const task = (q.splitTask && S.state==='A') ? q.taskA : q.task;
+  if(task) h+=`<div class="task"><div class="lbl">${esc(task.lbl)}</div>
+    <div class="txt">${esc(task.txt)}</div>${task.sub?`<div class="sub">${esc(task.sub)}</div>`:''}</div>`;
+
+  /* 배지(보유자만·분리 집계)는 내부 집계 표기라 참가자 화면에 넣지 않는다.
+     분기는 렌더 단계에서 이미 처리되고, 집계 구분은 CSV 에서 한다. */
+  const badge = '';
+  const qText = (S.state==='A'&&q.qA) ? q.qA : q.q;
+  const hint = (S.state==='A'&&q.hintA) ? q.hintA : (S.state==='B'&&q.hintB!==undefined?q.hintB:q.hint);
+
+  h+=`<div class="q"><div class="qh"><span class="qn">${q.id}</span>
+      <span class="qt">${esc(qText)}${badge}</span></div>
+      ${hint?`<div class="qhint">${esc(hint)}</div>`:''}
+      <div id="body"></div>
+      ${q.mod && !(q.mod.onlyA && S.state!=='A') ? modBox(q) : ''}
+      </div>`;
+  $('#main').innerHTML=h;
+  body(q);
+
+  $('#navin').innerHTML=`
+    <button class="btn btn-s" id="back">이전</button>
+    <button class="btn btn-p" id="next">${S.i===list.length-1?'제출':'다음'}</button>`;
+  $('#back').disabled=S.i===0;
+  $('#back').onclick=()=>{S.i--; render(); window.scrollTo(0,0)};
+  $('#next').onclick=()=>{
+    const f=q.follow, a=S.ans[q.id];
+    if(f&&f.required&&a&&a.v!=null&&!(a.follow||'').trim()){ alert('이유를 적어주세요.'); return; }
+    if(S.i===list.length-1){ submit(); } else { S.i++; render(); window.scrollTo(0,0); }
+  };
+}
+
+function modBox(q){
+  const m=q.mod, cur=S.mod[q.id];
+  const sel=v=> m.multi ? (Array.isArray(cur)&&cur.includes(v)) : cur===v;
+  return `<div class="mod">
+    <div class="mh"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.6"/></svg>
+      진행자 기록 · ${esc(m.label)}</div>
+    <div class="mrow" id="mrow">
+      ${m.opts.map(o=>`<button type="button" data-v="${esc(o)}" aria-pressed="${sel(o)}">${esc(o)}</button>`).join('')}
+    </div>
+    ${m.note?`<div class="mnote">${esc(m.note)}</div>`:''}
+  </div>`;
+}
+
+function body(q){
+  const el=$('#body'); const a=S.ans[q.id]||{};
+  const opts = q.split&&q.optsA ? (S.state==='A'?q.optsA:q.optsB) : (q.optsB&&S.state==='B'?q.optsB:q.opts);
+
+  if(q.type==='scale'||q.type==='pair'){
+    const labels=q.labels||SC5;
+    const rows = q.type==='pair' ? (q.pairLabels||['기존 슈퍼SOL','두 번째 화면']) : [null];
+    el.innerHTML = rows.map((r,ri)=>`
+      ${r?`<div class="pairlbl">${esc(r)}</div>`:''}
+      <div class="scale" data-row="${ri}">
+        ${labels.map((L,i)=>`<button type="button" data-v="${i+1}"
+           aria-pressed="${(q.type==='pair'? (a['r'+ri]===i+1) : (a.v===i+1))}">
+           <span class="num">${i+1}</span><span class="cap">${esc(L)}</span></button>`).join('')}
+      </div>`).join('');
+    el.querySelectorAll('.scale').forEach(g=>{
+      g.onclick=e=>{const b=e.target.closest('button'); if(!b)return;
+        const v=+b.dataset.v, ri=g.dataset.row;
+        const cur=S.ans[q.id]||{}; if(q.type==='pair') cur['r'+ri]=v; else cur.v=v;
+        S.ans[q.id]=cur; [...g.children].forEach(c=>c.setAttribute('aria-pressed',c===b));
+      };
+    });
+  }
+  else if(q.type==='choice'||q.type==='multi'){
+    const multi=q.type==='multi';
+    let list=opts.map((o,i)=>({o,i}));
+    if(q.flip&&flipFor()) list=[...list].reverse();
+    el.innerHTML=`<div class="opts">
+      ${list.map(({o,i})=>`<button type="button" class="opt${multi?' multi':''}" data-i="${i}"
+        aria-pressed="${multi?(a.v||[]).includes(i):a.v===i}">
+        <span class="mark"></span><span>${esc(o)}</span></button>`).join('')}
+      ${q.other?`<button type="button" class="opt${multi?' multi':''}" data-i="-1"
+        aria-pressed="${multi?(a.v||[]).includes(-1):a.v===-1}">
+        <span class="mark"></span><span>기타</span></button>`:''}
+    </div>
+    ${q.other?`<input class="other-in" id="oth" placeholder="기타 내용을 적어주세요" value="${esc(a.other||'')}" hidden>`:''}
+    ${q.follow?`<div class="pairlbl" style="margin-top:16px">${esc(q.follow.q)}</div>
+      <textarea id="fol" placeholder="${esc(q.follow.ph||'')}">${esc(a.follow||'')}</textarea>`:''}`;
+
+    const oth=$('#oth');
+    const showOther=()=>{ if(!oth)return; const c=S.ans[q.id]||{};
+      oth.hidden = multi ? !(c.v||[]).includes(-1) : c.v!==-1; };
+    el.querySelector('.opts').onclick=e=>{
+      const b=e.target.closest('.opt'); if(!b)return;
+      const i=+b.dataset.i; const cur=S.ans[q.id]||{};
+      if(multi){ const arr=new Set(cur.v||[]); arr.has(i)?arr.delete(i):arr.add(i); cur.v=[...arr];
+        b.setAttribute('aria-pressed',arr.has(i)); }
+      else { cur.v=i; el.querySelectorAll('.opt').forEach(c=>c.setAttribute('aria-pressed',c===b)); }
+      S.ans[q.id]=cur; showOther();
+    };
+    showOther();
+    if(oth) oth.oninput=e=>{const c=S.ans[q.id]||{}; c.other=e.target.value; S.ans[q.id]=c};
+    if($('#fol')) $('#fol').oninput=e=>{const c=S.ans[q.id]||{}; c.follow=e.target.value; S.ans[q.id]=c};
+  }
+  else if(q.type==='compare'){
+    const rows=q.rows.filter(r=>!(r.only&&r.only!==S.state));
+    const cur=S.ans[q.id]||{};
+    el.innerHTML=`
+      ${rows.map(r=>`<div class="pairlbl">${esc(r.label)}</div>
+        <div class="scale" style="grid-template-columns:repeat(3,1fr)" data-r="${esc(r.id)}">
+          ${[['기존이 나음','L'],['차이 없음','S'],['두 번째가 나음','R']].map(([t,v])=>
+            `<button type="button" data-v="${v}" aria-pressed="${cur[r.id]===v}">
+              <span class="cap" style="font-size:12px">${esc(t)}</span></button>`).join('')}
+        </div>`).join('')}
+      <div style="margin-top:16px">
+        <button type="button" class="opt" id="noneBtn" aria-pressed="${!!cur.none}">
+          <span class="mark"></span><span>${esc(q.none)}</span></button>
+      </div>`;
+    el.querySelectorAll('.scale').forEach(g=>{
+      g.onclick=e=>{const b=e.target.closest('button'); if(!b)return;
+        const c=S.ans[q.id]||{}; c[g.dataset.r]=b.dataset.v; c.none=false;
+        S.ans[q.id]=c; [...g.children].forEach(x=>x.setAttribute('aria-pressed',x===b));
+        $('#noneBtn').setAttribute('aria-pressed','false');
+      };
+    });
+    $('#noneBtn').onclick=e=>{
+      const c=S.ans[q.id]||{}; c.none=!c.none;
+      if(c.none) rows.forEach(r=>delete c[r.id]);
+      S.ans[q.id]=c; body(q);
+    };
+  }
+  else { /* text */
+    el.innerHTML=`<textarea id="t" placeholder="${esc(q.ph||'자유롭게 적어주세요')}">${esc(a.v||'')}</textarea>`;
+    $('#t').oninput=e=>{S.ans[q.id]={v:e.target.value}};
+  }
+
+  const mr=$('#mrow');
+  if(mr) mr.onclick=e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    const v=b.dataset.v, m=q.mod;
+    if(m.multi){ const arr=new Set(S.mod[q.id]||[]); arr.has(v)?arr.delete(v):arr.add(v);
+      S.mod[q.id]=[...arr]; b.setAttribute('aria-pressed',arr.has(v)); }
+    else { S.mod[q.id]=v; [...mr.children].forEach(c=>c.setAttribute('aria-pressed',c===b)); }
+  };
+}
+
+function submit(){
+  const rec={p:S.p,state:S.state,order:S.order,moderator:S.moderator,
+             started:S.started,ended:new Date().toISOString(),ans:S.ans,mod:S.mod};
+  const ok=save(rec);
+  view='done'; render(); window.scrollTo(0,0);
+  if(!ok) alert('저장에 실패했습니다. 지금 바로 CSV를 내려받으세요.');
+}
+
+function done(){
+  $('#hd').hidden=true;
+  const n=load().length;
+  $('#main').innerHTML=`<div class="card done">
+    <div class="ic">✓</div>
+    <h1>응답이 저장됐어요</h1>
+    <p class="lead">참여해주셔서 감사합니다.</p>
+    <div class="warnbox" style="text-align:left">
+      진행자 확인: 지금 CSV를 내려받으세요. 저장된 응답은 ${n}건입니다.
+      브라우저 데이터가 지워지면 복구할 수 없습니다.
+    </div>
+  </div>`;
+  $('#navin').innerHTML=`
+    <button class="btn btn-s" id="dl" style="flex:1">CSV 받기</button>
+    <button class="btn btn-p" id="nx">다음 참가자</button>`;
+  $('#dl').onclick=csv;
+  $('#nx').onclick=()=>{S={p:'',state:'',order:'',moderator:S.moderator,started:'',ans:{},mod:{},i:0};
+    view='intro'; render(); window.scrollTo(0,0)};
+}
+
+/* ══ CSV ══ */
+function csv(){
+  const rows=load();
+  if(!rows.length){ alert('저장된 응답이 없습니다.'); return; }
+  const cols=['참가자','보유여부','순서','진행자','시작','종료'];
+  Q.forEach(q=>{
+    if(q.type==='pair'){ cols.push(q.id+'_기존', q.id+'_두번째'); }
+    else if(q.type==='compare'){ q.rows.forEach(r=>cols.push(q.id+'_'+r.id)); cols.push(q.id+'_차이없음'); }
+    else { cols.push(q.id); if(q.other) cols.push(q.id+'_기타'); if(q.follow) cols.push(q.id+'_이유'); }
+    if(q.mod) cols.push(q.id+'_진행자');
+  });
+  const cell=v=>{ const s=String(v==null?'':v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const lines=[cols.join(',')];
+  rows.forEach(r=>{
+    const o=[r.p, r.state==='B'?'보유':'미보유', r.order, r.moderator||'', r.started||'', r.ended||''];
+    Q.forEach(q=>{
+      const a=r.ans[q.id]||{}, skip=(q.only&&q.only!==r.state);
+      const opts = q.optsA&&r.state==='A' ? q.optsA : (q.optsB||q.opts);
+      if(q.type==='pair'){ o.push(skip?'N/A':(a.r0??''), skip?'N/A':(a.r1??'')); }
+      else if(q.type==='compare'){
+        q.rows.forEach(rw=>{ const sk=(rw.only&&rw.only!==r.state);
+          o.push(sk?'N/A':({L:'기존이 나음',S:'차이 없음',R:'두 번째가 나음'}[a[rw.id]]||'')); });
+        o.push(a.none?'예':'');
+      }
+      else if(q.type==='multi'){
+        o.push(skip?'N/A':(a.v||[]).map(i=>i===-1?'기타':opts[i]).join(' | '));
+        if(q.other) o.push(a.other||'');
+      }
+      else if(q.type==='choice'){
+        o.push(skip?'N/A':(a.v===-1?'기타':(a.v!=null?opts[a.v]:'')));
+        if(q.other) o.push(a.other||'');
+        if(q.follow) o.push(a.follow||'');
+      }
+      else if(q.type==='scale'){ o.push(skip?'N/A':(a.v??'')); }
+      else { o.push(skip?'N/A':(a.v||'')); }
+      if(q.mod){ const m=r.mod[q.id]; o.push(skip?'N/A':(Array.isArray(m)?m.join(' | '):(m||''))); }
+    });
+    lines.push(o.map(cell).join(','));
+  });
+  const text='\ufeff'+lines.join('\n');
+  const name=`정성평가_${new Date().toISOString().slice(0,10)}.csv`;
+
+  /* 로컬 파일에서는 바로 내려받는다.
+     ⚠️ 아티팩트 뷰어는 페이지가 시작하는 다운로드를 막으므로 복사창으로 대신한다. */
+  const local = location.protocol==='file:' || /^(localhost|127\.)/.test(location.hostname);
+  if(local){
+    try{
+      const blob=new Blob([text],{type:'text/csv;charset=utf-8'});
+      const url=URL.createObjectURL(blob), a=document.createElement('a');
+      a.href=url; a.download=name; a.style.display='none';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+      return;
+    }catch(e){ /* 아래 복사창으로 넘어간다 */ }
+  }
+  showCsv(text, name);
+}
+
+/* 다운로드가 막힌 환경용 — 복사해서 쓰도록 띄운다 */
+function showCsv(text, name){
+  const bd=document.createElement('div');
+  bd.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.55);'+
+    'display:flex;align-items:center;justify-content:center;padding:16px';
+  bd.innerHTML=`<div style="background:var(--surface);border-radius:var(--r);padding:18px;
+      max-width:720px;width:100%;max-height:86vh;display:flex;flex-direction:column;gap:12px">
+    <div><div style="font-size:17px;font-weight:700">CSV 내보내기</div>
+    <div style="font-size:13px;color:var(--text-2);margin-top:4px">
+      이 화면에서는 파일 저장이 막혀 있어요. 복사해서 엑셀이나 메모장에 붙여넣고
+      <b>${esc(name)}</b> 로 저장하세요.</div></div>
+    <textarea id="csvout" readonly style="flex:1;min-height:220px;font-family:ui-monospace,
+      SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre">${esc(text)}</textarea>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" id="cp" style="flex:1">복사하기</button>
+      <button class="btn btn-s" id="cl" style="flex:0 0 96px">닫기</button></div>
+  </div>`;
+  document.body.appendChild(bd);
+  const ta=bd.querySelector('#csvout');
+  bd.querySelector('#cp').onclick=async()=>{
+    const b=bd.querySelector('#cp');
+    try{ await navigator.clipboard.writeText(text); b.textContent='복사됐어요'; }
+    catch(e){ ta.select(); b.textContent='직접 복사하세요'; }
+    setTimeout(()=>{b.textContent='복사하기'},2200);
+  };
+  bd.querySelector('#cl').onclick=()=>bd.remove();
+  bd.onclick=e=>{ if(e.target===bd) bd.remove(); };
+}
+
+render();
+</script>
