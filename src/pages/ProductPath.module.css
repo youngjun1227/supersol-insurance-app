@@ -83,10 +83,6 @@
 .rowName { color: var(--text-primary); }
 .rowDesc { color: var(--text-caption); }
 
-.chevron {
-  flex-shrink: 0;
-  color: var(--text-disabled);
-}
 
 .chips {
   display: flex;

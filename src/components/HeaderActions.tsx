@@ -7,7 +7,7 @@
      <Header … actions={<HeaderActions screen={SCREEN.s3c} />} />          검색+전체메뉴
      <Header … actions={<HeaderActions screen={SCREEN.s1} withAlarm />} /> +알림 */
 
-import { Bell, List, MagnifyingGlass } from '@phosphor-icons/react'
+import { Bell, House, List, MagnifyingGlass } from '@phosphor-icons/react'
 import { ELEMENT, type ScreenCode, tid } from '@/lib/targetId'
 import { IconAction } from './Header'
 
@@ -16,12 +16,14 @@ interface HeaderActionsProps {
   screen: ScreenCode
   /** 알림 버튼을 끼워 넣는다 (메인 계열 화면) */
   withAlarm?: boolean
+  /** 홈 버튼을 끼워 넣는다 (상품 계열 화면 — 알림 자리에 홈이 온다) */
+  withHome?: boolean
 }
 
 /** 아이콘 한 벌 — 크기 24·regular·--text-secondary 는 전 화면 공통 */
 const ICON = { size: 24, weight: 'regular', color: 'var(--text-secondary)' } as const
 
-export function HeaderActions({ screen, withAlarm = false }: HeaderActionsProps) {
+export function HeaderActions({ screen, withAlarm = false, withHome = false }: HeaderActionsProps) {
   return (
     <>
       <IconAction targetId={tid(screen, ELEMENT.버튼, '검색')} label="검색">
@@ -31,6 +33,12 @@ export function HeaderActions({ screen, withAlarm = false }: HeaderActionsProps)
       {withAlarm ? (
         <IconAction targetId={tid(screen, ELEMENT.버튼, '알림')} label="알림 설정">
           <Bell {...ICON} />
+        </IconAction>
+      ) : null}
+
+      {withHome ? (
+        <IconAction targetId={tid(screen, ELEMENT.버튼, '홈')} label="홈">
+          <House {...ICON} />
         </IconAction>
       ) : null}
 

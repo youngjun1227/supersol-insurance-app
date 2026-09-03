@@ -8,8 +8,8 @@
    분리형 진단 카드(S1-8 · S1-14)는 통합 카드와 별개 — 변경로그 §1. */
 
 import { useState } from 'react'
-import { Bell, HandCoins, List, MagnifyingGlass } from '@phosphor-icons/react'
-import { AppShell, Battery, Card, FinanceTopTabs, Header, IconAction, TabBar } from '@/components'
+import { HandCoins, MagnifyingGlass } from '@phosphor-icons/react'
+import { AppShell, Battery, Card, FinanceTopTabs, Header, HeaderActions, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import {
   INSURANCE_CUSTOM_OFF as O, INSURANCE_EMPTY as E, INSURANCE_MAIN as C,
@@ -96,7 +96,7 @@ export function FinanceInsurance() {
         }}
       >
         {C.basisAction}
-        <span className={styles.chevron} aria-hidden="true">›</span>
+        <span className="u-chevron" aria-hidden="true">›</span>
       </button>
     </div>
   )
@@ -117,7 +117,7 @@ export function FinanceInsurance() {
           onClick={() => go(tid(SCREEN.s1, ELEMENT.카드, '내보험'), '/finance/insurance/my')}
         >
           <span className={`${styles.title} t-h2`}>{C.myTitle}</span>
-          <span className={styles.chevron} aria-hidden="true">›</span>
+          <span className="u-chevron" aria-hidden="true">›</span>
         </button>
 
         <div className={styles.stats}>
@@ -226,7 +226,7 @@ export function FinanceInsurance() {
       >
         <span className={styles.titleRow}>
           <span className={`${styles.title} t-h2`}>{C.diagnosisTitle}</span>
-          <span className={styles.chevron} aria-hidden="true">›</span>
+          <span className="u-chevron" aria-hidden="true">›</span>
         </span>
 
         <Battery level={batteryLevelFor(data.coverageTotal)} width={72} height={96} />
@@ -257,7 +257,7 @@ export function FinanceInsurance() {
             <span className={`${styles.diagItemName} t-body-lg-medium`}>{topEmpty.label}</span>
             <span className={`${styles.diagItemPeer} t-body-sm`}>{C.diagnosisPeer}</span>
           </span>
-          <span className={styles.chevron} aria-hidden="true">›</span>
+          <span className="u-chevron" aria-hidden="true">›</span>
         </button>
       ) : null}
 
@@ -305,7 +305,7 @@ export function FinanceInsurance() {
       >
         <span className={styles.titleRow}>
           <span className={`${styles.title} t-h2`}>{title}</span>
-          <span className={styles.chevron} aria-hidden="true">›</span>
+          <span className="u-chevron" aria-hidden="true">›</span>
         </span>
 
         <Battery level={100} width={72} height={96} />
@@ -364,7 +364,7 @@ export function FinanceInsurance() {
                   {product.description} · 월 {won(product.monthlyPremium)}
                 </span>
               </span>
-              <span className={styles.chevron} aria-hidden="true">›</span>
+              <span className="u-chevron" aria-hidden="true">›</span>
             </button>
           )
         })}
@@ -410,7 +410,7 @@ export function FinanceInsurance() {
             </span>
             <span className={`${styles.policyMeta} t-body-sm`}>{E.servicesSub}</span>
           </span>
-          <span className={styles.chevron} aria-hidden="true">›</span>
+          <span className="u-chevron" aria-hidden="true">›</span>
         </button>
       </Card>
     )
@@ -446,17 +446,7 @@ export function FinanceInsurance() {
           <Header
             title="금융"
             actions={
-              <>
-                <IconAction targetId={tid(SCREEN.s1, ELEMENT.버튼, '검색')} label="검색">
-                  <MagnifyingGlass size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-                <IconAction targetId={tid(SCREEN.s1, ELEMENT.버튼, '알림')} label="알림">
-                  <Bell size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-                <IconAction targetId={tid(SCREEN.s1, ELEMENT.버튼, '전체메뉴')} label="전체메뉴">
-                  <List size={24} weight="regular" color="var(--text-secondary)" />
-                </IconAction>
-              </>
+              <HeaderActions screen={SCREEN.s1} withAlarm />
             }
           />
           <FinanceTopTabs active="insurance" screen={SCREEN.s1} />

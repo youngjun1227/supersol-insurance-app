@@ -23,15 +23,30 @@ export function ProductFilters({
   const rowRef = useRef<HTMLDivElement>(null)
 
   /* 선택된 칩을 스크롤 영역 맨 앞으로 — '전체' 바로 오른쪽에 온다.
-     ⚠️ 가운데 정렬(inline:'center')이 아니다 — 뒤 칩이 절반만 보여 탐색이 끊긴다 */
+     ⚠️ 가운데 정렬(inline:'center')이 아니다 — 뒤 칩이 절반만 보여 탐색이 끊긴다
+
+     진입(마운트)은 즉시, 화면 안에서 칩을 갈아탈 때만 smooth (#124).
+     - 도착 상태는 figma-ref S2-D 가 그리는 그대로다 — 선택 칩이 맨 왼쪽, 앞 칩은
+       가장자리에 잘림. 이건 바뀌지 않는다
+     - 즉시 대입은 눈앞의 칩을 눌렀는데 행 전체가 홱 튀어 뭐가 어디로 갔는지
+       눈이 못 따라간다. smooth 는 정지 화면이 아니라 전환만 바꾼다
+     - 마운트까지 smooth 로 하면 S2-A→S2-D 도착 장면이 흘러가 보인다.
+       PNG 는 도착 상태라 진입은 즉시 놓는다 */
+  const mounted = useRef(false)
   useEffect(() => {
     const row = rowRef.current
+    const instant = !mounted.current
+    mounted.current = true
     if (!row || !activeCategory) return
     const chip = row.querySelector<HTMLElement>('[data-selected="true"]')
     if (!chip) return
     /* ⚠️ offsetLeft 는 offsetParent 기준이라 스크롤 컨테이너와 다를 수 있다.
        실제 화면 위치 차이로 계산해야 칩이 영역 안에 정확히 들어온다 */
-    row.scrollLeft += chip.getBoundingClientRect().left - row.getBoundingClientRect().left
+    const left = row.scrollLeft + chip.getBoundingClientRect().left - row.getBoundingClientRect().left
+    /* jsdom 에는 Element.scrollTo 가 없어 스모크에서 throw 했다. 없으면 즉시 대입 —
+       #124 이전과 정확히 같은 동작이라 어느 환경에서도 화면이 깨지지 않는다 */
+    if (typeof row.scrollTo === 'function') row.scrollTo({ left, behavior: instant ? 'auto' : 'smooth' })
+    else row.scrollLeft = left
   }, [activeCategory])
 
   return (
