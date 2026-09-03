@@ -73,8 +73,6 @@ export function App() {
               시작해야 한다. start_url 만 바꿨더니 PWA 로 추가했을 때만 진입
               화면이 뜨고, 링크를 그냥 열면 홈으로 갔다. */}
           <Route path="/" element={<Start />} />
-          {/* 예전 주소 — 배포 링크·QR 이 돌아다닐 수 있어 남긴다 */}
-          <Route path="/start" element={<Navigate to="/" replace />} />
 
           {/* 00 메인홈 — S4-A 결제 감지 팝업은 이 위 오버레이 */}
           <Route path="/home" element={<Home />} />

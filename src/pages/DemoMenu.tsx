@@ -31,7 +31,7 @@ export function DemoMenu() {
           <Button
             block
             targetId={tid(SCREEN.demoMenu, ELEMENT.버튼, '상황고르기')}
-            onClick={() => navigate('/start')}
+            onClick={() => navigate('/')}
           >
             진입 화면 열기
           </Button>

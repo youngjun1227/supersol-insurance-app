@@ -83,7 +83,6 @@ test('라우트 목록이 App.tsx 와 같은 수다 (화면 추가 시 스모크
   const covered = new Set(
     ROUTES.map((r) => r.split('?')[0].replace(/\/(sp|op)-[\w-]+$/, '/:productId').replace(/\/(c-)[\w-]+$/, '/:itemId')),
   )
-  /* /start 는 예전 주소를 / 로 넘기는 리다이렉트 전용이라 렌더 대상이 아니다 */
-  const missing = appRoutes.filter((r) => r !== '/start' && !covered.has(r))
+  const missing = appRoutes.filter((r) => !covered.has(r))
   expect(missing).toEqual([])
 })
