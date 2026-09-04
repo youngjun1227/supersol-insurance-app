@@ -51,9 +51,13 @@
 
 /* 문구 폭 측정 전용 — 자리를 차지하지 않고 실제 폭만 갖는다.
    visibility:hidden 이면 레이아웃에 남아 버블을 밀어내므로 absolute 로 뺀다.
-   ⚠️ 버블과 같은 좌우 패딩(14px)을 줘야 한다 — 없으면 28px 좁게 재서 글자가 잘린다. */
+   ⚠️ 버블과 같은 좌우 패딩(14px)을 줘야 한다 — 없으면 28px 좁게 재서 글자가 잘린다.
+   ⚠️ 오른쪽에 앵커한다(top/right:0) — 좌표 없이 두면 wrap 왼쪽 끝에서 오른쪽으로 뻗는데,
+      접혀서 wrap 이 마스코트 48px 만 남으면 뷰포트 밖으로 돌출해 가로 스크롤이 생긴다 (#147). */
 .measure {
   position: absolute;
+  top: 0;
+  right: 0;
   visibility: hidden;
   pointer-events: none;
   white-space: nowrap;
