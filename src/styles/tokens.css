@@ -102,7 +102,7 @@
   --h-cta-area:    102px;
   --h-row:         60px;   /* 리스트 행 */
   --h-row-sub:     77px;   /* 서브텍스트 있는 행 — 현재 미사용 */
-  --tabbar-bottom: 12px;   /* 탭바 하단 띄움 (+ safe-area) */
+  --tabbar-bottom: 12px;   /* 탭바 하단 띄움 — safe-area 없는 기기만. 있으면 safe-area 가 대신한다 */
 
   /* ── §2 타이포 (13단계. 중간값 새로 만들기 금지) ──────────── */
   --font-sans: Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont,

@@ -1,6 +1,7 @@
 /* §4 TabBar — 363×62 플로팅 pill, fixed, bottom 12 + safe-area.
    탭 5개(홈·금융·상품·혜택·주식).
-   선택 = 채움 아이콘 22 + 라벨 12/500, 색만 --primary
+   선택 = 채움 아이콘 28(글리프 ≈22) + 라벨 13/500, 색만 --primary
+   (실기기 원본 비교 2026-09-04 — 22/12 는 원본보다 작았다. 필 62 는 동일)
    비선택 = 같은 아이콘 --text-disabled
    ⚠️ 선택 원 같은 건 없다 (8/23 정정). */
 
@@ -76,8 +77,8 @@ export function TabBar({ activeId, screen }: TabBarProps) {
               navigate({ pathname: tab.path, search: location.search })
             }}
           >
-            <Icon size={22} weight="fill" />
-            <span className={`${styles.label} t-label`}>{tab.label}</span>
+            <Icon size={28} weight="fill" />
+            <span className={`${styles.label} t-caption-medium`}>{tab.label}</span>
           </button>
         )
       })}
