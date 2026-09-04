@@ -359,7 +359,7 @@
    아이디어 1 · 상품 찾기        — 역할 없음. 실기기로 기존/두 번째 화면 각각 과업 수행
    아이디어 2 · 보험 탭 홈 개인화 — 역할 부여(보험 2개 20대), 스크린샷 2장 블라인드 비교
    아이디어 3 · 보장진단        — 역할 유지(되짚기), 프로토타입에서 직접 조작, 이름부터 물어 블라인드 아님
-   아이디어 4 · 보험금 청구      — 역할 없음. 화면 없이 평소 청구 경험부터 묻는다 (K1 답으로 분기)
+   아이디어 4 · 보험금 청구      — 역할 없음. 화면 없이 평소 청구 경험부터 묻는다 (K1~K3 전원 공통)
                                   ⚠️ 프로토타입(결제 감지 알림) 조작 문항은 별도 개정에서 이 뒤에 잇는다
 
    홈·보장 블록 순서는 참가자 번호 홀짝으로 교차한다.
@@ -568,8 +568,8 @@ const D=[
 
 /* ── 아이디어 4 · 보험금 청구 — 사전 경험 인터뷰 (화면 없음) ──
    프로토타입(결제 감지 알림) 조작 문항은 별도 개정에서 이 뒤에 잇는다 — 여기서는 경험만 끌어낸다.
-   K1 은 참가자가 고른 단계로 직접 분기한다: ②서류(v===1) → K3a · ③앱/입력(v===2) → K3b.
-   ①④⑤는 추가 문항 없음 — K2(이유)로 충분하다.
+   K3a·K3b 는 전원 공통이다 (분기 없음 — 2026-09-04 팀원 B 결정: 표본이 작아
+   K1 답으로 갈라 받으면 문항당 응답이 몇 개 안 남는다).
    ⚠️ K3a 가 노리는 지점: 서류를 안 챙겨 청구를 포기한 경험 = 결제 감지 알림이 해결하려는 문제.
       참가자가 적는 동안 진행자가 구두로 경험을 더 끌어내도 된다 (화면에는 힌트를 남기지 않는다) */
 const CLAIM_STEPS=[
@@ -580,7 +580,7 @@ const CLAIM_STEPS=[
   '⑤ 제출 후 심사 대기, 지급 확인',
 ];
 const K=[
- {id:'K1', type:'choice', required:true, clearOnChange:['K3a','K3b'],
+ {id:'K1', type:'choice', required:true,
   guide:'보험금 청구는 보통 이런 순서로 진행돼요. 한 번 같이 볼게요.',
   q:'이 5단계 중에서 가장 귀찮을 것 같은 단계는 어디인가요? 하나만 골라주세요.',
   opts:CLAIM_STEPS},
@@ -588,18 +588,14 @@ const K=[
   q:'왜 그 단계가 가장 귀찮게 느껴지시나요? 구체적인 상황을 떠올려서 말해 주세요.',
   ph:'겪었던 일이든 상상되는 상황이든 자유롭게 적어주세요'},
 ];
-const K_DOCS=[
- {id:'K3a', type:'text', cbranch:'docs',
+const K3=[
+ {id:'K3a', type:'text',
   q:'서류를 안 챙겨서 (또는 잃어버려서) 청구를 못 하거나 미룬 적이 있나요? 그때 상황을 들려주세요.',
   ph:'없으면 "없음" — 있었다면 어떤 서류였고 어떻게 됐는지'},
-];
-const K_APP=[
- {id:'K3b', type:'text', cbranch:'app',
+ {id:'K3b', type:'text',
   q:'어느 앱에서 청구해야 하는지, 혹은 어느 메뉴에서 청구해야 하는지 바로 떠오르시나요?',
   ph:'떠오르는 대로 — 잘 모르겠다면 그렇게 적어주세요'},
 ];
-/* K1 답으로 어느 분기를 밟는지 — steps() 는 S.ans.cmp 를, CSV 는 저장된 row 의 ans.cmp 를 넘긴다 */
-const claimBranchOf=a=>{const v=a?.K1?.v; return v===1?'docs':v===2?'app':'none';};
 
 /* ── 배경 — 맨 앞. 참가자가 보험이 없어 옛 도입(전제 검증)은 못 쓰고, 사전 지식 차이만 잡는다 ── */
 const B=[
@@ -662,7 +658,7 @@ const dropDraft=()=>{try{localStorage.removeItem(DRAFT)}catch(e){}};
    [표지: 아이디어1] 상품찾기 Task1 Q1~Q3 → Task2 G1·G1b → (분기) G2~G6 또는 G7
    [표지: 아이디어2] 역할 → 홈 화면1 P×5 → 홈 화면2 P×5 → C×4
    [표지: 아이디어3] 역할 되짚기 → 이름 T×2 ×2 → T5 → 서비스1 A×7 → 서비스2 A×7 → E×2 → D×4
-   [표지: 아이디어4] 청구 경험 K1·K2 → (K1 분기) K3a(②서류) 또는 K3b(③앱·입력) 또는 없음
+   [표지: 아이디어4] 청구 경험 K1·K2 (한 페이지) → K3a·K3b (한 페이지, 전원 공통)
 
    G1b 는 참가자가 직접 답한 값으로 분기한다(진행자 개입 없음) — v===0(눌러봤다)이면 G_USED,
    그 외(못 봤거나 안 눌러봤다)면 G_UNUSED 로 간다. steps() 는 매 렌더마다 다시 계산되므로
@@ -711,10 +707,10 @@ function steps(){
 
   /* ── 아이디어 4 · 보험금 청구 — 사전 경험 인터뷰 ── */
   st.push({kind:'divider', idea:IDEAS[4]});
-  /* K1·K2 는 한 페이지 — 단계를 고르고 그 자리에서 이유를 적는다 (5단계 목록을 다시 안 봐도 되게) */
+  /* K1·K2 는 한 페이지 — 단계를 고르고 그 자리에서 이유를 적는다 (5단계 목록을 다시 안 봐도 되게).
+     K3a·K3b 도 한 페이지, 전원 공통 (분기 없음) */
   st.push({kind:'cmp',key:'cmp',qs:K, sec:'보험금 청구 경험', secNote:'화면 없이, 평소 경험을 여쭤볼게요'});
-  const kb=claimBranchOf(S.ans.cmp);
-  (kb==='docs'?K_DOCS:kb==='app'?K_APP:[]).forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'보험금 청구 경험'}));
+  st.push({kind:'cmp',key:'cmp',qs:K3, sec:'보험금 청구 경험'});
 
   /* ── 마무리 ── */
   F.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'마무리', secNote:'오늘 본 두 화면 전체에 대해'}));
@@ -1032,7 +1028,6 @@ function body(q,key){
       else {
         /* 분기점 답이 바뀌면 반대 분기에 남아 있던 답을 비운다 — 되돌아가 바꿨을 때 유령 응답이 남지 않게 */
         if(q.branchKey && cur.v!==i) [...G_USED,...G_UNUSED].forEach(g=>delete S.ans.cmp[g.id]);
-        if(q.clearOnChange && cur.v!==i) q.clearOnChange.forEach(id=>delete S.ans.cmp[id]);
         cur.v=i; el.querySelectorAll('.opt').forEach(c=>c.setAttribute('aria-pressed',c===b));
       }
       store[q.id]=cur; showOther();
@@ -1105,8 +1100,7 @@ function walk(cb){
   E.forEach(q=>cb(q,'cmp',q.id));
   D.forEach(q=>cb(q,'cmp',q.id));
   K.forEach(q=>cb(q,'cmp',q.id));
-  K_DOCS.forEach(q=>cb(q,'cmp',q.id));
-  K_APP.forEach(q=>cb(q,'cmp',q.id));
+  K3.forEach(q=>cb(q,'cmp',q.id));
   F.forEach(q=>cb(q,'cmp',q.id));
 }
 /* G_USED/G_UNUSED 는 참가자마다 한쪽만 응답이 있다 — 안 밟은 쪽은 N/A 로 찍는다.
@@ -1149,9 +1143,7 @@ function csv(){
     const o=[r.p, SIDES[seqOf(r.order)[0]].csv, r.moderator||'', r.started||'', r.ended||''];
     const rBranch=branchOf(r);
     walk((q,k)=>{
-      /* 안 밟은 분기는 N/A — G(에이전트) 분기와 K(청구 K1) 분기 각각 */
-      const skip=(q.branch && q.branch!==rBranch)
-        || (q.cbranch && q.cbranch!==claimBranchOf(r.ans.cmp));
+      const skip=q.branch && q.branch!==rBranch;
       const a=(r.ans[k]||{})[q.id]||{}, m=(r.mod[k]||{})[q.id];
       fields(q).forEach(([,fn])=>o.push(skip?'N/A':fn(a,m,r)));
     });
