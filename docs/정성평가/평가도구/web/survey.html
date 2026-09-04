@@ -267,6 +267,31 @@
   .btn-s:hover{filter:brightness(.96)}
   .btn:disabled{opacity:.45; cursor:not-allowed}
 
+  /* ── 문항 바로가기 패널 (문제은행식) — 진행 중(quiz)에만, 넓은 화면에만 보인다.
+     좁은 화면에서는 본문과 겹쳐서 아예 숨긴다 — 폰 진행은 이전/다음으로 충분하다 */
+  #side{
+    position:fixed; left:12px; top:64px; bottom:12px; z-index:15;
+    width:176px; overflow-y:auto; padding:12px 10px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  }
+  #side .sttl{font-size:11px; font-weight:700; color:var(--text-3); margin:12px 0 5px; letter-spacing:.02em; word-break:keep-all}
+  #side .sttl:first-child{margin-top:0}
+  #side .sgrid{display:flex; flex-wrap:wrap; gap:4px}
+  #side .jmp{
+    min-width:36px; padding:5px 6px; text-align:center; cursor:pointer; font:inherit; font-size:11px;
+    font-variant-numeric:tabular-nums;
+    background:var(--surface-2); color:var(--text-2); border:1.5px solid transparent; border-radius:7px;
+  }
+  #side .jmp:hover{background:var(--accent-soft)}
+  #side .jmp[data-done="true"]{background:var(--accent-soft); color:var(--accent)}
+  #side .jmp[aria-current="true"]{border-color:var(--accent); font-weight:700; color:var(--accent)}
+  @media (max-width:1119px){ #side{display:none} }
+  /* 패널이 보일 때 본문·하단 버튼을 오른쪽으로 밀어 겹치지 않게 한다 */
+  @media (min-width:1120px){
+    body[data-side="on"]{padding-left:200px}
+    body[data-side="on"] .nav{left:200px}
+  }
+
   /* ── 시작/종료 화면 ── */
   .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:20px; margin:16px 0}
   .card h1{font-size:22px; margin:0 0 6px; line-height:1.3}
@@ -313,6 +338,7 @@
   }
 </style>
 
+<aside id="side" hidden aria-label="문항 바로가기"></aside>
 <div class="wrap">
   <header id="hd" hidden>
     <div class="hrow">
@@ -327,12 +353,14 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════
-   9/11 정성평가 — 아이디어 1·2·3 순서로 진행한다 (아이디어 4 청구는 별도 개정 예정, 미포함).
+   9/11 정성평가 — 아이디어 1·2·3·4 순서로 진행한다.
    각 아이디어 앞에 표지 섹션(이름 + 과업/역할 안내)을 넣는다.
 
    아이디어 1 · 상품 찾기        — 역할 없음. 실기기로 기존/두 번째 화면 각각 과업 수행
    아이디어 2 · 보험 탭 홈 개인화 — 역할 부여(보험 2개 20대), 스크린샷 2장 블라인드 비교
    아이디어 3 · 보장진단        — 역할 유지(되짚기), 프로토타입에서 직접 조작, 이름부터 물어 블라인드 아님
+   아이디어 4 · 보험금 청구      — 역할 없음. 화면 없이 평소 청구 경험부터 묻는다 (K1~K3 전원 공통)
+                                  ⚠️ 프로토타입(결제 감지 알림) 조작 문항은 별도 개정에서 이 뒤에 잇는다
 
    홈·보장 블록 순서는 참가자 번호 홀짝으로 교차한다.
    응답은 순서가 아니라 정체(기존/우리)로 저장한다 — 집계가 바로 되게.
@@ -381,6 +409,8 @@ const IDEAS=[
   lead:'지금부터 역할을 하나 드릴게요.'},
  {id:'idea3', idx:'아이디어 3', title:'보장진단', role:true,
   lead:'같은 역할로 이어서 진행합니다.'},
+ {id:'idea4', idx:'아이디어 4', title:'보험금 청구', role:false,
+  lead:'지금부터는 다시 역할 없이, 참가자님 그대로 진행합니다. 화면 없이 평소 경험을 여쭤볼게요.'},
 ];
 
 /* ── 아이디어 1 · Task1 — 상품 찾기 (실기기, 대응비교) ──
@@ -536,6 +566,37 @@ const D=[
   follow:{q:'왜요?', ph:'짧게 적어주세요'}},
 ];
 
+/* ── 아이디어 4 · 보험금 청구 — 사전 경험 인터뷰 (화면 없음) ──
+   프로토타입(결제 감지 알림) 조작 문항은 별도 개정에서 이 뒤에 잇는다 — 여기서는 경험만 끌어낸다.
+   K3a·K3b 는 전원 공통이다 (분기 없음 — 2026-09-04 팀원 B 결정: 표본이 작아
+   K1 답으로 갈라 받으면 문항당 응답이 몇 개 안 남는다).
+   ⚠️ K3a 가 노리는 지점: 서류를 안 챙겨 청구를 포기한 경험 = 결제 감지 알림이 해결하려는 문제.
+      참가자가 적는 동안 진행자가 구두로 경험을 더 끌어내도 된다 (화면에는 힌트를 남기지 않는다) */
+const CLAIM_STEPS=[
+  '① 병원 진료 후 카드 결제, 영수증·진료비 세부내역서 요청',
+  '② 서류를 집까지 챙겨서 가지고 옴 (잃어버리지 않게)',
+  '③ 청구할 보험사와 앱을 찾아 로그인, 청구 메뉴 찾기 → 진료 내용·날짜·금액 입력',
+  '④ 서류 사진 촬영·업로드',
+  '⑤ 제출 후 심사 대기, 지급 확인',
+];
+const K=[
+ {id:'K1', type:'choice', required:true,
+  guide:'보험금 청구는 보통 이런 순서로 진행돼요. 한 번 같이 볼게요.',
+  q:'이 5단계 중에서 가장 귀찮을 것 같은 단계는 어디인가요? 하나만 골라주세요.',
+  opts:CLAIM_STEPS},
+ {id:'K2', type:'text',
+  q:'왜 그 단계가 가장 귀찮게 느껴지시나요? 구체적인 상황을 떠올려서 말해 주세요.',
+  ph:'겪었던 일이든 상상되는 상황이든 자유롭게 적어주세요'},
+];
+const K3=[
+ {id:'K3a', type:'text',
+  q:'서류를 안 챙겨서 (또는 잃어버려서) 청구를 못 하거나 미룬 적이 있나요? 그때 상황을 들려주세요.',
+  ph:'없으면 "없음" — 있었다면 어떤 서류였고 어떻게 됐는지'},
+ {id:'K3b', type:'text',
+  q:'어느 앱에서 청구해야 하는지, 혹은 어느 메뉴에서 청구해야 하는지 바로 떠오르시나요?',
+  ph:'떠오르는 대로 — 잘 모르겠다면 그렇게 적어주세요'},
+];
+
 /* ── 배경 — 맨 앞. 참가자가 보험이 없어 옛 도입(전제 검증)은 못 쓰고, 사전 지식 차이만 잡는다 ── */
 const B=[
  {id:'B1', type:'choice',
@@ -546,17 +607,25 @@ const B=[
   opts:['있고, 내용도 안다','있는 건 아는데 내용은 모른다','없다 / 모르겠다']},
 ];
 
-/* ── 마무리 — 맨 끝. F2·F3 는 반증 문항이라 뺄 수 없다 — 없으면 "전원 좋다고 했다"가 된다 ── */
+/* ── 마무리 — 맨 끝. F2·F3 는 반증 문항이라 뺄 수 없다 — 없으면 "전원 좋다고 했다"가 된다.
+   마무리에서는 "두 번째 화면" 대신 "수정안"이라 부른다 — 아이디어 3 에서 이름을 이미 물어
+   블라인드가 끝난 뒤라, 마지막 총평은 무엇을 평가하는지 분명한 말이 낫다 (2026-09-04 팀원 B 제안).
+   ⚠️ 이름은 금칙어 목록(CLAUDE.md 문구 규칙)에 안 걸리는 "수정안"으로 쓴다 */
 const F=[
  {id:'F1', type:'choice',
   q:'오늘 본 두 화면 중, 전체적으로 보험 관련 이용이 더 편했던 쪽은?',
-  opts:['기존 슈퍼SOL','두 번째 화면','비슷했다'],
+  opts:['기존 슈퍼SOL','수정안','비슷했다'],
   follow:{q:'왜요?', ph:'한 줄로 적어주세요'}},
  {id:'F2', type:'text',
-  q:'두 번째 화면에서 가장 불편하거나 개선이 필요하다고 느낀 부분은?',
+  q:'수정안에서 가장 불편하거나 개선이 필요하다고 느낀 부분은?',
   hint:'솔직하게 적어주실수록 도움이 됩니다.', ph:'자유롭게 적어주세요'},
  {id:'F3', type:'text',
   q:'반대로 기존 슈퍼SOL이 더 낫다고 느낀 부분이 있었나요?', ph:'없으면 "없음"'},
+ /* F1(선호)과 달리 행동 변화를 묻는다 — "좋다더라"보다 강한 근거 (2026-09-04 팀원 B 제안, 확정) */
+ {id:'F4', type:'choice',
+  q:'수정안이 실제 슈퍼SOL에 들어간다면, 보험 관련 일을 지금보다 자주 열어볼 것 같나요?',
+  opts:['그럴 것 같다','아닐 것 같다','모르겠다'],
+  follow:{q:'이유를 한 줄로 적어주세요', ph:'짧게 적어주세요'}},
 ];
 
 /* ══ 상태 ══ */
@@ -589,6 +658,7 @@ const dropDraft=()=>{try{localStorage.removeItem(DRAFT)}catch(e){}};
    [표지: 아이디어1] 상품찾기 Task1 Q1~Q3 → Task2 G1·G1b → (분기) G2~G6 또는 G7
    [표지: 아이디어2] 역할 → 홈 화면1 P×5 → 홈 화면2 P×5 → C×4
    [표지: 아이디어3] 역할 되짚기 → 이름 T×2 ×2 → T5 → 서비스1 A×7 → 서비스2 A×7 → E×2 → D×4
+   [표지: 아이디어4] 청구 경험 K1·K2 (한 페이지) → K3a·K3b (한 페이지, 전원 공통)
 
    G1b 는 참가자가 직접 답한 값으로 분기한다(진행자 개입 없음) — v===0(눌러봤다)이면 G_USED,
    그 외(못 봤거나 안 눌러봤다)면 G_UNUSED 로 간다. steps() 는 매 렌더마다 다시 계산되므로
@@ -635,6 +705,13 @@ function steps(){
   E.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 서비스를 다 본 뒤', secNote:'또래 비교 부분에 대해'}));
   D.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 서비스 비교'}));
 
+  /* ── 아이디어 4 · 보험금 청구 — 사전 경험 인터뷰 ── */
+  st.push({kind:'divider', idea:IDEAS[4]});
+  /* K1·K2 는 한 페이지 — 단계를 고르고 그 자리에서 이유를 적는다 (5단계 목록을 다시 안 봐도 되게).
+     K3a·K3b 도 한 페이지, 전원 공통 (분기 없음) */
+  st.push({kind:'cmp',key:'cmp',qs:K, sec:'보험금 청구 경험', secNote:'화면 없이, 평소 경험을 여쭤볼게요'});
+  st.push({kind:'cmp',key:'cmp',qs:K3, sec:'보험금 청구 경험'});
+
   /* ── 마무리 ── */
   F.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'마무리', secNote:'오늘 본 두 화면 전체에 대해'}));
 
@@ -650,6 +727,7 @@ function render(){
 
 function intro(){
   $('#hd').hidden=true; $('#nav').hidden=true;
+  $('#side').hidden=true; document.body.dataset.side='off';
   const saved=load(), draft=loadDraft();
   $('#main').innerHTML=`
   <div class="card">
@@ -679,6 +757,7 @@ function intro(){
       아이디어 2(홈)는 두 화면을 <b>"첫 번째 화면 · 두 번째 화면"</b>으로만 부릅니다. 어느 쪽이 기존인지 말하지 않습니다.<br>
       아이디어 3(보장)은 이름(보장에너지·보장진단)을 먼저 묻기 때문에 블라인드가 아닙니다.<br>
       아이디어 2·3 모두 같은 역할(20대·보험 2개)을 이어서 씁니다.<br>
+      아이디어 4(보험금 청구)는 다시 역할 없이, 화면 없이 평소 경험만 묻습니다.<br>
       응답은 이 브라우저에만 저장되니, 참가자 한 명이 끝날 때마다 CSV로 내려받으세요.
     </div>
   </div>
@@ -765,9 +844,48 @@ function bindStage(){
   if(c&&s) c.onclick=()=>{ const on=s.classList.toggle('collapsed'); c.textContent=on?'화면 펼치기':'화면 접기'; };
 }
 
+/* ── 문항 바로가기 패널 — 문제은행식. 아이디어 표지마다 묶고, 답한 문항은 칠해진다.
+   진행자가 특정 문항으로 되돌아가거나(참가자가 말을 바꿈) 중단 지점을 찾을 때 쓴다.
+   ⚠️ 참가자가 임의로 건너뛸 수도 있는 도구다 — 넓은 화면(진행자 노트북)에만 보이고,
+      필수 문항 검증은 어차피 '다음' 버튼이 아니라 답 존재로 하므로 집계는 안 깨진다 */
+function sideLabel(st){
+  const qid=q=> st.labelPrefix ? st.labelPrefix+q.id.replace(/^[A-Z]+/,'') : q.id;
+  if(st.kind==='divider') return '표지';
+  if(st.kind==='role'||st.kind==='role2') return '역할';
+  if(st.q) return st.label||st.q.id;
+  const qs=st.qs||[];
+  return qs.length>1 ? `${qid(qs[0])}~${qid(qs[qs.length-1])}` : (qs[0]?qid(qs[0]):'');
+}
+function sideFilled(st){
+  const qs=st.qs||(st.q?[st.q]:[]); if(!qs.length) return false;
+  return qs.every(q=>{
+    const a=(S.ans[st.key]||{})[q.id]||{};
+    if(q.type==='pair')  return a.r0!=null&&a.r1!=null;
+    if(q.type==='multi') return !!(a.v&&a.v.length);
+    if(q.type==='choice'||q.type==='scale') return a.v!=null;
+    return !!(a.v&&String(a.v).trim());
+  });
+}
+function side(list){
+  const el=$('#side'); el.hidden=false; document.body.dataset.side='on';
+  const grps=[]; let g=null;
+  list.forEach((st,i)=>{
+    if(st.kind==='divider') grps.push(g={ttl:`${st.idea.idx} · ${st.idea.title}`, items:[]});
+    else if(!g) grps.push(g={ttl:'배경', items:[]});
+    else if(st.sec==='마무리'&&g.ttl!=='마무리') grps.push(g={ttl:'마무리', items:[]});
+    g.items.push({i, lbl:sideLabel(st), done:sideFilled(st), sec:st.sec||''});
+  });
+  el.innerHTML=grps.map(gr=>`<div class="sttl">${esc(gr.ttl)}</div><div class="sgrid">
+    ${gr.items.map(it=>`<button type="button" class="jmp" data-i="${it.i}" title="${esc(it.sec)}"
+      data-done="${it.done}" aria-current="${it.i===S.i}">${esc(it.lbl)}</button>`).join('')}
+  </div>`).join('');
+  el.onclick=e=>{const b=e.target.closest('.jmp'); if(!b)return; S.i=+b.dataset.i; render(); window.scrollTo(0,0);};
+}
+
 function quiz(){
   const list=steps(), st=list[S.i], prev=list[S.i-1];
   $('#hd').hidden=false; $('#nav').hidden=false;
+  side(list);
   $('#who').innerHTML=`<b>${esc(S.p)}</b>${S.moderator?` · ${esc(S.moderator)}`:''}`;
   /* 분기에 따라 총 단계가 달라지므로 참가자에게는 % 만 보여준다 */
   $('#steps').textContent=`${Math.round((S.i+1)/list.length*100)}%`;
@@ -945,6 +1063,7 @@ function submit(){
 
 function done(){
   $('#hd').hidden=true;
+  $('#side').hidden=true; document.body.dataset.side='off';
   const n=load().length;
   $('#main').innerHTML=`<div class="card done">
     <div class="ic">✓</div>
@@ -980,6 +1099,8 @@ function walk(cb){
   ['old','ours'].forEach(k=>A.forEach(q=>cb(q,k,SIDES[k].csv+'_'+q.id)));
   E.forEach(q=>cb(q,'cmp',q.id));
   D.forEach(q=>cb(q,'cmp',q.id));
+  K.forEach(q=>cb(q,'cmp',q.id));
+  K3.forEach(q=>cb(q,'cmp',q.id));
   F.forEach(q=>cb(q,'cmp',q.id));
 }
 /* G_USED/G_UNUSED 는 참가자마다 한쪽만 응답이 있다 — 안 밟은 쪽은 N/A 로 찍는다.
