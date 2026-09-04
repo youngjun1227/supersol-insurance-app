@@ -7,10 +7,10 @@
 
   display: flex;
   align-items: center;
-  width: var(--w-tabbar);   /* 349 */
-  height: var(--h-tabbar);  /* 72 */
-  /* 393 기준 좌우 여백 22 (실물 실측). 더 좁은 폰에서만 줄어든다 */
-  max-width: calc(100% - 44px);
+  width: var(--w-tabbar);   /* 363 */
+  height: var(--h-tabbar);  /* 62 */
+  /* 393 기준 좌우 여백 15 (§3). 더 좁은 폰에서만 줄어든다 */
+  max-width: calc(100% - 30px);
 
   background: var(--bg-surface);
   border-radius: var(--r-pill);
