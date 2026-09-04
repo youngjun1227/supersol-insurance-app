@@ -32,7 +32,9 @@
 .dim[data-variant='sheet'] .sheet {
   padding: var(--space-8) var(--gutter);
   border-radius: var(--r-card-lg) var(--r-card-lg) 0 0;
-  padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  /* figma-ref(S4-A·S1-13)의 마지막 요소 아래 32 는 홈 인디케이터 영역 그 자체다 —
+     safe-area 를 더하면 이중(실기기 78). 탭바와 같은 규칙: 둘 중 큰 값 */
+  padding-bottom: max(var(--space-8), env(safe-area-inset-bottom, 0px));
   animation: slideUp var(--t-sheet) var(--ease);
 }
 
