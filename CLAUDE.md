@@ -99,7 +99,11 @@ React 1차 구현 8/25~31 → 9/1~ 다듬기·배포 → 🔒 9/11 사용자 테
   main 이 먼저 앞서가면 `Update branch` 를 눌러야 다시 진행된다.
   ⚠️ 켠 뒤에는 브랜치에 커밋을 더 push 하지 말 것 — 머지 뒤에 push 하면 빠진다 (#150 이 그랬다).
   **9/10 프리즈 기간엔 켜지 않는다.**
-- CI = 토큰 lint → 문구 컴플라이언스 스윕 → 목데이터 정합성 → typecheck → build → 번들 크기
-  (`.github/workflows/ci.yml`). pre-commit 우회해도 CI가 막는다
+- CI = 토큰 lint · 문구 컴플라이언스 · 목데이터 정합성 · typecheck/build/번들 · 스모크 · **협업 규칙(9/10 프리즈 · 공용 표면)**
+  (`.github/workflows/ci.yml` · 명세 `docs/CI명세.md`). 승인이 필수가 아니라서 CI 가 유일한 관문이다. pre-commit 우회해도 CI가 막는다
+- **시각 회귀는 9/11 이후로 보류** (2026-09-04 팀장) — 도구(`playwright.config.ts` · `e2e/visual.spec.ts` ·
+  `npm run visual`)와 명세(`docs/CI명세.md`)는 다 있고 CI 잡만 뺐다. 회귀 비교는 화면이 안정된 뒤에야
+  값이 나오는데 9/11 까지는 계속 만드는 중이라 기준선 갱신 잡일만 늘고, 첫 기준선을 검수 없이 찍으면
+  현재 화면이 그대로 정답으로 굳어 figma-ref 와 어긋난 게 있어도 못 잡는다. 그때까지 화면 검수는 사람이 한다
 - **9/10부터 main 프리즈** (9/11 테스트 전날) — 핫픽스만
 - 배포: Vercel main=프로덕션 / PR=프리뷰 (✅ 연결 완료 — 프로덕션 https://supersol-insurance-app.vercel.app)

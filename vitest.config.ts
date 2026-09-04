@@ -11,5 +11,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['src/test/setup.ts'],
     css: false, // CSS Modules 는 렌더 검사에 불필요 — 클래스명만 스텁된다
+    exclude: ['e2e/**', 'node_modules/**'], // e2e 는 Playwright 가 돈다
   },
 })

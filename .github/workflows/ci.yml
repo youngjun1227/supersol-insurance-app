@@ -2,11 +2,17 @@ name: ci
 
 # ⚠️ required status check 로 등록되므로 paths 필터를 두지 않는다 —
 # 필터에 걸려 실행되지 않으면 체크가 영원히 pending 이 되어 병합 불가 (Ventry 교훈)
+# 명세: docs/CI명세.md (2.0 — 승인 필수 해제에 맞춰 시각 회귀·협업 규칙 추가)
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+    # labeled — `기준선-갱신` 라벨이 붙는 순간 기준선을 다시 찍는다 (시각 회귀 job 참고)
+    types: [opened, synchronize, reopened, labeled]
+  # 기준선 갱신 커밋은 GITHUB_TOKEN 으로 push 되어 새 run 을 만들지 못한다 —
+  # 갱신 job 이 직접 dispatch 해서 새 SHA 에 체크를 붙인다
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -109,6 +115,53 @@ jobs:
       - name: 라우트 29벌 렌더 (쿼리 상태 변형 포함)
         run: npm run test
 
+  # ── 시각 회귀 — 9/11 테스트 이후로 미룬다 (2026-09-04 팀장) ──────────
+  # 잡 정의는 뺐지만 도구 일체(playwright.config.ts · e2e/visual.spec.ts · npm run visual)는 남아 있다.
+  # 되살리려면 이 자리에 visual job 을 다시 넣고 아래 ci 의 needs 에 visual 을 더한 뒤,
+  # PR 에 라벨 `기준선-갱신` 을 붙여 기준선 50장(25화면 × webkit·chromium)을 처음 찍으면 된다.
+  # 지금 끄는 이유 — 회귀 테스트는 "저번과 달라졌나"를 묻는 것이라 화면이 안정된 뒤에야 값이 나온다.
+  # 9/11 까지 화면을 계속 만드는 중이라, 지금 켜면 기준선 갱신 잡일만 늘고 남은 가동 기간도 프리즈(9/10)까지 엿새뿐이다.
+  # 게다가 첫 기준선을 검수 없이 찍으면 현재 화면이 그대로 "정답" 으로 굳어, figma-ref 와 어긋난 게 있어도 영영 못 잡는다.
+  # ⚠️ 이 잡의 폰트 검사가 실제로 결함을 하나 잡았다 — 웹폰트가 "Pretendard Variable" 로 등록되는데
+  #    토큰 스택에 그 이름이 없어 참가자 아이폰·CI 가 시스템 폰트로 렌더되고 있었다 (f201ab8 에서 수정).
+  #    끄는 것은 회귀 비교이지 그 수정이 아니다.
+
+  # ── 협업 규칙 — 사람이 보던 것을 CI 가 본다 (명세 REQ-010·011) ──
+  rules:
+    name: 협업 규칙 (프리즈 · 공용 표면)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # 9/10 00:00 KST 부터 main 프리즈 — hotfix 라벨 없는 PR 은 팀장도 막힌다 (CLAUDE.md 일정)
+      - name: 프리즈 (9/10 이후는 hotfix 라벨)
+        run: |
+          FREEZE=$(date -u -d "2026-09-09T15:00:00Z" +%s)
+          NOW=$(date -u +%s)
+          HAS_HOTFIX="${{ contains(github.event.pull_request.labels.*.name, 'hotfix') }}"
+          if [ "$NOW" -ge "$FREEZE" ] && [ "$HAS_HOTFIX" != "true" ]; then
+            echo "❌ 9/10 부터 main 프리즈 — 핫픽스면 PR 에 hotfix 라벨을 붙이세요 (CLAUDE.md 일정)"
+            exit 1
+          fi
+          echo "✓ 프리즈 아님 또는 hotfix"
+      # 공용 표면은 팀장 소유 (CLAUDE.md 협업 규칙). 승인이 없어졌으니 여기서 본다 —
+      # 팀장이 아닌 작성자가 건드리면 팀장이 `공용-허용` 라벨을 붙여야 통과
+      - name: 공용 표면 (팀장 외 수정은 공용-허용 라벨)
+        run: |
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          ALLOWED="${{ contains(github.event.pull_request.labels.*.name, '공용-허용') }}"
+          if [ "$AUTHOR" = "youngjun1227" ] || [ "$ALLOWED" = "true" ]; then echo "✓ 팀장 또는 허용 라벨"; exit 0; fi
+          CHANGED=$(git diff --name-only "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+            | grep -E '^(src/components/|src/app/|src/pages/Home\.tsx|src/data/|src/styles/tokens\.css|src/lib/targetId\.ts)' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "❌ 공용 표면은 팀장 소유입니다 — 필요하면 팀장에게 요청하세요 (CLAUDE.md 협업 규칙). 바뀐 파일:"
+            echo "$CHANGED"
+            exit 1
+          fi
+          echo "✓ 공용 표면 변경 없음"
+
   # ── 관문 job ──────────────────────────────────────────────
   # ⚠️ 브랜치 보호의 required status check 는 이름으로 매칭된다.
   # job 을 쪼개면 'ci' 라는 이름이 사라져 체크가 영원히 pending → 병합 불가.
@@ -116,7 +169,7 @@ jobs:
   ci:
     name: ci
     runs-on: ubuntu-latest
-    needs: [tokens, copy, mock, build, smoke]
+    needs: [tokens, copy, mock, build, smoke, rules]
     if: always()
     steps:
       - name: 앞 단계 결과 확인
@@ -126,6 +179,7 @@ jobs:
           echo "목데이터 정합성:   ${{ needs.mock.result }}"
           echo "빌드·타입·번들:   ${{ needs.build.result }}"
           echo "스모크:          ${{ needs.smoke.result }}"
+          echo "협업 규칙:       ${{ needs.rules.result }}  (push 에선 skipped 가 정상)"
           if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "true" ]; then
             echo "❌ 실패한 단계가 있습니다 — 위 목록에서 확인하세요."
             exit 1
