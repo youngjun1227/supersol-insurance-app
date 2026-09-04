@@ -111,15 +111,18 @@ export function ProductDetail() {
       }
     >
       <div className={styles.body}>
-        {/* 에이전트 진입 버블 — 헤더 아래 우측 플로팅 */}
-        <AgentBubble
-          label={PD.bubble}
-          labelSecond={PD.bubbleSecond}
-          resetKey={product.id}
-          onTap={() => {
-            go(tid(SCREEN.s6, ELEMENT.버튼, '에이전트'), `/agent?ctx=product&id=${product.id}`)
-          }}
-        />
+        {/* 에이전트 진입 버블 — 헤더 아래 우측, 스크롤해도 그 자리에 남는다 (2026-09-05).
+            AgentBubble 은 absolute 라 fixed 기준 상자(.agentDock)만 여기서 준다 — 공용 컴포넌트는 안 건드린다 */}
+        <div className={styles.agentDock}>
+          <AgentBubble
+            label={PD.bubble}
+            labelSecond={PD.bubbleSecond}
+            resetKey={product.id}
+            onTap={() => {
+              go(tid(SCREEN.s6, ELEMENT.버튼, '에이전트'), `/agent?ctx=product&id=${product.id}`)
+            }}
+          />
+        </div>
 
         {/* 상단 요약 */}
         <section className={styles.summary}>
