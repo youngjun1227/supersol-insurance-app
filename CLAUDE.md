@@ -91,10 +91,14 @@ React 1차 구현 8/25~31 → 9/1~ 다듬기·배포 → 🔒 9/11 사용자 테
   ⚠️ 히스토리를 다시 쓰면 남의 커밋이 조용히 사라진다. 팀장이 자기 브랜치에서 force push 를
   했다가 GitHub 워크플로 이벤트가 유실돼 CI 가 아예 안 도는 일도 겪었다
 - **PR 은 팀장도 예외 없이 거친다** — figma-ref 비교 스크린샷 포함. 이게 시각 검수의 유일한 관문이다
-- **승인**: 팀원은 팀장 승인 1개 필요 / **팀장은 승인 없이 머지한다** — 승인해줄 사람이 팀장뿐이라
-  자기 PR 을 자기가 승인하는 건 의미가 없다. GitHub 설정은 `enforce_admins: false`(admin bypass),
-  PR 화면의 `Merge without waiting for requirements to be met` 로 머지
+- **승인 필수 아님 (2026-09-04 팀장)** — 필수 승인 수 0. 팀원이 밤에 올린 PR 이 팀장 확인을 기다리다
+  쌓여서 내렸다. 시각 검수는 머지 뒤 팀장이 main 프리뷰를 보며 사후에 한다 — 어긋나면 이슈로 되돌린다
 - **Squash merge만** · 머지 후 브랜치 자동 삭제
+- **오토머지** (2026-09-04 팀장) — PR 올리고 `gh pr merge <번호> --auto --squash`(또는 PR 화면
+  `Enable auto-merge`)를 켜두면 **CI 통과 + main 최신 반영** 조건이 갖춰지는 순간 squash 머지된다.
+  main 이 먼저 앞서가면 `Update branch` 를 눌러야 다시 진행된다.
+  ⚠️ 켠 뒤에는 브랜치에 커밋을 더 push 하지 말 것 — 머지 뒤에 push 하면 빠진다 (#150 이 그랬다).
+  **9/10 프리즈 기간엔 켜지 않는다.**
 - CI = 토큰 lint · 문구 컴플라이언스 · 목데이터 정합성 · typecheck/build/번들 · 스모크 · **시각 회귀(WebKit·Chromium, figma-ref 화면 25장 기준선 비교)** · **협업 규칙(9/10 프리즈 · 공용 표면)**
   (`.github/workflows/ci.yml` · 명세 `docs/CI명세.md`). 승인이 필수가 아니라서 CI 가 유일한 관문이다. pre-commit 우회해도 CI가 막는다.
   화면을 바꾸면 시각 회귀가 실패하는 게 정상 — figma-ref 와 맞는지 보고 PR 에 라벨 `기준선-갱신` 을 붙이면 CI 가 기준선을 다시 찍어 커밋한다
