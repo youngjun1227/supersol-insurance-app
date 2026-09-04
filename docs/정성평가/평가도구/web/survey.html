@@ -69,10 +69,6 @@
     padding:10px 12px; margin:12px 0 4px; font-size:13px; color:var(--mod-text); line-height:1.5;
   }
   .guide b{flex:none}
-  .obsnote{
-    background:var(--surface-2); border-radius:var(--r-sm); padding:14px 16px;
-    color:var(--text-2); font-size:14px; text-align:center;
-  }
 
   /* ── 화면 이미지: 폰 프레임 안에서 스크롤 ──
      UI 스크린샷은 세로로 길다(393×1674). 축소해 끼우면 띠가 되므로 원본 폭으로 두고
@@ -89,7 +85,20 @@
     flex:none; font-size:12px; font-weight:700; color:var(--accent); text-align:center;
     background:var(--surface); border-bottom:1px solid var(--line); padding:5px 10px;
   }
+  .phone .ptabs{
+    flex:none; display:flex; gap:6px; padding:6px 8px; overflow-x:auto;
+    background:var(--surface); border-bottom:1px solid var(--line);
+  }
+  .phone .ptabs button{
+    flex:none; font:inherit; font-size:12px; padding:4px 10px; border-radius:99px; cursor:pointer;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--text-2);
+  }
+  .phone .ptabs button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#fff}
   .phone .scroll{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain}
+  .phone .page{display:flex; flex-direction:column; min-height:100%}
+  .phone .page[hidden]{display:none}  /* display:flex 가 hidden 의 display:none 을 덮어쓴다 */
+  .phone .page .ph{flex:1}
+
   .phone img{display:block; width:100%; height:auto}
   .phone .ph{
     display:grid; place-items:center; height:100%; text-align:center;
@@ -121,7 +130,7 @@
     margin:0 -16px 8px; padding:6px 16px 6px;
   }
   .split .phone{height:42vh}
-  .split .phones.two .phone{height:36vh}
+  .split .phones.two .phone{height:48vh}
   .split .stage.collapsed .phone{height:0; border:none}
   .split .stage.collapsed .stagehint{display:none}
   .split .stage.collapsed .stagefoot{margin-top:0}
@@ -132,8 +141,10 @@
     .split{display:grid; grid-template-columns:393px minmax(0,1fr); gap:28px; align-items:start}
     .split .stage{position:sticky; top:64px; margin:12px 0 0; padding:0; background:none}
     .split .phone, .split .phones.two .phone{height:calc(100dvh - 200px)}
-    .split .phones.two{grid-template-columns:1fr; }
-    .split .phones.two .phone{height:calc(50dvh - 110px)}
+    /* 두 화면 비교 단계: 프레임을 좌우로 나란히, 각각 전체 높이 — 스테이지 열을 2배로 넓힌다 */
+    .split.two{grid-template-columns:min(796px,62%) minmax(0,1fr)}
+    .split .phones.two{grid-template-columns:1fr 1fr}
+    .wrap:has(.split.two){max-width:1440px}
     .collapse{display:none}
   }
 
@@ -336,6 +347,22 @@ const ROLE={
   facts:['20대','보험을 2개 가지고 있어요','매달 3만 5천 원쯤 보험료를 내요'],
   tail:'지금부터 보여드리는 두 화면은 그런 당신이 보는 보험 탭이에요. 이 사람이라고 생각하고 봐주세요.',
 };
+/* 아이디어 3 은 양쪽 다 스크린샷 탭 3개다 — 매체를 맞춰야 D1(이해하기 쉬운 쪽)이 설계 차이만 잰다.
+   기존은 프로토타입에 재현돼 있지 않고, 참가자 본인 계정(보험 없음)으로 실제 앱을 쓰게 하면 내용이 비어
+   설계 차이와 데이터 차이가 안 갈린다. 그래서 보유자 계정 스크린샷. 우리도 같은 조건으로 스크린샷.
+   탭은 단계가 대응되게 잡았다: 첫 화면 → 목록 → 항목 상세 */
+const DIAG={
+  old :{tag:'보장에너지 · 기존 슈퍼SOL',
+        /* 기존 구조: 첫 화면 한 장에 "주요 보장 보기 / 부족 보장 보기" 탭 전환, "모든 보장 보기" → 항목 상세 */
+        pages:[{file:'img/energy-existing-1.png', label:'첫 화면 · 주요 보장'},
+               {file:'img/energy-existing-2.png', label:'첫 화면 · 부족 보장'},
+               {file:'img/energy-existing-3.png', label:'모든 보장 · 상세'}]},
+  ours:{tag:'보장진단 · 두 번째 화면',
+        /* 우리 구조: 브리핑(숫자·차트·또래) → "자세한 진단 보기" → 3단계 목록(전부 펼친 상태) → 항목 상세 */
+        pages:[{file:'img/diag-ours-1.png', label:'첫 화면'},
+               {file:'img/diag-ours-2.png', label:'자세한 진단'},
+               {file:'img/diag-ours-3.png', label:'항목 상세'}]},
+};
 const ROLE2='계속 같은 사람이에요 — 20대, 보험 2개, 매달 3만 5천 원. 이제 이 사람의 보험 상태를 보여주는 서비스를 두 개 보실 거예요.';
 
 /* ── 아이디어 섹션 표지 — 이름 + 역할/과업 안내만. 문항이 아니라 진행자가 읽어주는 페이지 ──
@@ -450,16 +477,20 @@ const T5={id:'T5', type:'choice', svcOpts:true,
   q:'두 이름 중, 무슨 서비스인지 더 잘 짐작되는 쪽은?', opts:['보장에너지','보장진단','비슷하다'],
   follow:{q:'왜요?', ph:'짧게 적어주세요'}};
 
-/* ── 블록 2 · 보장 — 사용 (서비스마다 같은 문항) ──
+/* ── 블록 2 · 보장 — 사용 (서비스마다 같은 문항, 서비스당 한 페이지) ──
    재는 건 "지금 뭘 먼저 채워야 하는지 아는가 + 왜 그게 먼저인지(나이 기준) 읽히는가".
    A1·A2·A3 의 정오·근거 판정은 화면에서 하지 않는다 — 참가자가 보는 화면에 정답 힌트가 남기 때문.
-   CSV 의 주관식 답을 보고 사후에 채점한다 (채점기준.md) */
+   CSV 의 주관식 답을 보고 사후에 채점한다 (채점기준.md)
+   guide 가 {old,ours} 객체면 서비스별로 다른 안내를 보여준다 — 탭 이름이 서로 다르다.
+   기존: 첫 화면(주요/부족 보장 탭) → "모든 보장 보기" → 항목 상세 / 우리: 첫 화면(브리핑) → 자세한 진단 → 항목 상세 */
 const A=[
  {id:'A1', type:'text',
-  guide:'카드를 누르고 뜨는 첫 페이지만 보고 작성해주세요.',
+  guide:{old:'"첫 화면 · 주요 보장" 탭의 숫자가 보이는 부분만 보고 작성해주세요.',
+         ours:'"첫 화면" 탭의 숫자가 보이는 부분만 보고 작성해주세요.'},
   q:'여기 나오는 숫자가 무엇을 기준으로 나온 것 같아요?', ph:'생각하시는 대로 적어주세요'},
  {id:'A2', type:'text',
-  guide:'"자세히 진단 보기"를 눌러 상세 화면으로 들어간 뒤 답해주세요.',
+  guide:{old:'"첫 화면 · 부족 보장"과 "모든 보장 · 상세" 탭까지 보고 답해주세요.',
+         ours:'"자세한 진단"·"항목 상세" 탭까지 보고 답해주세요.'},
   q:'이 사람이 지금 가장 먼저 챙겨야 할 보장은 무엇인가요?', ph:'하나만 적어주세요'},
  {id:'A3', type:'text',
   q:'왜 그게 먼저라고 생각했어요? 화면의 어디를 보고요?', ph:'화면에서 본 것을 적어주세요'},
@@ -470,17 +501,20 @@ const A=[
  {id:'A6', type:'text',
   q:'이해가 안 되거나 낯설었던 표현이 있었나요?', ph:'없으면 "없음"'},
  {id:'A7', type:'choice',
-  q:'써보고 나니, "{name}"이라는 이름이 이 서비스에 잘 어울린다고 생각하나요?',
+  q:'써보고 나니, 홈에서 본 "{name}"이라는 이름이 이 서비스에 잘 어울린다고 생각하나요?',
   opts:['어울린다','안 어울린다','모르겠다'],
   follow:{q:'안 어울린다면 더 맞는 이름이 있을까요?', ph:'있으면 적어주세요'}},
 ];
 
-/* 우리 화면에만 있는 요소 — 두 서비스를 다 본 뒤에 묻는다(먼저 물으면 "이쪽이 다른 거구나"가 샌다) */
+/* 또래 비교는 양쪽에 다 있다 — 기존은 "또래 대비 100% 부족"(결핍), 우리는 "또래 78%가 가입"(긍정).
+   두 서비스를 다 본 뒤 프레임을 비교한다 */
 const E=[
- {id:'E1', type:'text',
-  q:'또래 가입 수준과 비교해 보여주는 부분을 보고 어떤 생각이 드셨어요?', ph:'자유롭게 적어주세요'},
- {id:'E2', type:'text',
-  q:'그 방식이 부담스럽거나 불편하지는 않았나요?', ph:'솔직하게 적어주세요'},
+ {id:'E1', type:'choice', svcOpts:true,
+  q:'두 서비스 모두 또래와 비교해 보여주는 부분이 있었죠. 어느 쪽이 더 이해하기 쉬웠나요?',
+  opts:['보장에너지','보장진단','비슷하다'], follow:{q:'왜요?', ph:'짧게 적어주세요'}},
+ {id:'E2', type:'choice', svcOpts:true,
+  q:'또래와 비교하는 방식이 부담스럽거나 불편하게 느껴진 쪽이 있었나요?',
+  opts:['보장에너지','보장진단','둘 다','없다'], follow:{q:'어떤 점이 그랬나요?', ph:'짧게 적어주세요'}},
 ];
 const D=[
  {id:'D1', type:'choice', svcOpts:true,
@@ -592,8 +626,12 @@ function steps(){
   seq().forEach((key,nth)=>T.forEach((q,i)=>st.push({kind:'svc',key,nth,q, label:'T'+(i+1+nth*T.length),
     sec:'이름만 보고', secNote:'아직 아무 화면도 보지 않았어요'})));
   st.push({kind:'cmp',key:'cmp',q:T5, sec:'이름만 보고'});
-  seq().forEach((key,nth)=>A.forEach((q,i)=>st.push({kind:'svc',key,nth,q, label:(nth===0?'A':'B')+(i+1),
-    sec:`${nth===0?'첫 번째':'두 번째'} 서비스 · ${SIDES[key].name}`, secNote:'홈의 카드에서 시작합니다'})));
+  /* 서비스당 한 페이지 — 양쪽 다 스크린샷 탭 3개를 보며 A1~A7 을 이어서 답한다 */
+  seq().forEach((key,nth)=>st.push({
+    kind:'screen', key, nth, qs:A, dict:DIAG, labelPrefix: nth===0?'A':'B',
+    sec:`${nth===0?'첫 번째':'두 번째'} 서비스 · ${SIDES[key].name}`,
+    secNote:'화면의 탭을 눌러가며 보고 답해주세요',
+  }));
   E.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 서비스를 다 본 뒤', secNote:'또래 비교 부분에 대해'}));
   D.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 서비스 비교'}));
 
@@ -687,11 +725,16 @@ function intro(){
 
 /* 폰 프레임 — 파일이 없으면 자리표시. 참가자에게 보이는 이름표는 순서(첫/두 번째)뿐 */
 function phone(key,nth,dict){
-  const sc=(dict||SIDES)[key], tag=nth===0?'첫 번째 화면':'두 번째 화면';
+  const sc=(dict||SIDES)[key], tag=sc.tag||(nth===0?'첫 번째 화면':'두 번째 화면');
+  /* pages 가 있으면 프레임 안 탭으로 화면을 옮겨 다닌다 (기존 보장에너지처럼 여러 화면인 경우) */
+  const pages=sc.pages||[{file:sc.file,label:''}];
+  const imgs=pages.map((pg,i)=>`<div class="page" data-page="${i}"${i?' hidden':''}>
+      <img src="${esc(pg.file)}" alt="${tag}"
+        onerror="this.outerHTML='<div class=ph>${tag}${pg.label?' · '+esc(pg.label):''} 이미지 준비 중<small>${esc(pg.file)}</small></div>'"></div>`).join('');
   return `<div class="phone"><div class="phead">${tag}</div>
-    <div class="scroll"><img src="${esc(sc.file)}" alt="${tag}"
-      onerror="this.outerHTML='<div class=ph>${tag} 이미지 준비 중<small>${esc(sc.file)}</small></div>'"></div>
-    <button type="button" class="full" data-full="${esc(sc.file)}">크게 보기</button>
+    ${pages.length>1?`<div class="ptabs">${pages.map((pg,i)=>`<button type="button" data-page="${i}" aria-pressed="${i===0}">${i+1}. ${esc(pg.label)}</button>`).join('')}</div>`:''}
+    <div class="scroll">${imgs}</div>
+    <button type="button" class="full" data-full="${esc(pages[0].file)}">크게 보기</button>
   </div>`;
 }
 function stage(keys,dict){
@@ -702,6 +745,16 @@ function stage(keys,dict){
   </div>`;
 }
 function bindStage(){
+  /* 프레임은 항상 맨 위(앱 헤더)부터 보이게 — 브라우저가 이전 스크롤 위치를 복원하는 경우가 있다 */
+  document.querySelectorAll('.phone .scroll').forEach(el=>{ el.scrollTop=0; });
+  document.querySelectorAll('.phone .ptabs').forEach(tabs=>tabs.onclick=e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    const ph=tabs.closest('.phone'), i=+b.dataset.page;
+    [...tabs.children].forEach(c=>c.setAttribute('aria-pressed',c===b));
+    ph.querySelectorAll('.page').forEach(pg=>{ pg.hidden = pg.dataset.page!==String(i); });
+    const img=ph.querySelector(`.page[data-page="${i}"] img`); if(img) ph.querySelector('.full').dataset.full=img.getAttribute('src');
+    ph.querySelector('.scroll').scrollTop=0;
+  });
   document.querySelectorAll('[data-full]').forEach(b=>b.onclick=()=>{
     const z=document.createElement('div'); z.className='zoom';
     z.innerHTML=`<button type="button" class="close">닫기</button><img src="${esc(b.dataset.full)}" alt="">`;
@@ -750,10 +803,10 @@ function quiz(){
     if(st.sec && (!prev||prev.sec!==st.sec||prev.kind==='divider'))
       inner+=`<div class="sec"><h2>${esc(st.sec)}</h2>${st.secNote?`<p>${esc(st.secNote)}</p>`:''}</div>`;
     if(st.task) inner+=`<div class="task"><b>${esc(st.task.lbl)}</b> · ${esc(st.task.txt)}${st.task.sub?`<div style="color:var(--text-2);margin-top:4px">${esc(st.task.sub)}</div>`:''}</div>`;
-    inner+=qs.map(q=>qbox({...st,q})).join('');
+    inner+=qs.map(q=>qbox({...st,q, label: st.labelPrefix ? st.labelPrefix+q.id.replace(/^[A-Z]+/,'') : st.label})).join('');
     /* 화면 이미지가 있는 단계는 프레임 + 문항 2단(넓은 화면) / 프레임 위 고정(폰) */
     const keys = st.kind==='screen' ? [st.key] : (st.q&&st.q.thumbs ? seq() : null);
-    h+= keys ? `<div class="split">${stage(keys,st.dict)}<div class="qs">${inner}</div></div>` : inner;
+    h+= keys ? `<div class="split${keys.length>1?' two':''}">${stage(keys,st.dict)}<div class="qs">${inner}</div></div>` : inner;
   }
   $('#main').innerHTML=h;
   (st.qs||(st.q?[st.q]:[])).forEach(q=>body(q, st.key));
@@ -781,7 +834,8 @@ function quiz(){
 
 function qbox(st){
   const q=st.q, key=st.key;
-  return `${q.guide?`<div class="guide"><b>안내</b><span>${esc(fill(q.guide,key))}</span></div>`:''}
+  const guide = q.guide && typeof q.guide==='object' ? q.guide[key] : q.guide;
+  return `${guide?`<div class="guide"><b>안내</b><span>${esc(fill(guide,key))}</span></div>`:''}
     <div class="q"><div class="qh"><span class="qn">${esc(st.label||q.id)}</span>
       <span class="qt">${esc(fill(q.q,key))}</span></div>
       ${q.hint?`<div class="qhint">${esc(q.hint)}</div>`:''}
@@ -865,10 +919,6 @@ function body(q,key){
     const fol=el.querySelector('textarea.short');
     if(fol) fol.oninput=e=>{const c=store[q.id]||{}; c.follow=e.target.value; store[q.id]=c};
   }
-  else if(q.type==='obs'){
-    /* 진행자 관찰 — 참가자 입력 없음 */
-    el.innerHTML=`<div class="obsnote">진행자가 관찰해서 아래에 기록합니다</div>`;
-  }
   else { /* text */
     el.innerHTML=`<textarea placeholder="${esc(q.ph||'자유롭게 적어주세요')}">${esc(a.v||'')}</textarea>`;
     el.querySelector('textarea').oninput=e=>{store[q.id]={v:e.target.value}};
@@ -937,7 +987,7 @@ function walk(cb){
 const branchOf=row=>(row.ans.cmp||{}).G1b?.v===0 ? 'used' : 'unused';
 function fields(q){
   const f=[];
-  if(q.type!=='obs') f.push(['',(a,m,r)=>{
+  f.push(['',(a,m,r)=>{
     if(q.type==='pair') return null; /* pair 는 아래에서 r0/r1 두 열로 별도 처리 */
     if(q.type==='multi') return (a.v||[]).map(i=>i===-1?'기타':q.opts[i]).join(' | ');
     if(q.type==='choice'){
@@ -1032,6 +1082,11 @@ function showCsv(text, name){
 }
 
 render();
+/* 개발용: ?dev=A1 처럼 문항 ID 를 주면 P1·자동 순서로 시작해 그 문항이 있는 페이지로 바로 간다 (문항 고칠 때) */
+(()=>{ const id=new URLSearchParams(location.search).get('dev'); if(!id) return;
+  S=blank(); S.p='P1'; S.order=autoOrder(); S.started=new Date().toISOString(); view='quiz';
+  const st=steps(); const i=st.findIndex(x=>(x.qs||(x.q?[x.q]:[])).some(q=>q.id===id));
+  if(i>=0){ S.i=i; render(); } })();
 /* 입력·클릭마다 임시 저장 — 문항 안 이벤트 핸들러를 일일이 건드리지 않고 한 곳에서 잡는다 */
 document.addEventListener('input', saveDraft);
 document.addEventListener('click', ()=>setTimeout(saveDraft,0));
