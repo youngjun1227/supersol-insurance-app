@@ -3,7 +3,9 @@
   z-index: 20;
   left: 50%;
   transform: translateX(-50%);
-  bottom: calc(var(--tabbar-bottom) + env(safe-area-inset-bottom, 0px));
+  /* 실기기 비교(2026-09-04): 원본은 홈 인디케이터 safe-area 만큼만 띄운다(≈33).
+     12 를 더하면 13 만큼 높이 뜬다 — safe-area 가 없는 기기에서만 12 를 쓴다 */
+  bottom: max(var(--tabbar-bottom), env(safe-area-inset-bottom, 0px));
 
   display: flex;
   align-items: center;
