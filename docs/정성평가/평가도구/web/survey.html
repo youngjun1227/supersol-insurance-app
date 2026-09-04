@@ -327,12 +327,14 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════
-   9/11 정성평가 — 아이디어 1·2·3 순서로 진행한다 (아이디어 4 청구는 별도 개정 예정, 미포함).
+   9/11 정성평가 — 아이디어 1·2·3·4 순서로 진행한다.
    각 아이디어 앞에 표지 섹션(이름 + 과업/역할 안내)을 넣는다.
 
    아이디어 1 · 상품 찾기        — 역할 없음. 실기기로 기존/두 번째 화면 각각 과업 수행
    아이디어 2 · 보험 탭 홈 개인화 — 역할 부여(보험 2개 20대), 스크린샷 2장 블라인드 비교
    아이디어 3 · 보장진단        — 역할 유지(되짚기), 프로토타입에서 직접 조작, 이름부터 물어 블라인드 아님
+   아이디어 4 · 보험금 청구      — 역할 없음. 화면 없이 평소 청구 경험부터 묻는다 (K1 답으로 분기)
+                                  ⚠️ 프로토타입(결제 감지 알림) 조작 문항은 별도 개정에서 이 뒤에 잇는다
 
    홈·보장 블록 순서는 참가자 번호 홀짝으로 교차한다.
    응답은 순서가 아니라 정체(기존/우리)로 저장한다 — 집계가 바로 되게.
@@ -381,6 +383,8 @@ const IDEAS=[
   lead:'지금부터 역할을 하나 드릴게요.'},
  {id:'idea3', idx:'아이디어 3', title:'보장진단', role:true,
   lead:'같은 역할로 이어서 진행합니다.'},
+ {id:'idea4', idx:'아이디어 4', title:'보험금 청구', role:false,
+  lead:'지금부터는 다시 역할 없이, 참가자님 그대로 진행합니다. 화면 없이 평소 경험을 여쭤볼게요.'},
 ];
 
 /* ── 아이디어 1 · Task1 — 상품 찾기 (실기기, 대응비교) ──
@@ -536,6 +540,41 @@ const D=[
   follow:{q:'왜요?', ph:'짧게 적어주세요'}},
 ];
 
+/* ── 아이디어 4 · 보험금 청구 — 사전 경험 인터뷰 (화면 없음) ──
+   프로토타입(결제 감지 알림) 조작 문항은 별도 개정에서 이 뒤에 잇는다 — 여기서는 경험만 끌어낸다.
+   K1 은 참가자가 고른 단계로 직접 분기한다: ②서류(v===1) → K3a · ③앱/입력(v===2) → K3b.
+   ①④⑤는 추가 문항 없음 — K2(이유)로 충분하다.
+   ⚠️ K3a 가 노리는 지점: 서류를 안 챙겨 청구를 포기한 경험 = 결제 감지 알림이 해결하려는 문제.
+      참가자가 적는 동안 진행자가 구두로 경험을 더 끌어내도 된다 (화면에는 힌트를 남기지 않는다) */
+const CLAIM_STEPS=[
+  '① 병원 진료 후 카드 결제, 영수증·진료비 세부내역서 요청',
+  '② 서류를 집까지 챙겨서 가지고 옴 (잃어버리지 않게)',
+  '③ 청구할 보험사와 앱을 찾아 로그인, 청구 메뉴 찾기 → 진료 내용·날짜·금액 입력',
+  '④ 서류 사진 촬영·업로드',
+  '⑤ 제출 후 심사 대기, 지급 확인',
+];
+const K=[
+ {id:'K1', type:'choice', required:true, clearOnChange:['K3a','K3b'],
+  guide:'보험금 청구는 보통 이런 순서로 진행돼요. 한 번 같이 볼게요.',
+  q:'이 5단계 중에서 가장 귀찮을 것 같은 단계는 어디인가요? 하나만 골라주세요.',
+  opts:CLAIM_STEPS},
+ {id:'K2', type:'text',
+  q:'왜 그 단계가 가장 귀찮게 느껴지시나요? 구체적인 상황을 떠올려서 말해 주세요.',
+  ph:'겪었던 일이든 상상되는 상황이든 자유롭게 적어주세요'},
+];
+const K_DOCS=[
+ {id:'K3a', type:'text', cbranch:'docs',
+  q:'서류를 안 챙겨서 (또는 잃어버려서) 청구를 못 하거나 미룬 적이 있나요? 그때 상황을 들려주세요.',
+  ph:'없으면 "없음" — 있었다면 어떤 서류였고 어떻게 됐는지'},
+];
+const K_APP=[
+ {id:'K3b', type:'text', cbranch:'app',
+  q:'어느 앱에서 청구해야 하는지, 혹은 어느 메뉴에서 청구해야 하는지 바로 떠오르시나요?',
+  ph:'떠오르는 대로 — 잘 모르겠다면 그렇게 적어주세요'},
+];
+/* K1 답으로 어느 분기를 밟는지 — steps() 는 S.ans.cmp 를, CSV 는 저장된 row 의 ans.cmp 를 넘긴다 */
+const claimBranchOf=a=>{const v=a?.K1?.v; return v===1?'docs':v===2?'app':'none';};
+
 /* ── 배경 — 맨 앞. 참가자가 보험이 없어 옛 도입(전제 검증)은 못 쓰고, 사전 지식 차이만 잡는다 ── */
 const B=[
  {id:'B1', type:'choice',
@@ -589,6 +628,7 @@ const dropDraft=()=>{try{localStorage.removeItem(DRAFT)}catch(e){}};
    [표지: 아이디어1] 상품찾기 Task1 Q1~Q3 → Task2 G1·G1b → (분기) G2~G6 또는 G7
    [표지: 아이디어2] 역할 → 홈 화면1 P×5 → 홈 화면2 P×5 → C×4
    [표지: 아이디어3] 역할 되짚기 → 이름 T×2 ×2 → T5 → 서비스1 A×7 → 서비스2 A×7 → E×2 → D×4
+   [표지: 아이디어4] 청구 경험 K1·K2 → (K1 분기) K3a(②서류) 또는 K3b(③앱·입력) 또는 없음
 
    G1b 는 참가자가 직접 답한 값으로 분기한다(진행자 개입 없음) — v===0(눌러봤다)이면 G_USED,
    그 외(못 봤거나 안 눌러봤다)면 G_UNUSED 로 간다. steps() 는 매 렌더마다 다시 계산되므로
@@ -635,6 +675,12 @@ function steps(){
   E.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 서비스를 다 본 뒤', secNote:'또래 비교 부분에 대해'}));
   D.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 서비스 비교'}));
 
+  /* ── 아이디어 4 · 보험금 청구 — 사전 경험 인터뷰 ── */
+  st.push({kind:'divider', idea:IDEAS[4]});
+  K.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'보험금 청구 경험', secNote:'화면 없이, 평소 경험을 여쭤볼게요'}));
+  const kb=claimBranchOf(S.ans.cmp);
+  (kb==='docs'?K_DOCS:kb==='app'?K_APP:[]).forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'보험금 청구 경험'}));
+
   /* ── 마무리 ── */
   F.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'마무리', secNote:'오늘 본 두 화면 전체에 대해'}));
 
@@ -679,6 +725,7 @@ function intro(){
       아이디어 2(홈)는 두 화면을 <b>"첫 번째 화면 · 두 번째 화면"</b>으로만 부릅니다. 어느 쪽이 기존인지 말하지 않습니다.<br>
       아이디어 3(보장)은 이름(보장에너지·보장진단)을 먼저 묻기 때문에 블라인드가 아닙니다.<br>
       아이디어 2·3 모두 같은 역할(20대·보험 2개)을 이어서 씁니다.<br>
+      아이디어 4(보험금 청구)는 다시 역할 없이, 화면 없이 평소 경험만 묻습니다.<br>
       응답은 이 브라우저에만 저장되니, 참가자 한 명이 끝날 때마다 CSV로 내려받으세요.
     </div>
   </div>
@@ -910,6 +957,7 @@ function body(q,key){
       else {
         /* 분기점 답이 바뀌면 반대 분기에 남아 있던 답을 비운다 — 되돌아가 바꿨을 때 유령 응답이 남지 않게 */
         if(q.branchKey && cur.v!==i) [...G_USED,...G_UNUSED].forEach(g=>delete S.ans.cmp[g.id]);
+        if(q.clearOnChange && cur.v!==i) q.clearOnChange.forEach(id=>delete S.ans.cmp[id]);
         cur.v=i; el.querySelectorAll('.opt').forEach(c=>c.setAttribute('aria-pressed',c===b));
       }
       store[q.id]=cur; showOther();
@@ -980,6 +1028,9 @@ function walk(cb){
   ['old','ours'].forEach(k=>A.forEach(q=>cb(q,k,SIDES[k].csv+'_'+q.id)));
   E.forEach(q=>cb(q,'cmp',q.id));
   D.forEach(q=>cb(q,'cmp',q.id));
+  K.forEach(q=>cb(q,'cmp',q.id));
+  K_DOCS.forEach(q=>cb(q,'cmp',q.id));
+  K_APP.forEach(q=>cb(q,'cmp',q.id));
   F.forEach(q=>cb(q,'cmp',q.id));
 }
 /* G_USED/G_UNUSED 는 참가자마다 한쪽만 응답이 있다 — 안 밟은 쪽은 N/A 로 찍는다.
@@ -1022,7 +1073,9 @@ function csv(){
     const o=[r.p, SIDES[seqOf(r.order)[0]].csv, r.moderator||'', r.started||'', r.ended||''];
     const rBranch=branchOf(r);
     walk((q,k)=>{
-      const skip=q.branch && q.branch!==rBranch;
+      /* 안 밟은 분기는 N/A — G(에이전트) 분기와 K(청구 K1) 분기 각각 */
+      const skip=(q.branch && q.branch!==rBranch)
+        || (q.cbranch && q.cbranch!==claimBranchOf(r.ans.cmp));
       const a=(r.ans[k]||{})[q.id]||{}, m=(r.mod[k]||{})[q.id];
       fields(q).forEach(([,fn])=>o.push(skip?'N/A':fn(a,m,r)));
     });
