@@ -10,6 +10,7 @@
    필요한 화면만 closable 로 켠다 (팀원 A 리포트로 확인, 2026-08-27) */
 
 import { useEffect, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from '@phosphor-icons/react'
 import styles from './BottomSheet.module.css'
 
@@ -86,7 +87,10 @@ export function BottomSheet({
 
   if (!open) return null
 
-  return (
+  /* body 로 포털 — 호출부가 AppShell .body(overflow-y:auto + -webkit-overflow-scrolling)
+     안이라 iOS 사파리가 fixed 딤을 스크롤 컨테이너 기준으로 잡아 형제인 탭바가
+     딤 위로 뜬다 (S4-A 실기기 리포트). 문서 루트에 두면 z-index 가 그대로 먹는다 */
+  return createPortal(
     <div
       className={styles.dim}
       data-variant={variant}
@@ -110,6 +114,7 @@ export function BottomSheet({
         ) : null}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
