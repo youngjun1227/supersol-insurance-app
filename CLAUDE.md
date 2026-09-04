@@ -95,7 +95,8 @@ React 1차 구현 8/25~31 → 9/1~ 다듬기·배포 → 🔒 9/11 사용자 테
   자기 PR 을 자기가 승인하는 건 의미가 없다. GitHub 설정은 `enforce_admins: false`(admin bypass),
   PR 화면의 `Merge without waiting for requirements to be met` 로 머지
 - **Squash merge만** · 머지 후 브랜치 자동 삭제
-- CI = 토큰 lint → 문구 컴플라이언스 스윕 → 목데이터 정합성 → typecheck → build → 번들 크기
-  (`.github/workflows/ci.yml`). pre-commit 우회해도 CI가 막는다
+- CI = 토큰 lint · 문구 컴플라이언스 · 목데이터 정합성 · typecheck/build/번들 · 스모크 · **시각 회귀(WebKit·Chromium, figma-ref 화면 25장 기준선 비교)** · **협업 규칙(9/10 프리즈 · 공용 표면)**
+  (`.github/workflows/ci.yml` · 명세 `docs/CI명세.md`). 승인이 필수가 아니라서 CI 가 유일한 관문이다. pre-commit 우회해도 CI가 막는다.
+  화면을 바꾸면 시각 회귀가 실패하는 게 정상 — figma-ref 와 맞는지 보고 PR 에 라벨 `기준선-갱신` 을 붙이면 CI 가 기준선을 다시 찍어 커밋한다
 - **9/10부터 main 프리즈** (9/11 테스트 전날) — 핫픽스만
 - 배포: Vercel main=프로덕션 / PR=프리뷰 (✅ 연결 완료 — 프로덕션 https://supersol-insurance-app.vercel.app)
