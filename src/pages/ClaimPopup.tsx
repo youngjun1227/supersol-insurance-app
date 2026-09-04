@@ -8,7 +8,6 @@
       변경로그에 보고했고 스펙·Figma 는 팀장이 정리한다.
    ⚠️ 제목·고지는 CLAIM_COMPLIANCE 그대로 (멘토 요구 — 임의 수정 금지). */
 
-import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BottomSheet, Button } from '@/components'
 import { useMock } from '@/app/MockProvider'
@@ -16,7 +15,7 @@ import { CLAIM_COMPLIANCE, CLAIM_POPUP as C } from '@/data/copy'
 import { monthDay, won } from '@/lib/format'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
 import { useTrack } from '@/lib/useTrack'
-import { ClaimCheck } from './ClaimCheck'
+import { ClaimDocList } from './ClaimDocList'
 import styles from './ClaimPopup.module.css'
 
 export function ClaimPopup() {
@@ -24,7 +23,6 @@ export function ClaimPopup() {
   const track = useTrack()
   const { data } = useMock()
   const [searchParams, setSearchParams] = useSearchParams()
-  const [checked, setChecked] = useState<Record<string, boolean>>({})
 
   const open = searchParams.get('popup') === 'claim'
   /** 팝업이 보여주는 결제 건 — 청구 대상 중 가장 최근(목데이터 맨 앞 pay-1) */
@@ -71,15 +69,7 @@ export function ClaimPopup() {
 
       <div className={styles.docsBox}>
         <p className={`${styles.docsTitle} t-body-sm-medium`}>{C.docsTitle}</p>
-        {C.docs.map((doc) => (
-          <ClaimCheck
-            key={doc.id}
-            label={doc.label}
-            checked={checked[doc.id] ?? false}
-            targetId={tid(SCREEN.s4Popup, ELEMENT.체크, doc.id)}
-            onToggle={(next) => setChecked((prev) => ({ ...prev, [doc.id]: next }))}
-          />
-        ))}
+        <ClaimDocList docs={C.docs} />
       </div>
 
       <Button
