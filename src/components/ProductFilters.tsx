@@ -1,9 +1,12 @@
-/* S2 계열 공통 — 카테고리 칩 행 · 회사 칩 행 · 채널 고지 · 구분 밴드.
+/* S2 계열 공통 — 카테고리 칩 행 · 회사 칩 행 (ProductFilters) + 채널 고지 · 구분 밴드 (ProductFiltersNotice).
    S2-A(전체)와 S2-D(카테고리 선택 후)가 같은 필터 UI를 쓴다.
    ⚠️ 칩 동작이 화면마다 다르므로 onCategory 는 호출부가 정한다
-      (S2-A: S2-D 로 이동 / S2-D: 같은 화면에서 카테고리 교체) */
+      (S2-A: S2-D 로 이동 / S2-D: 같은 화면에서 카테고리 교체)
+   ⚠️ 둘로 나눈 이유 (2026-09-05): 칩 두 줄은 AppShell 의 header 슬롯(sticky)에 넣어 스크롤해도
+      헤더와 같이 붙어 있고, 고지 문구는 본문에 남아 스크롤한다 — 고지까지 붙이면 고정 영역이
+      화면의 1/3 을 먹는다. 호출부는 칩을 header 에, 고지를 본문 맨 위에 둔다. */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Category, CategoryId } from '@/data/types'
 import { CHANNEL_NOTICE, COMPANY_FILTERS, type CompanyFilter } from '@/data/paths'
 import styles from './ProductFilters.module.css'
@@ -49,8 +52,19 @@ export function ProductFilters({
     else row.scrollLeft = left
   }, [activeCategory])
 
+  /* 붙어 있는 동안(스크롤 > 0)만 바닥에 헤어라인 — 맨 위에서는 figma-ref 그대로 선이 없다.
+     페이드는 CSS 만으로 되지만 선은 맨 위에서 고지 위에 그어져 버려 스크롤을 봐야 한다 */
+  const [stuck, setStuck] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setStuck(window.scrollY > 0)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <>
+    /* 바깥 상자 — sticky 로 붙었을 때 바닥에 헤어라인 + 페이드 엣지를 깐다 (.filters::after) */
+    <div className={styles.filters} data-stuck={stuck}>
       {/* 카테고리 칩 — '전체' 는 고정, 나머지만 가로 스크롤.
           ⚠️ 같은 스크롤 영역 안에서 '전체' 를 sticky 로 두면
              선택 칩을 왼쪽 여백에 맞출 수 없다(둘이 같은 자리를 다툰다).
@@ -95,7 +109,14 @@ export function ProductFilters({
           </button>
         ))}
       </div>
+    </div>
+  )
+}
 
+/** 회사 구분 고지 + 목록 시작 전 구분 밴드 — 본문 맨 위(칩 아래)에 둔다 */
+export function ProductFiltersNotice() {
+  return (
+    <>
       {/* 회사 구분 고지 — 규제 대응 장치라 지우지 않는다 */}
       <p className={`${styles.notice} t-caption`}>{CHANNEL_NOTICE}</p>
 
