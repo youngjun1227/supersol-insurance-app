@@ -54,6 +54,8 @@
    ⚠️ 버블과 같은 좌우 패딩(14px)을 줘야 한다 — 없으면 28px 좁게 재서 글자가 잘린다. */
 .measure {
   position: absolute;
+  top: 0;
+  right: 0;
   visibility: hidden;
   pointer-events: none;
   white-space: nowrap;
