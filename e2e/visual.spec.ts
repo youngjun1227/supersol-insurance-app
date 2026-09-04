@@ -56,9 +56,11 @@ for (const s of SCREENS) {
     await page.goto(s.path)
     // 동적 요소 고정 (REQ-008): 스플래시 종료 · 웹폰트 로드. 폰트 실패는 실패다 — 시스템 폰트로 찍히면 기준선이 오염된다
     await expect(page.getByText(SPLASH_TEXT)).toHaveCount(0, { timeout: 10_000 })
+    // Pretendard 는 유니코드 범위별 동적 서브셋이라 fonts.check() 는 텍스트 없이 false 가 난다 —
+    // 실제로 로드된 Pretendard face 가 하나라도 있는지를 본다
     const fontOk = await page.evaluate(async () => {
       await document.fonts.ready
-      return document.fonts.check('16px Pretendard')
+      return [...document.fonts].some((f) => f.family.includes('Pretendard') && f.status === 'loaded')
     })
     expect(fontOk, 'Pretendard 웹폰트가 로드되지 않았다 (jsdelivr 네트워크?)').toBe(true)
     await s.act?.(page)
