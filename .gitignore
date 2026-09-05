@@ -23,3 +23,7 @@ docs/정성평가/참고자료/*
 
 # 정성평가 스크린샷 원본 — 실명·계정 정보가 있어 커밋 금지. 마스킹한 결과물만 img/ 에 둔다
 docs/정성평가/평가도구/web/img/raw/
+
+# Playwright 실행 산출물 — 기준선(e2e/__snapshots__)은 커밋한다, 이건 안 한다
+test-results/
+playwright-report/

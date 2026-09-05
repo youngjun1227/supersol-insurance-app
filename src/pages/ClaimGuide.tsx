@@ -2,19 +2,17 @@
    S4-A 팝업의 "보험금 청구하기"에서 도착한다. 9/11 과제 2(claim)의 성공 판정 지점.
    실제 청구 입력·제출 화면은 범위 밖 — "청구 시작하기"는 완료 화면으로 바로 간다. */
 
-import { useState } from 'react'
 import { List } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, BottomCTA, Button, Header, IconAction } from '@/components'
 import { CLAIM_GUIDE as C } from '@/data/copy'
 import { ELEMENT, SCREEN, tid } from '@/lib/targetId'
-import { ClaimCheck } from './ClaimCheck'
+import { ClaimDocList } from './ClaimDocList'
 import styles from './ClaimGuide.module.css'
 
 export function ClaimGuide() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [checked, setChecked] = useState<Record<string, boolean>>({})
 
   return (
     <AppShell
@@ -65,17 +63,7 @@ export function ClaimGuide() {
 
         <section className={styles.section}>
           <h2 className={`${styles.sectionTitle} t-h2`}>{C.docsTitle}</h2>
-          <div className={styles.docs}>
-            {C.docs.map((doc) => (
-              <ClaimCheck
-                key={doc.id}
-                label={doc.label}
-                checked={checked[doc.id] ?? false}
-                targetId={tid(SCREEN.s4Guide, ELEMENT.체크, doc.id)}
-                onToggle={(next) => setChecked((prev) => ({ ...prev, [doc.id]: next }))}
-              />
-            ))}
-          </div>
+          <ClaimDocList docs={C.docs} className={styles.docs} />
           <p className={`${styles.note} t-caption`}>{C.docsNote}</p>
         </section>
       </div>

@@ -8,7 +8,13 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  /* 가로 넘침만 자른다 — 오른쪽으로 삐져나가는 요소(추천 배너 일러스트 등)가 가로 스크롤을 만들지 않게.
+     ⚠️ hidden 이 아니라 clip 이어야 한다 (2026-09-05).
+        overflow-x:hidden 은 이 상자를 스크롤 컨테이너로 만들어(overflow-y 가 auto 로 계산됨)
+        아래 .header 의 sticky 기준이 뷰포트가 아니라 이 상자가 됐다. 상자는 min-height 라
+        내용만큼 늘어나고 실제로는 창이 스크롤하니, 헤더가 본문과 같이 올라가 사라졌다 — 전 화면.
+        clip 은 스크롤 컨테이너를 만들지 않아 sticky 가 뷰포트에 붙는다 (Safari 16+). */
+  overflow-x: clip;
 }
 
 /* §1 배경 규칙 */
