@@ -436,7 +436,10 @@ const IDEAS=[
     sub:'어떤 방법을 써도 됩니다. 다 알아보셨으면 알려주세요.'}]},
  {id:'idea2', idx:'아이디어 2', title:'보험 탭 홈 개인화', role:true,
   lead:'지금부터 역할을 하나 드릴게요.'},
- {id:'idea3', idx:'아이디어 3', title:'보장진단', role:true,
+ /* 아이디어 2 와 달리 역할을 새로 주는 게 아니라 되짚기만 한다 — 표지에 같이 싣는다
+    (2026-09-05). 전에는 표지("같은 역할로 이어서 진행합니다") 다음에 역할 페이지가
+    또 나와 같은 말을 세 번 했다 */
+ {id:'idea3', idx:'아이디어 3', title:'보장진단', role:false, roleInline:true,
   lead:'같은 역할로 이어서 진행합니다.'},
  {id:'idea4', idx:'아이디어 4', title:'보험금 청구', role:false,
   lead:'지금부터는 다시 역할 없이, 참가자님 그대로 진행합니다. 화면 없이 평소 경험을 여쭤볼게요.'},
@@ -754,9 +757,8 @@ function steps(){
     sec:nth===0?'첫 번째 화면':'두 번째 화면', secNote:'화면을 보면서 답해주세요'}));
   C.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 화면 비교', secNote:'두 화면을 다 보셨어요'}));
 
-  /* ── 아이디어 3 · 보장진단 ── */
+  /* ── 아이디어 3 · 보장진단 ── 역할 되짚기는 표지 안에 있다(roleInline) */
   st.push({kind:'divider', idea:IDEAS[3]});
-  st.push({kind:'role2'});
   seq().forEach((key,nth)=>T.forEach((q,i)=>st.push({kind:'svc',key,nth,q, label:'T'+(i+1+nth*T.length),
     sec:'이름만 보고', secNote:'아직 아무 화면도 보지 않았어요'})));
   st.push({kind:'cmp',key:'cmp',q:T5, sec:'이름만 보고'});
@@ -935,7 +937,7 @@ function bindStage(){
 function sideLabel(st){
   const qid=q=> st.labelPrefix ? st.labelPrefix+q.id.replace(/^[A-Z]+/,'') : q.id;
   if(st.kind==='divider') return '표지';
-  if(st.kind==='role'||st.kind==='role2') return '역할';
+  if(st.kind==='role') return '역할';
   if(st.kind==='timer') return '시간'+(st.nth+1);
   if(st.q) return st.label||st.q.id;
   const qs=st.qs||[];
@@ -986,6 +988,7 @@ function quiz(){
       <p class="lead">${esc(d.lead)}${d.role?' 다음 화면에서 역할을 안내합니다.':''}</p>
       ${(d.tasks||[]).map(t=>`<div class="task"><b>${esc(t.lbl)}</b> · ${esc(t.txt)}${t.sub?`<div style="color:var(--text-2);margin-top:4px">${esc(t.sub)}</div>`:''}</div>`).join('')}
       ${d.orderNote?`<div class="task"><b>순서</b> · 첫 번째 화면 → 두 번째 화면 순으로 진행합니다.</div>`:''}
+      ${d.roleInline?`<div class="role"><div class="lbl">역할 되짚기</div><p>${esc(ROLE2)}</p></div>`:''}
     </div>`;
   }
   else if(st.kind==='role'){
@@ -996,10 +999,6 @@ function quiz(){
       <ul>${ROLE.facts.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
       <p style="margin-top:14px;font-weight:500;font-size:15px">${esc(ROLE.tail)}</p>
     </div>`;
-  }
-  else if(st.kind==='role2'){
-    h=`<div class="sec"><h2>역할 되짚기</h2><p>같은 역할로 이어갑니다</p></div>
-    <div class="role"><div class="lbl">역할 되짚기</div><p>${esc(ROLE2)}</p></div>`;
   }
   /* 진행자가 조작하는 스톱워치. 참가자에게는 숫자를 보여줄 필요가 없지만
      같은 화면을 같이 보는 자리라 숨기지는 않는다 — 대신 "진행자용"이라고 못 박는다 */
