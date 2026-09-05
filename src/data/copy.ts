@@ -251,6 +251,10 @@ export const INSURANCE_MAIN = {
   recoOffLead: '이런 보험이',
   recoOffCategory: '많이 선택되고 있어요',
 
+  /** 서비스 묶음 "정보"의 표시 제목 — 상태 A·B 공통.
+      2026-09-04 전에는 2건(S1-9)만 "정보"였다 — 0건의 "알아두면 좋은 것"으로 통일 */
+  infoTitle: '알아두면 좋은 것',
+
   /** 하단 배너 2개 */
   bannerExpert: '보험이 어렵다면 전문가에게 물어보세요!',
   bannerEvent: '슈퍼SOL 여름 이벤트 참여하기',
@@ -301,10 +305,8 @@ export const INSURANCE_EMPTY = {
   /** 추천 카드 하단 고지 — S1-9 의 면책과 문장이 다르다 */
   recommendNotice: '가입을 권하는 것이 아니에요. 어떤 게 있는지 보여드릴 뿐이에요.',
 
-  /** 0건에서는 "정보" 묶음 제목이 바뀐다 */
-  infoTitle: '알아두면 좋은 것',
-
-  /** 서비스 그리드가 접힌 행. {n} = 조회·계약 + 청구·신청 개수 */
+  /** 서비스 그리드가 접힌 행. {n} = 조회 + 청구·신청 개수 ("정보"는 위 카드에 이미 있다).
+      "정보" 묶음 제목은 INSURANCE_MAIN.infoTitle 로 상태 공통 */
   servicesTitle: '가입하면 쓸 수 있어요 ({n})',
   servicesSub: '계약조회 · 보험금청구 · 보험료납입 · 자동이체 등',
 } as const
