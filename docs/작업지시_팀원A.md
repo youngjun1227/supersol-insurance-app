@@ -19,7 +19,7 @@ npm run dev                            # http://localhost:5173
 ```bash
 git switch -c feat/s1-main
 ```
-**`main`에 직접 push하지 마세요.** PR을 올리면 팀장이 머지합니다.
+**`main`에 직접 push하지 마세요.** PR 을 올리고 오토머지를 켜면 CI 통과 즉시 머지됩니다.
 `.githooks/pre-push` 가 자동으로 막습니다 (clone 후 `git config core.hooksPath .githooks` 를 했다면).
 
 ```bash
@@ -30,7 +30,7 @@ git push --force              # ❌ 모든 브랜치에서 거부
 
 되돌릴 게 있으면 `git revert` 로 새 커밋을 쌓으세요. `--amend` 후 force push 는 막힙니다.
 
-PR 을 올리면 **팀장 승인 1개 + CI 통과** 후 머지됩니다.
+PR 을 올리고 `gh pr merge <PR번호> --auto --squash` 로 오토머지를 켜두면 **CI 통과 즉시** 머지됩니다 (팀장 승인 불필요). 켠 뒤엔 커밋을 더 push 하지 마세요.
 PR 에 "out-of-date" 가 뜨면 `Update branch` — 자세한 건 `docs/온보딩.md` 참고.
 (팀장도 PR 은 똑같이 올립니다 — 승인만 자기가 생략합니다. 승인해줄 사람이 팀장뿐이라서요.)
 

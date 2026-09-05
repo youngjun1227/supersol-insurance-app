@@ -1,0 +1,24 @@
+/* 체크 행(ClaimCheck) 자리 — 행 높이·글자·색은 그대로, 24 체크박스 대신 점 불릿.
+   행 사이 간격은 화면이 className 으로 준다 (S4-A 0 · S4-D --space-2) */
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  color: var(--text-secondary);
+}
+
+.item::before {
+  content: '';
+  flex: none;
+  width: var(--space-1);
+  height: var(--space-1);
+  border-radius: var(--r-pill);
+  background: var(--text-caption);
+}
