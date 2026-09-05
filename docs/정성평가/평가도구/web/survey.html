@@ -377,8 +377,11 @@
    응답은 순서가 아니라 정체(기존/우리)로 저장한다 — 집계가 바로 되게.
    ══════════════════════════════════════════════════════════ */
 const SIDES={
-  old :{csv:'기존', name:'보장에너지', file:'img/home-existing.png', app:'기존 슈퍼SOL'},
-  ours:{csv:'우리', name:'보장진단',   file:'img/home-ours.png',     app:'두 번째 화면'},
+  /* app("기존 슈퍼SOL"/"두 번째 화면") 은 2026-09-05 에 뺐다 — 한쪽만 이름을 밝히면
+     나머지가 새로 만든 것임을 알려 주는 꼴이라, 참가자에게 보이는 곳에서는
+     위치("첫/두 번째 화면")로만 부른다. 집계용 정체 이름은 csv 를 쓴다 */
+  old :{csv:'기존', name:'보장에너지', file:'img/home-existing.png'},
+  ours:{csv:'우리', name:'보장진단',   file:'img/home-ours.png'},
 };
 /* 값은 목데이터(상태 B)와 같아야 한다 — 화면에 뜨는 숫자와 역할이 어긋나면 "내 얘기가 아니다"가 된다 */
 const ROLE={
@@ -391,12 +394,15 @@ const ROLE={
    설계 차이와 데이터 차이가 안 갈린다. 그래서 보유자 계정 스크린샷. 우리도 같은 조건으로 스크린샷.
    탭은 단계가 대응되게 잡았다: 첫 화면 → 목록 → 항목 상세 */
 const DIAG={
-  old :{tag:'보장에너지 · 기존 슈퍼SOL',
+  /* 태그는 서비스 이름만 쓴다 — 아이디어 3 은 이름(보장에너지·보장진단)을 대놓고 묻는
+     구간이라 이름은 밝히지만, 거기에 "기존 슈퍼SOL"을 붙이면 나머지가 새것임을 알려 준다
+     (2026-09-05). 어느 쪽이 첫/두 번째인지는 참가자 번호 홀짝으로 갈린다 */
+  old :{tag:'보장에너지',
         /* 기존 구조: 첫 화면 한 장에 "주요 보장 보기 / 부족 보장 보기" 탭 전환, "모든 보장 보기" → 항목 상세 */
         pages:[{file:'img/energy-existing-1.png', label:'첫 화면 · 주요 보장'},
                {file:'img/energy-existing-2.png', label:'첫 화면 · 부족 보장'},
                {file:'img/energy-existing-3.png', label:'모든 보장 · 상세'}]},
-  ours:{tag:'보장진단 · 두 번째 화면',
+  ours:{tag:'보장진단',
         /* 우리 구조: 브리핑(숫자·차트·또래) → "자세한 진단 보기" → 3단계 목록(전부 펼친 상태) → 항목 상세 */
         pages:[{file:'img/diag-ours-1.png', label:'첫 화면'},
                {file:'img/diag-ours-2.png', label:'자세한 진단'},
@@ -854,9 +860,12 @@ function phone(key,nth,dict){
     <button type="button" class="full" data-full="${esc(pages[0].file)}">크게 보기</button>
   </div>`;
 }
-function stage(keys,dict){
+/* nth0 = 이 화면이 실제로 몇 번째인지(0/1). 한 화면만 띄우는 단계(kind:'screen')는
+   keys 가 1개라 배열 index 로는 늘 0 이 되어 두 번째 화면도 "첫 번째 화면"이라 붙었다.
+   두 화면을 나란히 띄우는 단계(thumbs)는 index 가 곧 순서라 그대로 쓴다 (2026-09-05) */
+function stage(keys,dict,nth0){
   return `<div class="stage" id="stage">
-    <div class="phones${keys.length>1?' two':''}">${keys.map((k,i)=>phone(k,i,dict)).join('')}</div>
+    <div class="phones${keys.length>1?' two':''}">${keys.map((k,i)=>phone(k,nth0!=null?nth0:i,dict)).join('')}</div>
     <div class="stagefoot"><span class="stagehint">화면 안에서 위아래로 넘겨 보세요</span>
       <button type="button" class="collapse" id="collapse">화면 접기</button></div>
   </div>`;
@@ -956,7 +965,7 @@ function quiz(){
       <h1>${esc(d.title)}</h1>
       <p class="lead">${esc(d.lead)}${d.role?' 다음 화면에서 역할을 안내합니다.':''}</p>
       ${(d.tasks||[]).map(t=>`<div class="task"><b>${esc(t.lbl)}</b> · ${esc(t.txt)}${t.sub?`<div style="color:var(--text-2);margin-top:4px">${esc(t.sub)}</div>`:''}</div>`).join('')}
-      ${d.orderNote?`<div class="task"><b>순서</b> · ${seq().map(k=>esc(SIDES[k].app)).join(' → ')} 순으로 진행합니다.</div>`:''}
+      ${d.orderNote?`<div class="task"><b>순서</b> · 첫 번째 화면 → 두 번째 화면 순으로 진행합니다.</div>`:''}
     </div>`;
   }
   else if(st.kind==='role'){
@@ -1000,7 +1009,7 @@ function quiz(){
     inner+=qs.map(q=>qbox({...st,q, label: st.labelPrefix ? st.labelPrefix+q.id.replace(/^[A-Z]+/,'') : st.label})).join('');
     /* 화면 이미지가 있는 단계는 프레임 + 문항 2단(넓은 화면) / 프레임 위 고정(폰) */
     const keys = st.kind==='screen' ? [st.key] : (st.q&&st.q.thumbs ? seq() : null);
-    h+= keys ? `<div class="split${keys.length>1?' two':''}">${stage(keys,st.dict)}<div class="qs">${inner}</div></div>` : inner;
+    h+= keys ? `<div class="split${keys.length>1?' two':''}">${stage(keys,st.dict,st.kind==='screen'?st.nth:null)}<div class="qs">${inner}</div></div>` : inner;
   }
   $('#main').innerHTML=h;
   (st.qs||(st.q?[st.q]:[])).forEach(q=>body(q, st.key));
