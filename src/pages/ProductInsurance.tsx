@@ -10,7 +10,7 @@ import { useMemo, useState } from 'react'
 import { CaretRight } from '@phosphor-icons/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  AppShell, Header, ProductFilters, ProductRow,
+  AppShell, Header, ProductFilters, ProductFiltersNotice, ProductRow,
   HeaderActions,
   ProductSectionHeader, ProductTopTabs, TabBar,
 } from '@/components'
@@ -70,19 +70,22 @@ export function ProductInsurance() {
             }
           />
           <ProductTopTabs active="insurance" screen={SCREEN.s2} />
+          {/* 칩 두 줄 — 헤더와 같이 sticky (2026-09-05). 고지는 본문에 남는다 */}
+          <ProductFilters
+            categories={data.categories}
+            activeCategory={null}
+            onCategory={goCategory}
+            company={company}
+            onCompany={(id) => {
+              track(tid(SCREEN.s2, ELEMENT.칩, `회사-${id}`), { cat: 'all', company: id })
+              setCompany(id)
+            }}
+          />
         </>
       }
     >
-      <ProductFilters
-        categories={data.categories}
-        activeCategory={null}
-        onCategory={goCategory}
-        company={company}
-        onCompany={(id) => {
-          track(tid(SCREEN.s2, ELEMENT.칩, `회사-${id}`), { cat: 'all', company: id })
-          setCompany(id)
-        }}
-      />
+      {/* 회사 구분 고지 + 구분 밴드 — 칩은 헤더(sticky)로 올라갔고 고지만 본문에 남아 스크롤한다 */}
+      <ProductFiltersNotice />
 
       {/* 섹션 9개 — 미리보기 3개 + 초과 시 "모두 보기" */}
       <div className={styles.sections}>

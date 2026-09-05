@@ -1,4 +1,32 @@
-/* S2 계열 필터. 상단(칩 영역) --bg-page → 목록부터 --bg-surface (§1 배경 규칙) */
+/* S2 계열 필터. 상단(칩 영역) --bg-page → 목록부터 --bg-surface (§1 배경 규칙)
+   칩 두 줄은 AppShell header(sticky) 안에 놓인다 — 행마다 --bg-page 를 깔아 둔 덕에
+   붙어 있는 동안 아래 목록이 비치지 않는다 (2026-09-05) */
+
+/* 칩 두 줄의 바깥 상자. sticky 로 붙어 있을 때 아래 목록 글자가 바닥선에서 뚝 잘려 보이지 않게
+   바닥 밖으로 헤어라인(--border-default, 상품 탭 밑 선과 같은 언어) + --bg-page → 투명 페이드 16 을 깐다.
+   ⚠️ 붙어 있는 동안(data-stuck)만 보인다 — 페이드의 윗부분은 불투명한 --bg-page 라 맨 위에서 켜 두면
+      바로 아래 고지 문구 첫 줄을 덮어 가린다 (실제로 그랬다). 스크롤 0 에서는 opacity 0 → 정지 화면은 figma-ref 그대로. */
+.filters {
+  position: relative;
+  width: 100%;
+  background: var(--bg-page);
+}
+
+.filters::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: var(--space-4);
+  border-top: 1px solid var(--border-default);
+  background: linear-gradient(180deg, var(--bg-page), transparent);
+  opacity: 0;
+  transition: opacity var(--t-push) var(--ease);
+  pointer-events: none;
+}
+
+.filters[data-stuck='true']::after { opacity: 1; }
 
 /* 카테고리 행 = 고정 '전체' + 스크롤 영역. 세로 여백은 여기서 준다 */
 .catRow {
@@ -64,14 +92,17 @@
 
 .notice {
   width: 100%;
-  padding: 0 var(--gutter) var(--gutter-main);
+  /* 아래 4 — 밴드(16)와 합쳐 목록까지 20, 예전 12 + 8 과 같다 */
+  padding: 0 var(--gutter) var(--space-1);
   background: var(--bg-page);
   color: var(--text-caption);
 }
 
-/* 목록 시작 전 구분 밴드 8 */
+/* 목록 시작 전 구분 밴드 — --bg-page → --bg-surface 페이드 16.
+   예전엔 --bg-page 8 뒤에 흰 목록이 바로 와서 칸이 뚝 갈렸다 (2026-09-05).
+   고지 아래 여백과 합쳐 목록까지 20 은 그대로라 정지 화면의 위치는 안 바뀐다 */
 .band {
   width: 100%;
-  height: var(--space-2);
-  background: var(--bg-page);
+  height: var(--space-4);
+  background: linear-gradient(180deg, var(--bg-page), var(--bg-surface));
 }

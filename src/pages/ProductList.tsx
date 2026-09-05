@@ -15,7 +15,7 @@ import { useMemo, useState } from 'react'
 import { CaretDown } from '@phosphor-icons/react'
 import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  AppShell, Header, ProductFilters, ProductRow,
+  AppShell, Header, ProductFilters, ProductFiltersNotice, ProductRow,
   HeaderActions,
   ProductSectionHeader, ProductTopTabs, TabBar,
 } from '@/components'
@@ -103,19 +103,22 @@ export function ProductList() {
             }
           />
           <ProductTopTabs active="insurance" screen={SCREEN.s2List} />
+          {/* 칩 두 줄 — 헤더와 같이 sticky (2026-09-05). 고지는 본문에 남는다 */}
+          <ProductFilters
+            categories={data.categories}
+            activeCategory={activeCategory}
+            onCategory={selectCategory}
+            company={company}
+            onCompany={(id) => {
+              track(tid(SCREEN.s2List, ELEMENT.칩, `회사-${id}`), { cat: activeCategory ?? 'all', company: id })
+              setCompany(id)
+            }}
+          />
         </>
       }
     >
-      <ProductFilters
-        categories={data.categories}
-        activeCategory={activeCategory}
-        onCategory={selectCategory}
-        company={company}
-        onCompany={(id) => {
-          track(tid(SCREEN.s2List, ELEMENT.칩, `회사-${id}`), { cat: activeCategory ?? 'all', company: id })
-          setCompany(id)
-        }}
-      />
+      {/* 회사 구분 고지 + 구분 밴드 — 칩은 헤더(sticky)로 올라갔고 고지만 본문에 남아 스크롤한다 */}
+      <ProductFiltersNotice />
 
       <div className={styles.sections}>
         {sections.map(({ category, items }) => (
