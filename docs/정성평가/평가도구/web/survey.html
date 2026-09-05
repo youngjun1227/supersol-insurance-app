@@ -417,12 +417,12 @@ const IDEAS=[
    과제 성공은 참가자 자기보고(Q0)로 받는다. 진행자 종이 기록란은 백업 */
 const PR=[
  {id:'Q0', type:'pair', nonum:true, textVal:true, labels:['둘 다 찾았다','하나만 찾았다','못 찾았다'],
-  q:'두 상품(신한라이프 1개 · 타사 1개)을 다 찾으셨나요?', pairLabels:['기존 슈퍼SOL','두 번째 화면']},
+  q:'두 상품(신한라이프 1개 · 타사 1개)을 다 찾으셨나요?'},
  {id:'Q1', type:'pair', labels:['전혀 쉽지 않았다','쉽지 않았다','보통이다','쉬웠다','매우 쉬웠다'],
-  q:'2가지 보험 상품들을 찾기 얼마나 쉬웠나요?', pairLabels:['기존 슈퍼SOL','두 번째 화면']},
- {id:'Q2', type:'choice',
-  q:'상품을 탐색하고 비교하기에 더 편리했던 쪽은?',
-  opts:['기존 슈퍼SOL','두 번째 화면','비슷했다','잘 모르겠다']},
+  q:'두 상품을 찾기가 얼마나 쉬웠나요?'},
+ {id:'Q2', type:'choice', orderOpts:true,
+  q:'상품을 찾고 비교하기에 더 편했던 쪽은?',
+  opts:['첫 번째 화면','두 번째 화면','비슷했다']},
  {id:'Q3', type:'text',
   q:'그렇게 느낀 이유를 말씀해 주세요.', ph:'자유롭게 적어주세요'},
 ];
@@ -991,13 +991,21 @@ function body(q,key){
       store[q.id]={v:+b.dataset.v}; [...g.children].forEach(c=>c.setAttribute('aria-pressed',c===b));};
   }
   else if(q.type==='pair'){
-    const rows=q.pairLabels||['기존 슈퍼SOL','두 번째 화면'];
-    el.innerHTML=rows.map((r,ri)=>`
-      <div class="pairlbl">${esc(r)}</div>
+    /* 화면에 보이는 순서는 참가자 번호 홀짝을 따른다 (C1 의 orderOpts 와 같은 규칙).
+       저장은 순서가 아니라 정체로 한다 — r0=기존 · r1=우리 고정.
+       CSV 의 _기존/_우리 열이 이 키를 그대로 읽으므로 여기를 순서로 바꾸면 집계가 뒤집힌다.
+       라벨을 "첫/두 번째 화면"으로 둔 이유: 한쪽만 "기존 슈퍼SOL"이라 부르면
+       나머지가 새로 만든 것임을 알려 주는 꼴이라 주관 평가에 편향이 붙는다 */
+    const seq=seqOf(S.order);                       /* ['old','ours'] 또는 ['ours','old'] */
+    const POS=['첫 번째 화면','두 번째 화면'];
+    el.innerHTML=seq.map((side,pos)=>{
+      const ri=side==='old'?0:1;                    /* 저장 키는 정체 고정 */
+      return `
+      <div class="pairlbl">${esc(q.pairLabels?q.pairLabels[ri]:POS[pos])}</div>
       <div class="scale" data-row="${ri}" style="grid-template-columns:repeat(${q.labels.length},1fr)">
         ${q.labels.map((L,i)=>`<button type="button" data-v="${i+1}" aria-pressed="${a['r'+ri]===i+1}">
            ${q.nonum?'':`<span class="num">${i+1}</span>`}<span class="cap"${q.nonum?' style="font-size:13px;color:var(--text)"':''}>${esc(L)}</span></button>`).join('')}
-      </div>`).join('');
+      </div>`;}).join('');
     el.querySelectorAll('.scale').forEach(g=>{
       g.onclick=e=>{const b=e.target.closest('button'); if(!b)return;
         const v=+b.dataset.v, ri=g.dataset.row, cur=store[q.id]||{};
@@ -1123,8 +1131,9 @@ function fields(q){
   if(q.type==='pair'){
     f.length=0;
     const val=v=> v==null ? '' : (q.textVal ? q.labels[v-1] : v);
+    /* 열 이름은 정체다 — 화면에 보인 순서(첫/두 번째)는 참가자마다 다르다 */
     f.push(['_기존',a=>val(a.r0)]);
-    f.push(['_두번째',a=>val(a.r1)]);
+    f.push(['_우리',a=>val(a.r1)]);
   }
   if(q.other)  f.push(['_기타',a=>a.other||'']);
   if(q.follow) f.push(['_이유',a=>a.follow||'']);
