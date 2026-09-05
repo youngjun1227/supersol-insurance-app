@@ -302,6 +302,36 @@
   gap: var(--space-1);
 }
 
+/* 접기·펼치기 캐럿 — 공용 MoreToggle 과 같은 CaretDown 180° 회전.
+   자리는 u-chevron(24 칸)이라 카드 제목 행의 "›"와 같은 위치·색이다 */
+.collapsedCaret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s var(--ease);
+}
+
+.collapsedCaret[data-open='true'] { transform: rotate(180deg); }
+
+/* 펼친 내용 — 같은 카드 안에 묶음 2개. 제목 행과는 구분선(§1 --border-default)으로 나눈다.
+   묶음을 별도 카드로 두면 제목 행만 따로 노는 것처럼 보였다 (2026-09-04) */
+.signupGroups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-default);
+}
+
+/* 묶음 소제목은 스펙 §2 h3 — "카드 소제목 · 묶음 제목" */
+.signupGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.signupGroupTitle { color: var(--text-primary); }
+
 /* ══ 진단 연계 추천 배너 (2026-09-02 팀장 — B안) ═══════════════
    Figma 679:5622 의 배너 자리. 레이아웃은 시안 그대로 가져오되
    (파란 라벨+chevron 한 줄 → 큰 본문 2줄 → 우측 일러스트) 내용은

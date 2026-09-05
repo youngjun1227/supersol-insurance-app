@@ -105,7 +105,10 @@
   --tabbar-bottom: 12px;   /* 탭바 하단 띄움 — safe-area 없는 기기만. 있으면 safe-area 가 대신한다 */
 
   /* ── §2 타이포 (13단계. 중간값 새로 만들기 금지) ──────────── */
-  --font-sans: Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont,
+  /* ⚠️ 웹폰트(global.css @import)는 family 를 "Pretendard Variable" 로 등록한다 — "Pretendard" 가
+     아니다. 이 이름이 빠져 있던 동안 팀장 맥(로컬 설치)에서만 Pretendard 로 보이고 참가자 아이폰·CI 는
+     Apple SD Gothic Neo 로 렌더됐다 (2026-09-04, CI 2.0 폰트 검사가 잡음). Pretendard 는 로컬 설치용 폴백 */
+  --font-sans: "Pretendard Variable", Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont,
                "Apple SD Gothic Neo", system-ui, sans-serif;
 
   --fw-regular: 400;

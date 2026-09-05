@@ -7,6 +7,22 @@
   width: 100%;
 }
 
+/* ── 에이전트 버블 고정 자리 (2026-09-05) ────────────────────
+   전에는 본문 안 absolute 라 스크롤하면 같이 올라가 사라졌다. 헤더 바로 아래 높이 0 의
+   fixed 상자를 두고 그 안에서 AgentBubble 이 원래대로 absolute(top 8 · right gutter)로 앉는다.
+   가운데 정렬은 BottomCTA 와 같은 방식(393 프레임). 높이 0 이라 본문 탭을 막지 않는다.
+   z-index 는 버블이 원래 쓰던 4 — 용어 툴팁(5) 아래, 헤더(10)·시트(50) 아래 그대로. */
+.agentDock {
+  position: fixed;
+  top: var(--h-header);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  width: 100%;
+  max-width: var(--viewport-w);
+  height: 0;
+}
+
 /* ── 상단 요약 ───────────────────────────────────────────── */
 .summary {
   display: flex;

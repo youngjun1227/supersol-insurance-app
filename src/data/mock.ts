@@ -284,13 +284,16 @@ export const PAYMENTS: Payment[] = [
   { id: 'pay-6', date: '08.16', merchant: '◇◇마트',      amount: 23_500,  claimable: false }, // 병원 아님 — 목록에 안 나옴
 ]
 
-/* ── 6. 서비스 12개 (S1 그리드 3묶음) ──────────────────────── */
+/* ── 6. 서비스 12개 (S1 그리드 3묶음) ────────────────────────
+   2026-09-04: "조회·계약" → "조회", 자동이체등록/변경은 청구·신청으로
+   (등록·변경은 신청 성격이라 조회 묶음과 어울리지 않는다 — 변경로그 "S1 서비스 묶음 정리").
+   ⚠️ 원본 mock-data.md 는 아직 이전 구성 — 팀장이 맞춘다. */
 export const SERVICES: ServiceItem[] = [
-  { id: 'sv-contract',  label: '보험계약조회',      group: '조회·계약', icon3d: '계약조회' },
-  { id: 'sv-history',   label: '보험거래내역',      group: '조회·계약', icon3d: '거래내역' },
-  { id: 'sv-autopay',   label: '자동이체등록/변경', group: '조회·계약', icon3d: '자동이체' },
+  { id: 'sv-contract',  label: '보험계약조회',      group: '조회',      icon3d: '계약조회' },
+  { id: 'sv-history',   label: '보험거래내역',      group: '조회',      icon3d: '거래내역' },
   { id: 'sv-claim',     label: '보험금청구',        group: '청구·신청', icon3d: '보험금청구' },
   { id: 'sv-premium',   label: '보험료납입',        group: '청구·신청', icon3d: '보험료납입' },
+  { id: 'sv-autopay',   label: '자동이체등록/변경', group: '청구·신청', icon3d: '자동이체' },
   { id: 'sv-loan',      label: '보험계약대출신청',  group: '청구·신청', icon3d: '계약대출' },
   { id: 'sv-dividend',  label: '배당금신청',        group: '청구·신청', icon3d: '배당금' },
   { id: 'sv-withdraw',  label: '중도인출신청',      group: '청구·신청', icon3d: '중도인출' },

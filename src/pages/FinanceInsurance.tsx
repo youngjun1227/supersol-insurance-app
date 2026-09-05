@@ -8,7 +8,7 @@
    분리형 진단 카드(S1-8 · S1-14)는 통합 카드와 별개 — 변경로그 §1. */
 
 import { useState } from 'react'
-import { HandCoins, MagnifyingGlass } from '@phosphor-icons/react'
+import { CaretDown, HandCoins, MagnifyingGlass } from '@phosphor-icons/react'
 import { AppShell, Battery, Card, FinanceTopTabs, Header, HeaderActions, TabBar } from '@/components'
 import { useMock } from '@/app/MockProvider'
 import {
@@ -29,8 +29,12 @@ import styles from './FinanceInsurance.module.css'
     (2026-08-27 확인 — "정보" 묶음은 PNG 기준 2개가 맞다) */
 const HIDDEN_SERVICES = ['sv-energy']
 
-/** 서비스 그리드 묶음 — figma-ref 순서 그대로 */
-const SERVICE_GROUPS: ServiceItem['group'][] = ['조회·계약', '청구·신청', '정보']
+/** 서비스 그리드 묶음 — figma-ref 순서 그대로.
+    "조회·계약"은 2026-09-04 "조회"로 — 자동이체등록/변경이 청구·신청으로 옮겨 계약 성격의 항목이 없다.
+    "정보" 묶음은 상태와 무관하게 C.infoTitle("알아두면 좋은 것")로 보여준다 */
+const SERVICE_GROUPS: ServiceItem['group'][] = ['조회', '청구·신청', '정보']
+/** 0건에서 "가입하면 쓸 수 있어요"를 펼쳤을 때 — "정보"는 바로 위 "알아두면 좋은 것"과 같은 항목이라 뺀다 */
+const SIGNUP_SERVICE_GROUPS: ServiceItem['group'][] = ['조회', '청구·신청']
 
 /** S1-8 "20대가 많이 보는 보험" 2행 — figma-ref 에 그려진 두 상품.
     ⚠️ mock.ts 에 추천 플래그가 없어 화면에서 id 로 고른다. 목데이터에
@@ -300,17 +304,19 @@ export function FinanceInsurance() {
     </Card>
   )
 
-  /* ── 서비스 그리드 3묶음 ──────────────────────────────────── */
-  const serviceGroups = SERVICE_GROUPS.map((group) => {
+  /* ── 서비스 그리드 묶음 카드 ─────────────────────────────── */
+  const groupCard = (group: ServiceItem['group']) => {
     const items = services.filter((s) => s.group === group)
     if (!items.length) return null
     return (
       <Card radius="lg" className={styles.serviceCard} key={group}>
-        <p className={`${styles.title} t-h2`}>{group}</p>
+        <p className={`${styles.title} t-h2`}>{group === '정보' ? C.infoTitle : group}</p>
         <div className={styles.grid}>{items.map(serviceItem)}</div>
       </Card>
     )
-  })
+  }
+  /** 상태 B · 맞춤 OFF — 3묶음 전부 */
+  const serviceGroups = SERVICE_GROUPS.map(groupCard)
 
   /* ══════ 상태 A (0건) 전용 — S1-8 분리형 ══════════════════════
      변경로그 §1: 통합 카드는 상태 B 전용. 0건은 "내 보험이 채우는
@@ -414,34 +420,31 @@ export function FinanceInsurance() {
     </Card>
   )
 
-  /* "알아두면 좋은 것" — 상태 B 의 "정보" 묶음과 같은 항목, 제목만 다르다 */
-  const infoCard = (() => {
-    const items = services.filter((s) => s.group === '정보')
-    if (!items.length) return null
-    return (
-      <Card radius="lg" className={styles.serviceCard}>
-        <p className={`${styles.title} t-h2`}>{E.infoTitle}</p>
-        <div className={styles.grid}>{items.map(serviceItem)}</div>
-      </Card>
-    )
-  })()
+  /* "알아두면 좋은 것" — 상태 B 의 "정보" 묶음 카드 그대로 (2026-09-04 부터 제목도 같다) */
+  const infoCard = groupCard('정보')
 
   /* "가입하면 쓸 수 있어요 (9)" — 0건에서는 서비스 그리드가 한 줄로 접힌다.
      누르면 그 자리에서 펼쳐진다 (#128) — 전에는 계측만 하고 아무 일도 없어서
      9/11 미보유자 대체 과제("가입하면 뭘 할 수 있는지 확인")가 성립하지 않았다.
-     펼친 내용은 상태 B 가 쓰는 serviceGroups 그대로다 */
+     펼쳐도 제목 행은 남아 다시 누르면 접힌다 (2026-09-04) — 전에는 펼치면 되돌릴 길이 없었다.
+     제목 행(제목·미리보기 줄·캐럿)은 접힘·펼침에서 똑같다 — 펼칠 때 미리보기 줄을 숨겼더니
+     헤더 높이가 바뀌어 캐럿이 위아래로 움직였다 (2026-09-05). 캐럿은 공용 MoreToggle 과 같은
+     CaretDown 180° 회전 — 이 앱의 접기·펼치기 관례다 ("›"는 이동 표시라 토글에 안 맞는다).
+     펼친 내용은 **같은 카드 안에** 조회·청구·신청 2묶음(h3 소제목) — 묶음을 별도 카드로 두면
+     제목 행만 따로 노는 것처럼 보였다. "정보"는 바로 위 "알아두면 좋은 것"과 같은 항목이라 뺀다 */
   const [servicesOpen, setServicesOpen] = useState(false)
   const servicesCollapsed = (() => {
-    const count = services.filter((s) => s.group !== '정보').length
-    if (servicesOpen) return serviceGroups
+    const count = services.filter((s) => SIGNUP_SERVICE_GROUPS.includes(s.group)).length
     return (
       <Card radius="lg" className={styles.serviceCard}>
         <button
           type="button"
           className={styles.collapsedRow}
+          aria-expanded={servicesOpen}
           onClick={() => {
-            track(tid(SCREEN.s1, ELEMENT.모두보기, '서비스'))
-            setServicesOpen(true)
+            /* 열기와 닫기를 따로 센다 — "펼쳐 보고 다시 접었는가"가 헤맴 진단 단서 */
+            track(tid(SCREEN.s1, servicesOpen ? ELEMENT.닫기 : ELEMENT.모두보기, '서비스'))
+            setServicesOpen((prev) => !prev)
           }}
         >
           <span className={styles.collapsedText}>
@@ -450,8 +453,29 @@ export function FinanceInsurance() {
             </span>
             <span className={`${styles.policyMeta} t-body-sm`}>{E.servicesSub}</span>
           </span>
-          <span className="u-chevron" aria-hidden="true">›</span>
+          <span
+            className={`u-chevron ${styles.collapsedCaret}`}
+            data-open={servicesOpen}
+            aria-hidden="true"
+          >
+            <CaretDown size={16} weight="regular" color="var(--text-disabled)" />
+          </span>
         </button>
+
+        {servicesOpen ? (
+          <div className={styles.signupGroups}>
+            {SIGNUP_SERVICE_GROUPS.map((group) => {
+              const items = services.filter((s) => s.group === group)
+              if (!items.length) return null
+              return (
+                <section key={group} className={styles.signupGroup}>
+                  <p className={`${styles.signupGroupTitle} t-h3`}>{group}</p>
+                  <div className={styles.grid}>{items.map(serviceItem)}</div>
+                </section>
+              )
+            })}
+          </div>
+        ) : null}
       </Card>
     )
   })()

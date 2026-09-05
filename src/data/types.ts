@@ -139,7 +139,7 @@ export interface ServiceItem {
   id: string
   label: string
   /** 묶음 */
-  group: '조회·계약' | '청구·신청' | '정보'
+  group: '조회' | '청구·신청' | '정보'
   /** public/assets/3d/ 파일명 (확장자 제외) */
   icon3d: string
 }
