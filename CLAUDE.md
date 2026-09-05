@@ -6,7 +6,7 @@
 ## 저장소 관계
 - **이 레포 (개발)**: https://github.com/youngjun1227/supersol-insurance-app — 코드만. **3인 개발**(아래 분담표).
 - **디자인 레포**: https://github.com/youngjun1227/supersol-insurance-redesign — Figma 작업·리서치·토큰 원본. 로컬 경로 `../SOL_UI:UX_Redesign` (형제 폴더 전제).
-- 디자인이 바뀌면 **디자인 레포가 원본** — 이쪽은 따라간다. 토큰·에셋은 스크립트로 동기화(`scripts/sync-assets.sh`, 생기면).
+- 디자인이 바뀌면 **디자인 레포가 원본** — 이쪽은 따라간다. 토큰·에셋은 스크립트로 동기화(`npm run sync:assets`).
 
 ## 커밋 규칙 (절대)
 - **커밋 메시지에 `Co-Authored-By: Claude …` / `Generated with Claude Code` 절대 넣지 말 것.** `.claude/settings.json`(`includeCoAuthoredBy:false`) + `.githooks/commit-msg`가 강제. clone 후 `git config core.hooksPath .githooks` 1회.
@@ -56,6 +56,45 @@
 - 아이콘: `@phosphor-icons/react` `weight="regular"`(탭바만 `fill`) / 3D는 `public/assets/3d/` PNG
 - 신한 CI 블루 `#0046FF`는 로고 전용 — 타사 카드·판매사 뱃지에 로고 금지 (계열사 우대 리스크)
 
+## 코드 지도
+```
+src/app/        App.tsx(라우트 전체) · MockProvider · AnalyticsProvider
+src/pages/      화면 1개 = Xxx.tsx + Xxx.module.css
+src/components/ 공용 컴포넌트 (팀장 소유) · index.ts 로 배럴 export
+src/lib/        targetId·analytics·useTrack·format·coverage·productFilter
+src/data/       index.ts(접근 한 층) · mock.ts(원본) · types.ts · copy.ts
+src/styles/     tokens.css(스펙 §1 색·간격) · typography.css · global.css
+```
+**S코드 → 라우트 → 파일** (문서·분담표는 S코드로, 코드는 개념명으로 부른다)
+
+| S코드 | 라우트 | 파일 |
+|---|---|---|
+| S1-8/9/14 보험 메인 | `/finance/insurance?state=A\|B&custom=off` | `pages/FinanceInsurance.tsx` |
+| S1-7 내 보험 | `/finance/insurance/my` | `pages/MyInsurance.tsx` |
+| S1-13 기준 시트 | (S1 안의 시트) | `pages/BasisSheet.tsx` |
+| S2-A 상품 목록 | `/product/insurance/list` | `pages/ProductList.tsx` |
+| S2-D 상품 상세 | `/product/insurance/:productId` | `pages/ProductDetail.tsx` |
+| S3-C 진단 결과 | `/diagnosis` | `pages/Diagnosis.tsx` ← **레퍼런스 구현** |
+| S3-D 브리핑 | `/diagnosis/briefing` | `pages/Briefing.tsx` |
+| S3-E 항목 상세 | `/diagnosis/:itemId` | `pages/ItemDetail.tsx` |
+| S3-F·S6-A 에이전트 | `/agent?ctx=…` | `pages/Agent.tsx` |
+| S4-A 결제 감지 팝업 | `/home?popup=claim` — 라우트 아닌 홈 위 오버레이 | `pages/ClaimPopup.tsx` |
+| S4-D 청구 절차 | `/claim/guide` | `pages/ClaimGuide.tsx` |
+| S5-A 알림 설정 | `/claim/settings` | `pages/ClaimSettings.tsx` |
+| 청구 완료 | `/claim/done` | `pages/ClaimDone.tsx` |
+| 00 메인홈 | `/home` | `pages/Home.tsx` |
+| 혜택·주식 스켈레톤 | `/benefit` `/stock` | `pages/Skeleton.tsx` |
+| 진행자 내보내기 | `/export` | `pages/Export.tsx` |
+
+각 페이지 파일 **첫 줄 주석에 Figma 노드·figma-ref PNG·그렇게 만든 이유**가 있다 — 고치기 전에 읽을 것.
+
+## 코드 규약
+- **화면 1개 = `Xxx.tsx` + `Xxx.module.css`** 짝. 전역 CSS 추가 금지 — 색·간격은 `styles/tokens.css`
+- **데이터는 `useMock()`** (`src/data/index.ts`)만 쓴다. 화면에서 `mock.ts` 직접 import 금지 — 실데이터 교체 지점이다
+- **계측은 `useTrack()`** — `const track = useTrack(); track(tid(...))`. 화면 이름·과제는 컨텍스트가 채운다
+- **모든 화면은 `<AppShell name="S3-C-진단결과">`** 로 감싼다. 이 `name` 이 계측 화면 코드(`lib/targetId.ts` 의 `SCREEN`)와 짝이다 — 빠뜨리면 집계에서 화면이 통째로 사라진다
+- 경로 별칭 `@/` = `src/`
+
 ## 데이터 규칙
 - 목데이터 원본: 디자인 레포 `02_to-be/mock-data.md` → `src/data/mock.ts`. **임의 값 생성 금지.** 나중에 실데이터로 교체할 수 있게 데이터 접근은 한 층으로 모은다.
 - 계정 상태 2벌: 상태 B(보유 2건 20대) = 기본 / 상태 A(0건). `?state=A|B` 쿼리 전환.
@@ -75,6 +114,18 @@
 
 ## 스택
 Vite + React + TypeScript. 라이브러리 최소(라우터·Phosphor 정도). 백엔드 없음. 정적 배포(Vercel). PWA 메타(`manifest.json` + apple 메타)로 홈 화면 전체화면 실행.
+
+```bash
+npm run dev          # Vite 개발 서버
+npm run build        # tsc -b && vite build
+npm test             # vitest (스모크 = 전 라우트 렌더)
+```
+**PR 전 CI와 같은 검사를 로컬에서** (승인이 필수가 아니라 CI가 유일한 관문이다):
+```bash
+npm run lint:tokens && node scripts/check-copy.mjs && npm run check:mock \
+  && npm run typecheck && npm run build && npm run check:bundle && npm test
+```
+`sync:assets`(디자인 레포 토큰·에셋 동기화) · `visual`(시각 회귀, 9/11 이후) 는 필요할 때만.
 
 ## 일정
 React 1차 구현 8/25~31 → 9/1~ 다듬기·배포 → 🔒 9/11 사용자 테스트 → 9/20 발표. 화면 4~6개(8/25 회의에서 확정).
