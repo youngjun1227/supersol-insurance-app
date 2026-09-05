@@ -131,6 +131,10 @@ jobs:
     name: 협업 규칙 (프리즈 · 공용 표면)
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    # 공용 표면 알림을 PR 코멘트로 남긴다 — 저장소 기본 워크플로 권한이 read 라 여기서만 올린다
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -146,21 +150,46 @@ jobs:
             exit 1
           fi
           echo "✓ 프리즈 아님 또는 hotfix"
-      # 공용 표면은 팀장 소유 (CLAUDE.md 협업 규칙). 승인이 없어졌으니 여기서 본다 —
-      # 팀장이 아닌 작성자가 건드리면 팀장이 `공용-허용` 라벨을 붙여야 통과
-      - name: 공용 표면 (팀장 외 수정은 공용-허용 라벨)
+      # 공용 표면은 팀장 소유 (CLAUDE.md 협업 규칙) — 다만 **막지 않고 알리기만 한다**.
+      # 2026-09-05 팀장: 팀원이 공용 컴포넌트를 건드릴 일이 실제로 잦았고(#148 AgentBubble ·
+      # #156 AppShell · #158 ProductFilters), 막아 두니 라벨을 기다리다 PR 이 쌓이거나
+      # 빨간 X 를 그냥 지나쳐 머지됐다 — 마찰만 남고 보호 효과는 없는 상태였다.
+      # 시각 검수를 머지 뒤 사후에 하기로 한 결정(2026-09-04)과도 결이 맞다.
+      # 소유권 규칙 자체는 유지된다 — 여기서 남긴 코멘트로 팀장이 사후에 본다.
+      - name: 공용 표면 (팀장 외 수정은 알림만)
+        if: github.event.pull_request.user.login != 'youngjun1227'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          AUTHOR="${{ github.event.pull_request.user.login }}"
-          ALLOWED="${{ contains(github.event.pull_request.labels.*.name, '공용-허용') }}"
-          if [ "$AUTHOR" = "youngjun1227" ] || [ "$ALLOWED" = "true" ]; then echo "✓ 팀장 또는 허용 라벨"; exit 0; fi
           CHANGED=$(git diff --name-only "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
             | grep -E '^(src/components/|src/app/|src/pages/Home\.tsx|src/data/|src/styles/tokens\.css|src/lib/targetId\.ts)' || true)
-          if [ -n "$CHANGED" ]; then
-            echo "❌ 공용 표면은 팀장 소유입니다 — 필요하면 팀장에게 요청하세요 (CLAUDE.md 협업 규칙). 바뀐 파일:"
+          if [ -z "$CHANGED" ]; then echo "✓ 공용 표면 변경 없음"; exit 0; fi
+
+          echo "⚠️ 공용 표면이 바뀌었습니다 (막지는 않습니다):"
+          echo "$CHANGED"
+          # 워크플로 요약에도 남긴다 — 코멘트 권한이 없어도 여기서는 보인다
+          {
+            echo "### ⚠️ 공용 표면 변경"
+            echo "공용 표면은 팀장 소유입니다 (CLAUDE.md 협업 규칙). **막지는 않으니 그대로 진행하세요** — 팀장이 머지 뒤 확인합니다."
+            echo ""
+            echo '```'
             echo "$CHANGED"
-            exit 1
-          fi
-          echo "✓ 공용 표면 변경 없음"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # PR 코멘트는 실패해도 무시한다 (fork PR 은 토큰이 읽기 전용이다)
+          {
+            echo "⚠️ **공용 표면 변경 알림** — 막지 않습니다. 그대로 진행하세요."
+            echo ""
+            echo "아래 파일은 CLAUDE.md 협업 규칙상 팀장 소유입니다. 팀장이 머지 뒤 main 프리뷰에서 확인합니다."
+            echo "크기·비율이 갈릴 수 있는 변경이면 팀장에게 한 줄 알려주세요."
+            echo ""
+            echo '```'
+            echo "$CHANGED"
+            echo '```'
+          } > /tmp/body.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/body.md \
+            --repo "${{ github.repository }}" || echo "(코멘트 실패 — 요약에만 남김)"
 
   # ── 관문 job ──────────────────────────────────────────────
   # ⚠️ 브랜치 보호의 required status check 는 이름으로 매칭된다.
