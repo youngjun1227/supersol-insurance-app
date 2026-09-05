@@ -328,6 +328,17 @@
     padding:10px 14px; font:inherit; font-size:14px; color:var(--text-2); cursor:pointer;
   }
   .ghost:hover{border-color:var(--accent); color:var(--accent)}
+  /* 진행자용 스톱워치 (아이디어 1 Task1) */
+  .tmr{text-align:center; padding:8px 0 4px}
+  .tmrv{font-size:44px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-1px}
+  .tmrb{display:flex; gap:8px; justify-content:center; margin-top:14px}
+  .tmrb button{
+    flex:1; max-width:150px; padding:14px 10px; font:inherit; font-size:15px; font-weight:600;
+    border:none; border-radius:var(--r-sm); background:var(--accent); color:#fff; cursor:pointer;
+  }
+  .tmrb #tmrStop{background:var(--text)}
+  .tmrb .ghost{flex:0 0 auto; max-width:none; font-weight:400}
+  .tmrn{margin-top:10px; font-size:12px; color:var(--text-2)}
   .done{text-align:center; padding:32px 0 8px}
   .done .ic{width:56px; height:56px; border-radius:50%; background:var(--accent-soft); color:var(--accent);
     display:grid; place-items:center; margin:0 auto 14px; font-size:28px}
@@ -366,8 +377,11 @@
    응답은 순서가 아니라 정체(기존/우리)로 저장한다 — 집계가 바로 되게.
    ══════════════════════════════════════════════════════════ */
 const SIDES={
-  old :{csv:'기존', name:'보장에너지', file:'img/home-existing.png', app:'기존 슈퍼SOL'},
-  ours:{csv:'우리', name:'보장진단',   file:'img/home-ours.png',     app:'두 번째 화면'},
+  /* app("기존 슈퍼SOL"/"두 번째 화면") 은 2026-09-05 에 뺐다 — 한쪽만 이름을 밝히면
+     나머지가 새로 만든 것임을 알려 주는 꼴이라, 참가자에게 보이는 곳에서는
+     위치("첫/두 번째 화면")로만 부른다. 집계용 정체 이름은 csv 를 쓴다 */
+  old :{csv:'기존', name:'보장에너지', file:'img/home-existing.png'},
+  ours:{csv:'우리', name:'보장진단',   file:'img/home-ours.png'},
 };
 /* 값은 목데이터(상태 B)와 같아야 한다 — 화면에 뜨는 숫자와 역할이 어긋나면 "내 얘기가 아니다"가 된다 */
 const ROLE={
@@ -380,12 +394,15 @@ const ROLE={
    설계 차이와 데이터 차이가 안 갈린다. 그래서 보유자 계정 스크린샷. 우리도 같은 조건으로 스크린샷.
    탭은 단계가 대응되게 잡았다: 첫 화면 → 목록 → 항목 상세 */
 const DIAG={
-  old :{tag:'보장에너지 · 기존 슈퍼SOL',
+  /* 태그는 서비스 이름만 쓴다 — 아이디어 3 은 이름(보장에너지·보장진단)을 대놓고 묻는
+     구간이라 이름은 밝히지만, 거기에 "기존 슈퍼SOL"을 붙이면 나머지가 새것임을 알려 준다
+     (2026-09-05). 어느 쪽이 첫/두 번째인지는 참가자 번호 홀짝으로 갈린다 */
+  old :{tag:'보장에너지',
         /* 기존 구조: 첫 화면 한 장에 "주요 보장 보기 / 부족 보장 보기" 탭 전환, "모든 보장 보기" → 항목 상세 */
         pages:[{file:'img/energy-existing-1.png', label:'첫 화면 · 주요 보장'},
                {file:'img/energy-existing-2.png', label:'첫 화면 · 부족 보장'},
                {file:'img/energy-existing-3.png', label:'모든 보장 · 상세'}]},
-  ours:{tag:'보장진단 · 두 번째 화면',
+  ours:{tag:'보장진단',
         /* 우리 구조: 브리핑(숫자·차트·또래) → "자세한 진단 보기" → 3단계 목록(전부 펼친 상태) → 항목 상세 */
         pages:[{file:'img/diag-ours-1.png', label:'첫 화면'},
                {file:'img/diag-ours-2.png', label:'자세한 진단'},
@@ -403,26 +420,60 @@ const IDEAS=[
   tasks:[{lbl:'Task 1', txt:'신한라이프 치아보험 1개, 타사 치아보험 1개를 찾아서 각각 열어봐 주세요.', sub:'두 상품의 순서는 상관없습니다. 두 화면 모두에서 같은 과제를 합니다.'}]},
  {id:'idea1-task2', idx:'아이디어 1', title:'상품 상세 살펴보기', role:false,
   lead:'이어서 진행합니다.',
-  /* 에이전트는 두 번째 화면에만 있다 — 어느 앱인지 못 박지 않으면 기존 앱에서 하고 끝난다 */
-  tasks:[{lbl:'Task 2', txt:'두 번째 화면에서, 방금 열어본 상품의 상세 화면으로 돌아가 이 상품에 대해 궁금한 걸 직접 알아봐 주세요.', sub:'어떤 방법을 써도 됩니다.'}]},
+  /* 에이전트는 두 번째 화면에만 있다 — 어느 앱인지 못 박지 않으면 기존 앱에서 하고 끝난다.
+     ⚠️ 상품을 하나로 특정한다 (2026-09-05) — Task1 에서 두 개(신한라이프·타사)를 열어
+     "방금 열어본 상품"이 어느 쪽인지 갈렸다. 참가자마다 다른 화면을 보면 G2~G6 답이 안 모인다.
+     신한라이프 쪽으로 고정한 이유: 타사(D생명) 상세에는 판매사 뱃지 등 변수가 붙는다.
+     ⚠️ 과업은 "모르는 말 찾기"다 (2026-09-05) — "어떤 보험인지 알아보세요"는 너무 추상적이라
+     참가자가 뭘 해야 할지 모른 채 화면만 훑는다. 상품 상세에는 보장내용·유의사항까지
+     낯선 용어가 흩어져 있어, 모르는 말을 만나면 스스로 풀어보게 하는 편이 행동이 분명하다.
+     ⚠️ 그래도 **어떻게 알아볼지는 말하지 않는다** — G1b("말풍선을 눌러봤나")가 자유 발견을
+     재는 문항이라 힌트를 주면 죽는다. 화면에는 길이 두 개다: [무배당 ?] 툴팁과 말풍선
+     (툴팁·에이전트 첫 두 문장은 글자까지 같다 — copy.ts AGENT_PRESETS.product 주석).
+     어느 길로 갔는지가 곧 G1b 의 답이라, 과업 문구는 둘 다 가리키지 않는다 */
+  tasks:[{lbl:'Task 2',
+    txt:'두 번째 화면에서 "신한라이프 신한SOL쏠한치아보험 일반보장형"을 찾아 열고, 화면을 살펴보다 뜻을 모르겠는 말이 나오면 무슨 뜻인지 알아봐 주세요.',
+    sub:'어떤 방법을 써도 됩니다. 다 알아보셨으면 알려주세요.'}]},
  {id:'idea2', idx:'아이디어 2', title:'보험 탭 홈 개인화', role:true,
   lead:'지금부터 역할을 하나 드릴게요.'},
- {id:'idea3', idx:'아이디어 3', title:'보장진단', role:true,
+ /* 아이디어 2 와 달리 역할을 새로 주는 게 아니라 되짚기만 한다 — 표지에 같이 싣는다
+    (2026-09-05). 전에는 표지("같은 역할로 이어서 진행합니다") 다음에 역할 페이지가
+    또 나와 같은 말을 세 번 했다 */
+ {id:'idea3', idx:'아이디어 3', title:'보장진단', role:false, roleInline:true,
   lead:'같은 역할로 이어서 진행합니다.'},
  {id:'idea4', idx:'아이디어 4', title:'보험금 청구', role:false,
   lead:'지금부터는 다시 역할 없이, 참가자님 그대로 진행합니다. 화면 없이 평소 경험을 여쭤볼게요.'},
 ];
 
+/* ── 아이디어 1 · Task1 — 소요 시간 (진행자 조작) ──
+   원래 있던 Q0("두 상품을 다 찾으셨나요")를 대신한다 — 시간을 넉넉히 주면 결국 다 찾아
+   전원 "둘 다 찾았다"가 되므로 천장 효과로 아무것도 못 가른다 (2026-09-05 팀장, Q0 삭제).
+   "찾았나"는 정지 버튼이 대신 말해 준다 — 두 상품을 다 열어야 진행자가 정지를 누르므로
+   기록된 시간 자체가 성공의 증거이고, 못 찾으면 시간이 비어 실패로 남는다.
+   성공 판정의 원본은 진행자 기록(`채점기준.md`)이다 — 자기보고보다 기준이 분명하다.
+
+   ⚠️ 시간은 2026-08-27 "지표 위상 재정의"에서 비교 지표에서 빠졌던 항목이다.
+      다시 넣는 근거는 그 결정문이 스스로 남긴 단서다 — "측정 방법을 통일해야 한다".
+      뺀 이유는 시간 자체가 아니라 **한쪽만 자동 계측이라 생기는 편향**이었고,
+      진행자가 양쪽 다 같은 버튼으로 재면 그 비대칭이 사라진다.
+      (2026-09-05 팀장 결정 — 변경로그에 재정의를 남긴다)
+
+   측정은 진행자가 한다. 참가자 폰이 아니라 진행자 화면에서 시작/정지를 누른다.
+   저장은 순서가 아니라 정체(old/ours)다 — 다른 문항과 같은 규칙 */
+const TIMER={
+  sec:'Task 1 · 상품 찾기',
+  note:'참가자가 찾기 시작할 때 시작을 누르고, 두 상품을 다 열면 정지를 누르세요.',
+};
+
 /* ── 아이디어 1 · Task1 — 상품 찾기 (실기기, 대응비교) ──
-   과제 성공은 참가자 자기보고(Q0)로 받는다. 진행자 종이 기록란은 백업 */
+   과제 성공은 진행자 기록(`채점기준.md`) + 위 타이머로 받는다.
+   Q0 자기보고는 2026-09-05 에 뺐다 — 위 TIMER 주석 참고 */
 const PR=[
- {id:'Q0', type:'pair', nonum:true, textVal:true, labels:['둘 다 찾았다','하나만 찾았다','못 찾았다'],
-  q:'두 상품(신한라이프 1개 · 타사 1개)을 다 찾으셨나요?', pairLabels:['기존 슈퍼SOL','두 번째 화면']},
  {id:'Q1', type:'pair', labels:['전혀 쉽지 않았다','쉽지 않았다','보통이다','쉬웠다','매우 쉬웠다'],
-  q:'2가지 보험 상품들을 찾기 얼마나 쉬웠나요?', pairLabels:['기존 슈퍼SOL','두 번째 화면']},
- {id:'Q2', type:'choice',
-  q:'상품을 탐색하고 비교하기에 더 편리했던 쪽은?',
-  opts:['기존 슈퍼SOL','두 번째 화면','비슷했다','잘 모르겠다']},
+  q:'두 상품을 찾기가 얼마나 쉬웠나요?'},
+ {id:'Q2', type:'choice', orderOpts:true,
+  q:'상품을 찾고 비교하기에 더 편했던 쪽은?',
+  opts:['첫 번째 화면','두 번째 화면','비슷했다']},
  {id:'Q3', type:'text',
   q:'그렇게 느낀 이유를 말씀해 주세요.', ph:'자유롭게 적어주세요'},
 ];
@@ -433,7 +484,8 @@ const PR=[
    branch:'unused'→ G7    (안 눌러본 경우) */
 const G1=[
  {id:'G1', type:'text',
-  q:'방금 그 정보를 어떻게 찾으셨어요?', ph:'한 방법이든 여러 방법이든 자유롭게 적어주세요'},
+  q:'어떤 말이 모르겠던가요? 그 뜻을 어떻게 찾으셨어요?',
+  ph:'모르는 말이 없었다면 그렇게 적어주세요'},
  {id:'G1b', type:'choice', branchKey:true, required:true,
   q:'화면에 있던 마스코트·말풍선 버튼을 눌러보셨나요?',
   opts:['눌러봤다','못 봤거나 안 눌러봤다']},
@@ -465,11 +517,14 @@ const P=[
  {id:'P2', type:'text',
   q:'이 화면에서 나에게 맞춰졌다고 느껴지는 부분을 적어주세요.',
   hint:'여러 군데여도 되고, 없으면 없다고 해주세요.'},
+ /* P2 에 "없다"고 답한 사람에게 "왜 그 부분이"는 성립하지 않는다 — 질문 본문에서 갈라 준다
+    (전에는 placeholder 에만 보정이 있어 질문과 어긋났다) */
  {id:'P3', type:'text',
-  q:'왜 그 부분이 나한테 맞춰졌다고 느꼈어요?',
-  ph:'작성한게 없다면 왜 없다고 느꼈는지 적어주세요'},
+  q:'왜 그렇게 느꼈어요?',
+  hint:'없다고 하셨다면, 왜 없다고 느꼈는지 적어주세요.',
+  ph:'생각하시는 대로 적어주세요'},
  {id:'P4', type:'text',
-  q:'반대로 "이건 나랑 상관없네" 또는 "왜 나한테 이걸 보여주지" 싶은 부분이 있나요? 있다면 아래에 작성해주세요.',
+  q:'반대로 "이건 나랑 상관없네" 또는 "왜 나한테 이걸 보여주지" 싶은 부분이 있나요?',
   ph:'없으면 "없음"'},
  {id:'P5', type:'scale',
   q:'이 화면이 나의 상황과 얼마나 맞는 것 같아요?',
@@ -481,10 +536,14 @@ const C=[
   opts:['첫 번째 화면','두 번째 화면','비슷하다']},
  {id:'C2', type:'multi', thumbs:true,
   q:'그렇게 느낀 이유는 무엇인가요?', hint:'해당되는 것을 모두 골라주세요.',
-  /* 어느 쪽을 골랐든 같은 목록. 앞 4개는 개인화 요소 1:1, 뒤 2개는 기존 쪽이 이길 수 있는 항목 */
+  /* 어느 쪽을 골랐든 같은 목록. 앞 4개는 개인화 요소 1:1, 뒤 2개는 기존 쪽이 이길 수 있는 항목.
+     ⚠️ 보기에 한쪽 화면의 카드 이름을 쓰지 않는다 (2026-09-05) — 같은 기능을 기존은
+     "보장에너지", 우리는 "보장진단"이라 부른다. 한쪽 이름으로 물으면 반대쪽을 고른 참가자가
+     자기 화면에 없는 말로 답하게 되고, 아이디어 3(T5)에서 두 이름을 비교하기 전에
+     한쪽만 반복 노출된다. 그래서 기능을 설명하는 중립 문구로 쓴다 */
   opts:['내 보험 현황(건수·보험료)이 바로 보인다',
         '메뉴가 묶여 있어서 나한테 필요한 걸 찾기 쉽다',
-        '보장진단 내용이 나의 상황에 맞다',
+        '내 보장에서 부족한 부분을 짚어준다',
         '추천되는 상품·서비스가 나한테 맞다',
         '늘 보던 화면이라 편하다',
         '정보가 더 많다'], other:true},
@@ -631,7 +690,12 @@ const F=[
 /* ══ 상태 ══ */
 const LS='sol_survey_v2';
 const blank=()=>({p:'',order:'',orderTouched:false,moderator:'',started:'',
-                  ans:{old:{},ours:{},cmp:{}},mod:{old:{},ours:{},cmp:{}},i:0});
+                  ans:{old:{},ours:{},cmp:{}},mod:{old:{},ours:{},cmp:{}},time:{},i:0});
+/* time 은 정체별 소요 시간(ms) — {old:12345, ours:9876}. 화면 순서와 무관하다 */
+const fmtMs=ms=> ms==null ? '00:00.0'
+  : String(Math.floor(ms/60000)).padStart(2,'0')+':'
+   +String(Math.floor(ms%60000/1000)).padStart(2,'0')+'.'
+   +String(Math.floor(ms%1000/100));
 let S=blank();
 let view='intro';
 
@@ -671,8 +735,11 @@ function steps(){
   /* ── 배경 ── */
   B.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'시작하기 전에', secNote:'참가자님에 대해 두 가지만 여쭤볼게요'}));
 
-  /* ── 아이디어 1 · Task1 상품 찾기 ── */
+  /* ── 아이디어 1 · Task1 상품 찾기 ──
+     화면마다 소요 시간을 먼저 재고(진행자 조작), 두 화면을 다 한 뒤 Q1~Q3 을 묻는다 */
   st.push({kind:'divider', idea:IDEAS[0]});
+  seq().forEach((key,nth)=>st.push({kind:'timer',key,nth,
+    sec:TIMER.sec, secNote:nth===0?TIMER.note:''}));
   PR.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'Task 1 · 상품 찾기'}));
 
   /* ── 아이디어 1 · Task2 상품 상세 에이전트 ── 별도 표지 뒤에 이어간다.
@@ -690,9 +757,8 @@ function steps(){
     sec:nth===0?'첫 번째 화면':'두 번째 화면', secNote:'화면을 보면서 답해주세요'}));
   C.forEach(q=>st.push({kind:'cmp',key:'cmp',q, sec:'두 화면 비교', secNote:'두 화면을 다 보셨어요'}));
 
-  /* ── 아이디어 3 · 보장진단 ── */
+  /* ── 아이디어 3 · 보장진단 ── 역할 되짚기는 표지 안에 있다(roleInline) */
   st.push({kind:'divider', idea:IDEAS[3]});
-  st.push({kind:'role2'});
   seq().forEach((key,nth)=>T.forEach((q,i)=>st.push({kind:'svc',key,nth,q, label:'T'+(i+1+nth*T.length),
     sec:'이름만 보고', secNote:'아직 아무 화면도 보지 않았어요'})));
   st.push({kind:'cmp',key:'cmp',q:T5, sec:'이름만 보고'});
@@ -816,9 +882,12 @@ function phone(key,nth,dict){
     <button type="button" class="full" data-full="${esc(pages[0].file)}">크게 보기</button>
   </div>`;
 }
-function stage(keys,dict){
+/* nth0 = 이 화면이 실제로 몇 번째인지(0/1). 한 화면만 띄우는 단계(kind:'screen')는
+   keys 가 1개라 배열 index 로는 늘 0 이 되어 두 번째 화면도 "첫 번째 화면"이라 붙었다.
+   두 화면을 나란히 띄우는 단계(thumbs)는 index 가 곧 순서라 그대로 쓴다 (2026-09-05) */
+function stage(keys,dict,nth0){
   return `<div class="stage" id="stage">
-    <div class="phones${keys.length>1?' two':''}">${keys.map((k,i)=>phone(k,i,dict)).join('')}</div>
+    <div class="phones${keys.length>1?' two':''}">${keys.map((k,i)=>phone(k,nth0!=null?nth0:i,dict)).join('')}</div>
     <div class="stagefoot"><span class="stagehint">화면 안에서 위아래로 넘겨 보세요</span>
       <button type="button" class="collapse" id="collapse">화면 접기</button></div>
   </div>`;
@@ -842,6 +911,23 @@ function bindStage(){
   });
   const c=$('#collapse'), s=$('#stage');
   if(c&&s) c.onclick=()=>{ const on=s.classList.toggle('collapsed'); c.textContent=on?'화면 펼치기':'화면 접기'; };
+
+  /* 스톱워치 — 진행 중에는 rAF 로 표시만 갱신하고, 저장은 정지를 눌렀을 때 한 번 한다.
+     페이지를 떠나면(다음 문항·새로고침) 진행 중이던 계측은 버린다 — 어차피 다시 재야 한다 */
+  const tv=$('#tmrv');
+  if(tv){
+    const stp=steps()[S.i], key=stp.key;
+    let t0=null, raf=null;
+    const tick=()=>{ tv.textContent=fmtMs(Date.now()-t0); raf=requestAnimationFrame(tick); };
+    const stop=()=>{ if(raf) cancelAnimationFrame(raf); raf=null; };
+    /* render() 끝에서 saveDraft() 가 돌므로 별도 저장 호출은 필요 없다 */
+    $('#tmrGo').onclick=()=>{ if(raf) return; t0=Date.now(); tick(); };
+    $('#tmrStop').onclick=()=>{ if(!t0||!raf) return; stop();
+      (S.time||(S.time={}))[key]=Date.now()-t0; render(); };
+    $('#tmrRst').onclick=()=>{ stop(); t0=null;
+      if(S.time) delete S.time[key]; render(); };
+    window.addEventListener('beforeunload', stop, {once:true});
+  }
 }
 
 /* ── 문항 바로가기 패널 — 문제은행식. 아이디어 표지마다 묶고, 답한 문항은 칠해진다.
@@ -851,12 +937,14 @@ function bindStage(){
 function sideLabel(st){
   const qid=q=> st.labelPrefix ? st.labelPrefix+q.id.replace(/^[A-Z]+/,'') : q.id;
   if(st.kind==='divider') return '표지';
-  if(st.kind==='role'||st.kind==='role2') return '역할';
+  if(st.kind==='role') return '역할';
+  if(st.kind==='timer') return '시간'+(st.nth+1);
   if(st.q) return st.label||st.q.id;
   const qs=st.qs||[];
   return qs.length>1 ? `${qid(qs[0])}~${qid(qs[qs.length-1])}` : (qs[0]?qid(qs[0]):'');
 }
 function sideFilled(st){
+  if(st.kind==='timer') return (S.time||{})[st.key]!=null;
   const qs=st.qs||(st.q?[st.q]:[]); if(!qs.length) return false;
   return qs.every(q=>{
     const a=(S.ans[st.key]||{})[q.id]||{};
@@ -899,7 +987,8 @@ function quiz(){
       <h1>${esc(d.title)}</h1>
       <p class="lead">${esc(d.lead)}${d.role?' 다음 화면에서 역할을 안내합니다.':''}</p>
       ${(d.tasks||[]).map(t=>`<div class="task"><b>${esc(t.lbl)}</b> · ${esc(t.txt)}${t.sub?`<div style="color:var(--text-2);margin-top:4px">${esc(t.sub)}</div>`:''}</div>`).join('')}
-      ${d.orderNote?`<div class="task"><b>순서</b> · ${seq().map(k=>esc(SIDES[k].app)).join(' → ')} 순으로 진행합니다.</div>`:''}
+      ${d.orderNote?`<div class="task"><b>순서</b> · 첫 번째 화면 → 두 번째 화면 순으로 진행합니다.</div>`:''}
+      ${d.roleInline?`<div class="role"><div class="lbl">역할 되짚기</div><p>${esc(ROLE2)}</p></div>`:''}
     </div>`;
   }
   else if(st.kind==='role'){
@@ -911,9 +1000,24 @@ function quiz(){
       <p style="margin-top:14px;font-weight:500;font-size:15px">${esc(ROLE.tail)}</p>
     </div>`;
   }
-  else if(st.kind==='role2'){
-    h=`<div class="sec"><h2>역할 되짚기</h2><p>같은 역할로 이어갑니다</p></div>
-    <div class="role"><div class="lbl">역할 되짚기</div><p>${esc(ROLE2)}</p></div>`;
+  /* 진행자가 조작하는 스톱워치. 참가자에게는 숫자를 보여줄 필요가 없지만
+     같은 화면을 같이 보는 자리라 숨기지는 않는다 — 대신 "진행자용"이라고 못 박는다 */
+  else if(st.kind==='timer'){
+    const ms=(S.time||{})[st.key];
+    h=`<div class="sec"><h2>${esc(st.sec)}</h2>${st.secNote?`<p>${esc(st.secNote)}</p>`:''}</div>
+    <div class="q">
+      <div class="qh"><span class="qn">진행자</span>
+        <span class="qt">${st.nth===0?'첫 번째':'두 번째'} 화면 — 두 상품을 찾는 데 걸린 시간</span></div>
+      <div class="tmr">
+        <div class="tmrv" id="tmrv">${fmtMs(ms)}</div>
+        <div class="tmrb">
+          <button type="button" id="tmrGo">시작</button>
+          <button type="button" id="tmrStop">정지</button>
+          <button type="button" id="tmrRst" class="ghost">초기화</button>
+        </div>
+        <div class="tmrn">정지를 눌러야 기록됩니다 · 다시 재려면 초기화</div>
+      </div>
+    </div>`;
   }
   else {
     const qs=st.qs||[st.q];
@@ -924,7 +1028,7 @@ function quiz(){
     inner+=qs.map(q=>qbox({...st,q, label: st.labelPrefix ? st.labelPrefix+q.id.replace(/^[A-Z]+/,'') : st.label})).join('');
     /* 화면 이미지가 있는 단계는 프레임 + 문항 2단(넓은 화면) / 프레임 위 고정(폰) */
     const keys = st.kind==='screen' ? [st.key] : (st.q&&st.q.thumbs ? seq() : null);
-    h+= keys ? `<div class="split${keys.length>1?' two':''}">${stage(keys,st.dict)}<div class="qs">${inner}</div></div>` : inner;
+    h+= keys ? `<div class="split${keys.length>1?' two':''}">${stage(keys,st.dict,st.kind==='screen'?st.nth:null)}<div class="qs">${inner}</div></div>` : inner;
   }
   $('#main').innerHTML=h;
   (st.qs||(st.q?[st.q]:[])).forEach(q=>body(q, st.key));
@@ -991,13 +1095,21 @@ function body(q,key){
       store[q.id]={v:+b.dataset.v}; [...g.children].forEach(c=>c.setAttribute('aria-pressed',c===b));};
   }
   else if(q.type==='pair'){
-    const rows=q.pairLabels||['기존 슈퍼SOL','두 번째 화면'];
-    el.innerHTML=rows.map((r,ri)=>`
-      <div class="pairlbl">${esc(r)}</div>
+    /* 화면에 보이는 순서는 참가자 번호 홀짝을 따른다 (C1 의 orderOpts 와 같은 규칙).
+       저장은 순서가 아니라 정체로 한다 — r0=기존 · r1=우리 고정.
+       CSV 의 _기존/_우리 열이 이 키를 그대로 읽으므로 여기를 순서로 바꾸면 집계가 뒤집힌다.
+       라벨을 "첫/두 번째 화면"으로 둔 이유: 한쪽만 "기존 슈퍼SOL"이라 부르면
+       나머지가 새로 만든 것임을 알려 주는 꼴이라 주관 평가에 편향이 붙는다 */
+    const seq=seqOf(S.order);                       /* ['old','ours'] 또는 ['ours','old'] */
+    const POS=['첫 번째 화면','두 번째 화면'];
+    el.innerHTML=seq.map((side,pos)=>{
+      const ri=side==='old'?0:1;                    /* 저장 키는 정체 고정 */
+      return `
+      <div class="pairlbl">${esc(q.pairLabels?q.pairLabels[ri]:POS[pos])}</div>
       <div class="scale" data-row="${ri}" style="grid-template-columns:repeat(${q.labels.length},1fr)">
         ${q.labels.map((L,i)=>`<button type="button" data-v="${i+1}" aria-pressed="${a['r'+ri]===i+1}">
            ${q.nonum?'':`<span class="num">${i+1}</span>`}<span class="cap"${q.nonum?' style="font-size:13px;color:var(--text)"':''}>${esc(L)}</span></button>`).join('')}
-      </div>`).join('');
+      </div>`;}).join('');
     el.querySelectorAll('.scale').forEach(g=>{
       g.onclick=e=>{const b=e.target.closest('button'); if(!b)return;
         const v=+b.dataset.v, ri=g.dataset.row, cur=store[q.id]||{};
@@ -1054,7 +1166,8 @@ function body(q,key){
 
 function submit(){
   const rec={p:S.p,order:S.order,moderator:S.moderator,
-             started:S.started,ended:new Date().toISOString(),ans:S.ans,mod:S.mod};
+             started:S.started,ended:new Date().toISOString(),ans:S.ans,mod:S.mod,
+             time:S.time||{}};
   const ok=save(rec);
   if(ok) dropDraft();
   view='done'; render(); window.scrollTo(0,0);
@@ -1123,8 +1236,9 @@ function fields(q){
   if(q.type==='pair'){
     f.length=0;
     const val=v=> v==null ? '' : (q.textVal ? q.labels[v-1] : v);
+    /* 열 이름은 정체다 — 화면에 보인 순서(첫/두 번째)는 참가자마다 다르다 */
     f.push(['_기존',a=>val(a.r0)]);
-    f.push(['_두번째',a=>val(a.r1)]);
+    f.push(['_우리',a=>val(a.r1)]);
   }
   if(q.other)  f.push(['_기타',a=>a.other||'']);
   if(q.follow) f.push(['_이유',a=>a.follow||'']);
@@ -1134,13 +1248,16 @@ function fields(q){
 function csv(){
   const rows=load();
   if(!rows.length){ alert('저장된 응답이 없습니다.'); return; }
-  const cols=['참가자','먼저','진행자','시작','종료'];
+  /* 시간은 초(소수 1자리)로 낸다 — 엑셀에서 바로 평균·중앙값이 계산되게 */
+  const cols=['참가자','먼저','진행자','시작','종료','Task1_소요초_기존','Task1_소요초_우리'];
   walk((q,k,pre)=>fields(q).forEach(([s])=>cols.push(pre+s)));
 
   const cell=v=>{ const s=String(v==null?'':v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
   const lines=[cols.join(',')];
   rows.forEach(r=>{
-    const o=[r.p, SIDES[seqOf(r.order)[0]].csv, r.moderator||'', r.started||'', r.ended||''];
+    const secs=k=>{ const v=(r.time||{})[k]; return v==null?'':(v/1000).toFixed(1); };
+    const o=[r.p, SIDES[seqOf(r.order)[0]].csv, r.moderator||'', r.started||'', r.ended||'',
+             secs('old'), secs('ours')];
     const rBranch=branchOf(r);
     walk((q,k)=>{
       const skip=q.branch && q.branch!==rBranch;
