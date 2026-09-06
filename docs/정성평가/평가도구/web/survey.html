@@ -37,10 +37,12 @@
   .wrap{max-width:720px; margin:0 auto; padding:0 16px 120px}
 
   /* ── 상단 진행 바 ── */
+  /* 띠는 화면 좌우 끝까지, 안쪽 내용만 본문과 같은 폭으로 (2026-09-06) */
   header{
     position:sticky; top:0; z-index:10; background:var(--bg);
-    border-bottom:1px solid var(--line); margin:0 -16px; padding:10px 16px 8px;
+    border-bottom:1px solid var(--line); padding:10px 16px 8px;
   }
+  .hdin{max-width:720px; margin:0 auto}
   .hrow{display:flex; align-items:center; gap:10px; justify-content:space-between}
   .who{font-size:13px; color:var(--text-2); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
   .who b{color:var(--text); font-weight:600}
@@ -311,8 +313,14 @@
   @media (max-width:1119px){ #side{display:none} }
   /* 패널이 보일 때 본문·하단 버튼을 오른쪽으로 밀어 겹치지 않게 한다 */
   @media (min-width:1120px){
-    body[data-side="on"]{padding-left:200px}
-    body[data-side="on"] .nav{left:200px}
+    /* 패널은 fixed 라 자리를 안 차지한다 — 본문·띠 안쪽을 똑같이 밀어
+       셋의 왼쪽 끝을 맞춘다. margin:0 auto 인 요소는 padding 만으로는 안 밀리므로
+       왼쪽 여백을 직접 준다 (2026-09-06) */
+    body[data-side="on"] .wrap{margin-left:200px; margin-right:auto}
+    /* 상·하단 띠 안쪽은 패널 오른쪽부터 화면 끝까지 다 쓴다 —
+       본문 폭(720)에 맞추면 넓은 화면에서 오른쪽이 휑하게 빈다 (2026-09-06) */
+    body[data-side="on"] .hdin,
+    body[data-side="on"] .navin{max-width:none; margin-left:200px; margin-right:0}
   }
 
   /* ── 시작/종료 화면 ── */
@@ -376,14 +384,18 @@
 </style>
 
 <aside id="side" hidden aria-label="문항 바로가기"></aside>
-<div class="wrap">
-  <header id="hd" hidden>
+<!-- 헤더를 .wrap 밖으로 뺀다 — 안에 두면 본문 폭(720)에 갇혀 좌우가 좁아 보인다.
+     띠는 화면 끝까지, 안쪽 내용만 본문과 같은 폭으로 맞춘다 (2026-09-06) -->
+<header id="hd" hidden>
+  <div class="hdin">
     <div class="hrow">
       <div class="who" id="who"></div>
       <div class="steps" id="steps"></div>
     </div>
     <div class="bar"><i id="prog" style="width:0%"></i></div>
-  </header>
+  </div>
+</header>
+<div class="wrap">
   <main id="main"></main>
 </div>
 <div class="nav" id="nav" hidden><div class="navin" id="navin"></div></div>
