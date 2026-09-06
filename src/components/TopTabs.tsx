@@ -20,8 +20,9 @@ interface TopTabsProps {
 export function TopTabs({ items, activeId, onChange }: TopTabsProps) {
   /* ⚠️ 여기서 계측하지 않는다 — 감싸는 쪽(FinanceTopTabs 등)이 tid()로 남긴다.
      둘 다 남기면 탭 1회가 2건으로 잡혀 클릭 수 지표가 부풀려진다 (실제로 겪음) */
+  /* data-vt — 탭 사이 전환 때 제자리에 남는 표면 (src/styles/transition.css) */
   return (
-    <div className={styles.row} role="tablist">
+    <div className={styles.row} role="tablist" data-vt="toptabs">
       {items.map((item) => {
         const selected = item.id === activeId
         return (

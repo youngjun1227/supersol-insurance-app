@@ -16,7 +16,7 @@
      돌아와 B 를 찾는 왕복이 실제 과제 동선이다. iOS·기존 슈퍼쏠도 복원한다 —
      우리만 안 하면 비교에서 우리에게 불리한 비대칭이다. */
 
-import { useEffect, useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { useLocation, useNavigationType } from 'react-router-dom'
 
 /* ⚠️ 브라우저는 뒤로 가기 때 스크롤을 자기가 되돌린다(기본 'auto').
@@ -40,10 +40,18 @@ const RESTORE_PATHS = new Set([
    같은 자리를 돌려줄 수 있다. 모듈 스코프라 화면을 오가도 살아남는다 (#38 과 같은 이유). */
 const savedPositions = new Map<string, number>()
 
-export function useScrollTop(): void {
-  const { pathname } = useLocation()
-  /* POP = 뒤로/앞으로 (브라우저 버튼·navigate(-1)) / PUSH·REPLACE = 앞으로 이동 */
+/** @param displayedPathname 화면에 실제로 그려진 경로 — 화면 전환(useRouteTransition) 중에는 라우터
+    location 이 이미 다음 화면이라, 이걸 따라야 옛 화면 스냅샷을 찍기 전에 스크롤이 튀지 않는다 (2026-09-06).
+    안 넘기면 라우터 location 그대로 (전환을 안 쓰는 곳). */
+export function useScrollTop(displayedPathname?: string): void {
+  const location = useLocation()
+  const pathname = displayedPathname ?? location.pathname
+  /* POP = 뒤로/앞으로 (브라우저 버튼·navigate(-1)) / PUSH·REPLACE = 앞으로 이동.
+     ⚠️ ref 로만 읽는다 — 의존성에 넣으면 화면 전환 중 "경로는 아직 이전 화면인데 이동 종류만 바뀐" 순간에
+        effect 가 한 번 더 돌아 옛 화면을 맨 위로 올려 버린다 (스냅샷이 튀고, 저장 위치도 0 으로 덮였다). */
   const navigationType = useNavigationType()
+  const navigationTypeRef = useRef(navigationType)
+  navigationTypeRef.current = navigationType
 
   /* 스크롤할 때마다 실시간으로 남긴다.
      ⚠️ "떠날 때(cleanup) 저장" 은 안 된다 — cleanup 이 도는 시점엔 이미 새 화면의
@@ -60,10 +68,10 @@ export function useScrollTop(): void {
      behavior 는 기본값(즉시). smooth 로 두면 새 화면이 스르륵 움직인다. */
   useLayoutEffect(() => {
     const saved = savedPositions.get(pathname)
-    if (navigationType === 'POP' && RESTORE_PATHS.has(pathname) && saved !== undefined) {
+    if (navigationTypeRef.current === 'POP' && RESTORE_PATHS.has(pathname) && saved !== undefined) {
       window.scrollTo(0, saved)
       return
     }
     window.scrollTo(0, 0)
-  }, [pathname, navigationType])
+  }, [pathname])
 }
