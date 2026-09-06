@@ -1,6 +1,8 @@
 .wrap {
   position: absolute;
-  top: var(--space-2);
+  /* 12 — 8 이면 곰 그림자(위로 ≈12 번짐)의 윗부분이 헤더 뒤로 들어가 잘려 보였다 (2026-09-06).
+     헤더는 sticky z-index 10 이라 그 아래 것을 덮는다. 곰 위 12 면 번짐이 헤더 경계에서 끝난다 */
+  top: var(--space-3);
   right: var(--gutter);
   z-index: 4;
   display: flex;
