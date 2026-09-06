@@ -87,6 +87,19 @@
 .statCount { color: var(--primary); }
 .statValue { color: var(--text-primary); }
 
+/* 납입 필 — 홈 계좌 카드 .pillBtn 과 같은 색·라운드(틴트 배경 · 링크색 · 14 · r12).
+   통계 행 오른쪽 끝, 두 줄(라벨+값) 가운데. 패딩만 홈(6×12)보다 한 단계 큰 8×16 —
+   텍스트가 짧아 오른쪽 끝 필이 홈 크기로는 작아 보였다 (2026-09-06) */
+.payBtn {
+  flex: none;
+  margin-left: auto;
+  align-self: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--r-card-sm);
+  background: var(--bg-tint-btn);
+  color: var(--text-link);
+}
+
 .policyRow {
   display: flex;
   align-items: center;
