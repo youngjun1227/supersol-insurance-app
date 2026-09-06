@@ -420,9 +420,13 @@ const CLAIM={
         intro:'결제한 뒤, 보험금을 청구하려고 앱을 열었어요. 청구를 시작하기까지 거치는 화면이에요. 탭을 순서대로 눌러가며 봐주세요.',
         liveTask:'보험금을 청구하려고 합니다. 청구를 시작하는 화면까지 가주세요.',
         liveMod:SCENARIO+' 진행자: 슈퍼SOL 홈에서 시작합니다. 힌트를 주면 실패로 적습니다.',
+        /* 실제 앱에서 거쳐가는 순서 그대로다 (2026-09-06 팀장 확인) —
+           홈에서 탭바의 "금융"을 누르면 반드시 은행 탭이 먼저 뜨고,
+           거기서 상단 "보험"을 눌러야 보험 탭으로 간다. 은행 탭은 건너뛸 수 없는 경유지라
+           빼면 기존 경로가 실제보다 짧아 보인다 */
         pages:[{file:'img/claim-existing-1.png', label:'홈'},
-               {file:'img/claim-existing-2.png', label:'보험 탭'},
-               {file:'img/claim-existing-3.png', label:'청구 메뉴'},
+               {file:'img/claim-existing-2.png', label:'금융 · 은행'},
+               {file:'img/claim-existing-3.png', label:'보험 탭'},
                {file:'img/claim-existing-4.png', label:'청구 시작'}]},
   ours:{live:true,
         intro:'알림을 눌렀을 때 이어지는 화면이에요. 탭을 순서대로 눌러가며 봐주세요.',
