@@ -309,11 +309,19 @@
     /* 패널은 fixed 라 자리를 안 차지한다 — 본문·띠 안쪽을 똑같이 밀어
        셋의 왼쪽 끝을 맞춘다. margin:0 auto 인 요소는 padding 만으로는 안 밀리므로
        왼쪽 여백을 직접 준다 (2026-09-06) */
-    body[data-side="on"] .wrap{margin-left:200px; margin-right:auto}
-    /* 상·하단 띠 안쪽은 패널 오른쪽부터 화면 끝까지 다 쓴다 —
-       본문 폭(720)에 맞추면 넓은 화면에서 오른쪽이 휑하게 빈다 (2026-09-06) */
-    body[data-side="on"] .hdin,
-    body[data-side="on"] .navin{max-width:none; margin-left:200px; margin-right:0}
+    /* 본문은 패널 오른쪽 공간 안에서 가운데 정렬 — margin-left 로 밀면
+       왼쪽에 딱 붙어 오른쪽만 휑해진다 (2026-09-06 회귀 수정).
+       body 에 여백을 주면 .wrap 의 margin:0 auto 가 남은 폭 기준으로 다시 가운데를 잡는다 */
+    body[data-side="on"]{padding-left:200px}
+    /* 하단 .nav 는 fixed 라 body padding 을 안 받는다 — 직접 밀어 준다.
+       그러면 header(sticky·padding 받음)·nav·.wrap 셋이 같은 좌표계에 놓이고,
+       안쪽은 전부 .wrap 과 똑같은 규칙(max-width:720 · margin:0 auto)이라
+       계산 없이 저절로 정렬된다 (2026-09-06) */
+    body[data-side="on"] .nav{left:200px}
+    /* 본문은 단계에 따라 폭이 달라진다(문항 720 · 프레임 1060 · 두 프레임 1440).
+       상·하단 안쪽도 같이 따라가야 세로줄이 맞는다 (2026-09-06) */
+    body:has(.split) .hdin, body:has(.split) .navin{max-width:1060px}
+    body:has(.split.two) .hdin, body:has(.split.two) .navin{max-width:1440px}
   }
 
   /* ── 시작/종료 화면 ── */
