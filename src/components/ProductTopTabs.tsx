@@ -33,8 +33,9 @@ export function ProductTopTabs({ active, screen }: ProductTopTabsProps) {
     else el.scrollLeft = 0
   }, [active])
 
+  /* data-vt — 탭 사이 전환 때 제자리에 남는 표면 (src/styles/transition.css) */
   return (
-    <div className={`${styles.scroller} no-scrollbar`} ref={scrollRef} role="tablist">
+    <div className={`${styles.scroller} no-scrollbar`} ref={scrollRef} role="tablist" data-vt="toptabs">
       <div className={styles.row}>
         {PRODUCT_TABS.map((tab) => {
           const selected = tab.id === active

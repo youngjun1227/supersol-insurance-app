@@ -11,6 +11,7 @@ import { Splash } from '@/components'
 import { SPLASH_MS } from '@/lib/timing'
 import { SCREEN } from '@/lib/targetId'
 import { useScrollTop } from '@/lib/useScrollTop'
+import { useRouteTransition } from './useRouteTransition'
 import { AnalyticsProvider } from './AnalyticsProvider'
 import { MockProvider } from './MockProvider'
 import { Agent } from '@/pages/Agent'
@@ -39,8 +40,12 @@ import { Skeleton } from '@/pages/Skeleton'
 const NO_SPLASH = ['/export', '/demo']
 
 export function App() {
-  /* 화면을 옮기면 맨 위에서 시작한다 — SPA 는 스크롤이 그대로 남는다 (#70) */
-  useScrollTop()
+  /* 화면 전환(밀어내기, 스펙 §5) — 전환 중에는 라우터 location 보다 한 박자 이전 화면을 그린다 */
+  const displayed = useRouteTransition()
+
+  /* 화면을 옮기면 맨 위에서 시작한다 — SPA 는 스크롤이 그대로 남는다 (#70).
+     ⚠️ 그려진 화면(displayed) 기준 — 라우터 location 기준이면 옛 화면 스냅샷을 찍기 전에 올라가 버린다 */
+  useScrollTop(displayed.pathname)
 
   const { pathname } = useLocation()
   const skipSplash = NO_SPLASH.some((p) => pathname === p || pathname.startsWith(`${p}/`))
@@ -65,7 +70,8 @@ export function App() {
   return (
     <AnalyticsProvider>
       <MockProvider>
-        <Routes>
+        {/* location 을 명시한다 — 전환 중 옛 화면을 0.3초 더 그리기 위해 (useRouteTransition) */}
+        <Routes location={displayed}>
           {/* 진입 화면 — 스플래시 다음, 앱의 첫 화면 (#130).
               ⚠️ NO_SPLASH 에 넣지 않는다. 스플래시 → 진입 → 홈 순서다.
 

@@ -59,8 +59,9 @@ export function TabBar({ activeId, screen }: TabBarProps) {
     TABS.find((t) => location.pathname.startsWith(t.match))?.id ??
     'home'
 
+  /* data-vt — 화면 전환에 휩쓸리지 않는다: 탭 사이 이동은 물론 상세로 들어갈 때도 제자리에서 사라진다 (src/styles/transition.css) */
   return (
-    <nav className={styles.bar} aria-label="주요 메뉴">
+    <nav className={styles.bar} aria-label="주요 메뉴" data-vt="tabbar">
       {TABS.map((tab) => {
         const selected = tab.id === current
         const Icon = tab.icon

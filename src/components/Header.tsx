@@ -37,8 +37,9 @@ export function Header({ title, variant = 'title', actions, titleAdornment, onBa
     else navigate(-1)
   }
 
+  /* data-vt — 탭 사이 전환 때 제자리에 남는 표면 (src/styles/transition.css) */
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-vt="header">
       {variant === 'sub' ? (
         <button type="button" className={styles.back} onClick={handleBack} aria-label="뒤로">
           <CaretLeft size={24} weight="regular" color="var(--text-secondary)" />
