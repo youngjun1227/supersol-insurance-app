@@ -109,14 +109,15 @@
   }
   .phone .ph small{display:block; font-size:11px; opacity:.8; margin-top:4px; font-family:ui-monospace,Menlo,monospace}
   /* 프레임 안에 떠 있으면 스크린샷 내용을 가린다 — 실제로 "1개 비어 있어요" 같은
-     문장을 덮었다. 프레임 아래 띠로 내려 콘텐츠를 안 가리게 한다 (2026-09-06) */
-  .phone .full{
-    display:block; width:100%; margin-top:6px;
-    background:none; color:var(--text-2); border:1px solid var(--line); border-radius:var(--r-sm);
-    padding:7px 11px; font:inherit; font-size:12px; font-weight:600; cursor:pointer;
+     문장을 덮었다. 프레임 아래로 내린다 (2026-09-06).
+     모양은 옆에 있는 "화면 접기"(.collapse)·프레임 탭과 같은 알약형으로 맞춘다 */
+  .phonewrap .full{
+    align-self:center; margin-top:8px;
+    background:none; border:1px solid var(--line); border-radius:99px;
+    padding:4px 11px; font:inherit; font-size:12px; color:var(--text-2); cursor:pointer;
     transition:border-color .12s, color .12s;
   }
-  .phone .full:hover{border-color:var(--accent); color:var(--accent)}
+  .phonewrap .full:hover{border-color:var(--accent); color:var(--accent)}
   .stagefoot{display:flex; align-items:center; justify-content:center; gap:10px; margin-top:6px}
   .stagehint{font-size:12px; color:var(--text-3)}
   .collapse{
@@ -151,8 +152,8 @@
     .wrap:has(.split){max-width:1060px}
     .split{display:grid; grid-template-columns:393px minmax(0,1fr); gap:28px; align-items:start}
     .split .stage{position:sticky; top:64px; margin:12px 0 0; padding:0; background:none}
-    /* 200 → 236: 프레임 밖으로 내린 "크게 보기" 높이만큼 뺀다 (2026-09-06) */
-    .split .phone, .split .phones.two .phone{height:calc(100dvh - 236px)}
+    /* 200 → 230: 프레임 밖으로 내린 "크게 보기"(알약 버튼 + 여백)만큼 뺀다 (2026-09-06) */
+    .split .phone, .split .phones.two .phone{height:calc(100dvh - 230px)}
     /* 두 화면 비교 단계: 프레임을 좌우로 나란히, 각각 전체 높이 — 스테이지 열을 2배로 넓힌다 */
     .split.two{grid-template-columns:min(796px,62%) minmax(0,1fr)}
     .split .phones.two{grid-template-columns:1fr 1fr}
@@ -287,16 +288,21 @@
   /* ── 문항 바로가기 패널 (문제은행식) — 진행 중(quiz)에만, 넓은 화면에만 보인다.
      좁은 화면에서는 본문과 겹쳐서 아예 숨긴다 — 폰 진행은 이전/다음으로 충분하다 */
   #side{
-    position:fixed; left:12px; top:64px; bottom:12px; z-index:15;
-    width:176px; overflow-y:auto; padding:12px 10px;
+    position:fixed; left:12px; top:64px; bottom:88px; z-index:15;
+    width:176px; overflow-y:auto; overscroll-behavior:contain; padding:12px 10px;
     background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
   }
   #side .sttl{font-size:11px; font-weight:700; color:var(--text-3); margin:12px 0 5px; letter-spacing:.02em; word-break:keep-all}
   #side .sttl:first-child{margin-top:0}
-  #side .sgrid{display:flex; flex-wrap:wrap; gap:4px}
+  /* flex-wrap 이면 칩 폭이 라벨 길이(T1 vs K3a~K3b)에 따라 달라져
+     줄마다 개수가 3·3·2·3 으로 들쭉날쭉했다 — 고정 격자로 세로줄을 맞춘다.
+     2열인 이유: 3열이면 한 칸이 47px 라 "K3a~K3b"·"P1~P5" 가 잘려 span 2 를 써야 하고,
+     그러면 옆칸이 비어 격자가 더 어색해진다. 2열은 모든 라벨이 그냥 들어간다 (2026-09-06) */
+  #side .sgrid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px}
   #side .jmp{
-    min-width:36px; padding:5px 6px; text-align:center; cursor:pointer; font:inherit; font-size:11px;
-    font-variant-numeric:tabular-nums;
+    padding:5px 4px; text-align:center; cursor:pointer; font:inherit; font-size:11px;
+    font-variant-numeric:tabular-nums; min-width:0;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;   /* 긴 라벨이 칸을 밀지 않게 */
     background:var(--surface-2); color:var(--text-2); border:1.5px solid transparent; border-radius:7px;
   }
   #side .jmp:hover{background:var(--accent-soft)}
