@@ -80,7 +80,7 @@
   .phones.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .phonewrap{display:flex; flex-direction:column; min-width:0}
   .phone{
-    position:relative; height:46vh; overflow:hidden; display:flex; flex-direction:column;
+    position:relative; height:46svh; overflow:hidden; display:flex; flex-direction:column;
     background:var(--surface-2); border:1px solid var(--line); border-radius:16px;
   }
   /* 이름표는 프레임 위 띠로 — 스크린샷 위에 얹으면 앱 헤더를 가린다 */
@@ -136,8 +136,8 @@
     position:sticky; top:50px; z-index:5; background:var(--bg);
     margin:0 -16px 8px; padding:6px 16px 6px;
   }
-  .split .phone{height:42vh}
-  .split .phones.two .phone{height:48vh}
+  .split .phone{height:42svh}
+  .split .phones.two .phone{height:48svh}
   .split .stage.collapsed .phone{height:0; border:none}
   .split .stage.collapsed .full{display:none}
   .split .stage.collapsed .stagehint{display:none}
@@ -149,7 +149,9 @@
     .split{display:grid; grid-template-columns:393px minmax(0,1fr); gap:28px; align-items:start}
     .split .stage{position:sticky; top:64px; margin:12px 0 0; padding:0; background:none}
     /* 200 → 230: 프레임 밖으로 내린 "크게 보기"(알약 버튼 + 여백)만큼 (2026-09-06) */
-    .split .phone, .split .phones.two .phone{height:calc(100dvh - 230px)}
+    /* ⚠️ dvh 가 아니라 svh 다 — dvh 는 탭을 떠났다 돌아올 때 값이 다시 잡히면서
+       sticky 스테이지 높이가 변하고, 그 여파로 하단 고정바가 잘려 보였다 (2026-09-07) */
+    .split .phone, .split .phones.two .phone{height:calc(100svh - 230px)}
     /* 두 화면 비교 단계: 프레임을 좌우로 나란히, 각각 전체 높이 — 스테이지 열을 2배로 넓힌다 */
     .split.two{grid-template-columns:min(796px,62%) minmax(0,1fr)}
     .split .phones.two{grid-template-columns:1fr 1fr}
@@ -1025,7 +1027,7 @@ function showCsv(text, name){
   bd.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.55);'+
     'display:flex;align-items:center;justify-content:center;padding:16px';
   bd.innerHTML=`<div style="background:var(--surface);border-radius:var(--r);padding:18px;
-      max-width:720px;width:100%;max-height:86vh;display:flex;flex-direction:column;gap:12px">
+      max-width:720px;width:100%;max-height:86svh;display:flex;flex-direction:column;gap:12px">
     <div><div style="font-size:17px;font-weight:700">CSV 내보내기</div>
     <div style="font-size:13px;color:var(--text-2);margin-top:4px">
       이 화면에서는 파일 저장이 막혀 있어요. 복사해서 엑셀이나 메모장에 붙여넣고
