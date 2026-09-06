@@ -139,6 +139,18 @@ export function FinanceInsurance() {
             <span className={`${styles.statLabel} t-caption`}>{C.myPremiumLabel}</span>
             <span className={`${styles.statValue} t-h2`}>{won(data.monthlyPremiumTotal)}</span>
           </span>
+
+          {/* 납입 — 홈 계좌 카드 "잔액 [이체]"와 같은 문법으로 통계 행 오른쪽 끝에 (2026-09-06).
+              금액 옆 12 에 붙이는 안은 사용자가 보고 뺐다 — 카드 끝 정렬이 낫다. 대신 필을 홈보다 한 단계 키운다.
+              하단 2분할(청구·찾기)은 스펙·Figma 그대로 둔다.
+              도착지 없음 — 납입 화면은 9/11 범위 밖. 서비스 그리드 "보험료납입"과 같이 계측만 남긴다 */}
+          <button
+            type="button"
+            className={`${styles.payBtn} t-body-sm`}
+            onClick={() => track(tid(SCREEN.s1, ELEMENT.버튼, '보험료납입'))}
+          >
+            {C.myPayAction}
+          </button>
         </div>
 
       </Card>

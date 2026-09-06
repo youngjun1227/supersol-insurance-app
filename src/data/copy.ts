@@ -214,6 +214,9 @@ export const INSURANCE_MAIN = {
   myTitle: '내 보험',
   myCountLabel: '보험',
   myPremiumLabel: '이번 달 보험료',
+  /** 금액 오른쪽 필 버튼 — 홈 계좌 카드 "이체"와 같은 문법 (2026-09-06).
+      "보험료"는 앞 라벨이 이미 말하므로 두 글자만. ⚠️ 보험금(받는 돈)이 아니라 보험료(내는 돈)를 낸다 */
+  myPayAction: '납입',
 
   /** 2분할 액션 */
   actionClaim: '보험금 청구',
