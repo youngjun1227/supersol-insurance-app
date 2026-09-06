@@ -31,9 +31,22 @@
 `docs/정성평가/평가도구/web` 로 잡고 Framework Preset 은 `Other`(빌드 없음).
 빌드 명령·출력 디렉터리는 비워 둔다 — 이 폴더를 그대로 올린다.
 
-⚠️ **`vercel.json` 의 rewrite 대상은 `/survey` 다 — `/survey.html` 이 아니다.**
-`cleanUrls: true` 가 `.html` 경로를 확장자 없는 쪽으로 308 리다이렉트하기 때문에,
-`/survey.html` 을 가리키면 **루트가 404** 가 된다 (2026-09-05 실제로 겪음).
+### 주소 3개
+
+| 주소 | 페이지 |
+|---|---|
+| `/` | **설문 고르기** (`index.html`) — 진행자가 여기서 둘 중 하나를 고른다 |
+| `/survey` | 아이디어 1~3 (`survey.html`) |
+| `/claim` | 아이디어 4 · 청구 (`claim.html`) |
+
+루트에 `index.html` 이 있으면 Vercel 이 알아서 서빙하므로 **rewrite 를 두지 않는다**
+(2026-09-06 선택 페이지 신설 전에는 `/` → `/survey` rewrite 가 있었다).
+
+⚠️ **`index.html` 의 링크는 `.html` 을 붙여 둔다.** Vercel 은 `cleanUrls` 가 `/survey` 로
+정리해 주지만, 로컬 정적 서버(`python -m http.server`)에서는 확장자가 없으면 404 다.
+⚠️ `cleanUrls: true` 는 `.html` 경로를 확장자 없는 쪽으로 308 리다이렉트한다 —
+rewrite 를 다시 둘 일이 있으면 대상을 `/survey` 로 적어야 한다. `/survey.html` 로 적으면
+**루트가 404** 가 된다 (2026-09-05 실제로 겪음).
 
 검색 노출은 `X-Robots-Tag: noindex` + `robots.txt` 로 막아 뒀다.
 다만 **링크를 아는 사람은 누구나 열 수 있다** — `img/` 에 기존 앱 캡처가 들어가므로
