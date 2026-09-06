@@ -75,7 +75,10 @@
      프레임 안을 실제 폰처럼 위아래로 넘기게 한다. "크게 보기"는 전체 화면(역시 스크롤) */
   .stage{margin:12px 0 4px}
   .phones{display:grid; grid-template-columns:1fr; gap:10px}
-  .phones.two{grid-template-columns:1fr 1fr}
+  /* 이미지가 든 칸은 minmax(0,1fr) — 1fr 만 쓰면 긴 스크린샷이 칸을 밀어 넘친다 */
+  .phones.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  /* 프레임 + "크게 보기" 를 한 칸으로 묶는 래퍼 */
+  .phonewrap{display:flex; flex-direction:column; min-width:0}
   .phone{
     position:relative; height:46vh; overflow:hidden; display:flex; flex-direction:column;
     background:var(--surface-2); border:1px solid var(--line); border-radius:16px;
@@ -105,11 +108,15 @@
     color:var(--text-3); font-size:13px; line-height:1.5;
   }
   .phone .ph small{display:block; font-size:11px; opacity:.8; margin-top:4px; font-family:ui-monospace,Menlo,monospace}
+  /* 프레임 안에 떠 있으면 스크린샷 내용을 가린다 — 실제로 "1개 비어 있어요" 같은
+     문장을 덮었다. 프레임 아래 띠로 내려 콘텐츠를 안 가리게 한다 (2026-09-06) */
   .phone .full{
-    position:absolute; right:8px; bottom:8px; z-index:2;
-    background:rgba(0,0,0,.6); color:#fff; border:none; border-radius:99px;
-    padding:6px 11px; font:inherit; font-size:12px; font-weight:600; cursor:pointer;
+    display:block; width:100%; margin-top:6px;
+    background:none; color:var(--text-2); border:1px solid var(--line); border-radius:var(--r-sm);
+    padding:7px 11px; font:inherit; font-size:12px; font-weight:600; cursor:pointer;
+    transition:border-color .12s, color .12s;
   }
+  .phone .full:hover{border-color:var(--accent); color:var(--accent)}
   .stagefoot{display:flex; align-items:center; justify-content:center; gap:10px; margin-top:6px}
   .stagehint{font-size:12px; color:var(--text-3)}
   .collapse{
@@ -132,15 +139,20 @@
   .split .phone{height:42vh}
   .split .phones.two .phone{height:48vh}
   .split .stage.collapsed .phone{height:0; border:none}
+  .split .stage.collapsed .full{display:none}   /* 접으면 "크게 보기"도 같이 숨긴다 */
   .split .stage.collapsed .stagehint{display:none}
   .split .stage.collapsed .stagefoot{margin-top:0}
 
   /* 태블릿·노트북: 왼쪽에 프레임 고정, 오른쪽에 문항 */
   @media (min-width:900px){
-    .wrap{max-width:1060px}
+    /* 프레임이 있는 단계만 넓힌다. 문항만 있는 단계까지 1060 으로 늘리면
+       척도 한 칸이 200px 씩 벌어지고 주관식 한 줄이 100자를 넘어 읽기 나쁘다.
+       기본은 읽기 좋은 폭(720)으로 두고, .split 이 있을 때만 넓힌다 (2026-09-06) */
+    .wrap:has(.split){max-width:1060px}
     .split{display:grid; grid-template-columns:393px minmax(0,1fr); gap:28px; align-items:start}
     .split .stage{position:sticky; top:64px; margin:12px 0 0; padding:0; background:none}
-    .split .phone, .split .phones.two .phone{height:calc(100dvh - 200px)}
+    /* 200 → 236: 프레임 밖으로 내린 "크게 보기" 높이만큼 뺀다 (2026-09-06) */
+    .split .phone, .split .phones.two .phone{height:calc(100dvh - 236px)}
     /* 두 화면 비교 단계: 프레임을 좌우로 나란히, 각각 전체 높이 — 스테이지 열을 2배로 넓힌다 */
     .split.two{grid-template-columns:min(796px,62%) minmax(0,1fr)}
     .split .phones.two{grid-template-columns:1fr 1fr}
@@ -194,13 +206,18 @@
   .follow{font-size:13px; font-weight:600; margin:16px 0 6px; color:var(--text-2)}
 
   /* ── 척도 ── */
-  .scale{display:grid; grid-template-columns:repeat(5,1fr); gap:6px}
+  /* 넓은 화면에서 한 칸이 200px 씩 벌어지면 5칸이 "척도" 로 안 읽힌다 — 상한을 둔다 */
+  .scale{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; max-width:560px}
   .scale button{
     background:var(--surface-2); border:1.5px solid transparent; border-radius:var(--r-sm);
-    padding:12px 4px 10px; font:inherit; color:var(--text); cursor:pointer; text-align:center;
+    padding:12px 6px 10px; font:inherit; color:var(--text); cursor:pointer; text-align:center;
     display:flex; flex-direction:column; align-items:center; gap:5px;
     transition:background .12s, border-color .12s, transform .06s;
+    /* 라벨 길이가 제각각이라("보통이다" vs "전혀 쉽지 않았다") 칸 높이가 들쭉날쭉했다.
+       한 줄짜리도 두 줄 높이를 차지하게 맞춰 5칸이 같은 크기로 보이게 한다 (2026-09-06) */
+    justify-content:flex-start;
   }
+  .scale button .cap{min-height:2.5em; display:flex; align-items:center}
   .scale button:hover{background:var(--accent-soft)}
   .scale button:active{transform:scale(.97)}
   .scale button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
@@ -879,9 +896,12 @@ function phone(key,nth,dict){
   const imgs=pages.map((pg,i)=>`<div class="page" data-page="${i}"${i?' hidden':''}>
       <img src="${esc(pg.file)}" alt="${tag}"
         onerror="this.outerHTML='<div class=ph>${tag}${pg.label?' · '+esc(pg.label):''} 이미지 준비 중<small>${esc(pg.file)}</small></div>'"></div>`).join('');
-  return `<div class="phone"><div class="phead">${tag}</div>
+  /* "크게 보기"는 .phone 밖에 둔다 — 안에 두면 overflow:hidden 에 잘리고,
+     떠 있게 하면 스크린샷 내용을 가린다 (2026-09-06) */
+  return `<div class="phonewrap"><div class="phone"><div class="phead">${tag}</div>
     ${pages.length>1?`<div class="ptabs">${pages.map((pg,i)=>`<button type="button" data-page="${i}" aria-pressed="${i===0}">${i+1}. ${esc(pg.label)}</button>`).join('')}</div>`:''}
     <div class="scroll">${imgs}</div>
+  </div>
     <button type="button" class="full" data-full="${esc(pages[0].file)}">크게 보기</button>
   </div>`;
 }
@@ -1109,7 +1129,7 @@ function body(q,key){
       const ri=side==='old'?0:1;                    /* 저장 키는 정체 고정 */
       return `
       <div class="pairlbl">${esc(q.pairLabels?q.pairLabels[ri]:POS[pos])}</div>
-      <div class="scale" data-row="${ri}" style="grid-template-columns:repeat(${q.labels.length},1fr)">
+      <div class="scale" data-row="${ri}" style="grid-template-columns:repeat(${q.labels.length},minmax(0,1fr))">
         ${q.labels.map((L,i)=>`<button type="button" data-v="${i+1}" aria-pressed="${a['r'+ri]===i+1}">
            ${q.nonum?'':`<span class="num">${i+1}</span>`}<span class="cap"${q.nonum?' style="font-size:13px;color:var(--text)"':''}>${esc(L)}</span></button>`).join('')}
       </div>`;}).join('');
