@@ -313,15 +313,25 @@
        왼쪽에 딱 붙어 오른쪽만 휑해진다 (2026-09-06 회귀 수정).
        body 에 여백을 주면 .wrap 의 margin:0 auto 가 남은 폭 기준으로 다시 가운데를 잡는다 */
     body[data-side="on"]{padding-left:200px}
+    /* 띠(header·nav)는 화면 좌우 끝까지 — body padding 을 되돌려 0 에서 시작하게 하고,
+       안쪽 래퍼(.hdin·.navin)에만 같은 값을 줘 본문과 세로줄을 맞춘다 (2026-09-07) */
+    /* header 는 sticky 라 body 의 padding-left 를 받는다 — 음수 마진으로 되돌려
+       띠를 화면 0 에서 시작하게만 하고, 안쪽 밀기는 .hdin 이 혼자 맡는다.
+       여기서도 padding-left 를 주면 200px 가 두 번 먹혀 92px 어긋난다 (2026-09-07) */
+    body[data-side="on"] header{margin-left:-200px}
+    body[data-side="on"] .hdin,
+    body[data-side="on"] .navin{max-width:calc(720px + 200px); padding-left:200px}
     /* 하단 .nav 는 fixed 라 body padding 을 안 받는다 — 직접 밀어 준다.
        그러면 header(sticky·padding 받음)·nav·.wrap 셋이 같은 좌표계에 놓이고,
        안쪽은 전부 .wrap 과 똑같은 규칙(max-width:720 · margin:0 auto)이라
        계산 없이 저절로 정렬된다 (2026-09-06) */
-    body[data-side="on"] .nav{left:200px}
+    body[data-side="on"] .nav{left:0}
     /* 본문은 단계에 따라 폭이 달라진다(문항 720 · 프레임 1060 · 두 프레임 1440).
        상·하단 안쪽도 같이 따라가야 세로줄이 맞는다 (2026-09-06) */
-    body:has(.split) .hdin, body:has(.split) .navin{max-width:1060px}
-    body:has(.split.two) .hdin, body:has(.split.two) .navin{max-width:1440px}
+    body[data-side="on"]:has(.split) .hdin,
+    body[data-side="on"]:has(.split) .navin{max-width:calc(1060px + 200px)}
+    body[data-side="on"]:has(.split.two) .hdin,
+    body[data-side="on"]:has(.split.two) .navin{max-width:calc(1440px + 200px)}
   }
 
   /* ── 시작/종료 화면 ── */
