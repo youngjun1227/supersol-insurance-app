@@ -63,3 +63,15 @@
   width: 22px;
   height: 22px;
 }
+
+/* › 보조 버튼 — 자리는 아이콘 16 그대로, 세로만 --hit-min(44) 으로 눌리게 음수 마진으로 키운다.
+   가로는 늘리지 않는다 — 왼쪽으로 늘리면 💬 의 탭 영역을 덮는다 (2026-09-07) */
+.chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: var(--hit-min);
+  margin: calc((16px - var(--hit-min)) / 2) 0;
+}

@@ -9,7 +9,10 @@
    ⚠️ 행 전체를 role="button" div 로 감싸면 안 된다 (#105) — 그 안의 💬 버튼이
       접근성 트리에서 텍스트로 평탄화돼, 스크린리더 사용자는 💬 를 아예 못 누른다
       (그 참가자에게서는 S3C-물어보기-* 이벤트가 절대 안 나온다).
-      배터리·텍스트·chevron 만 <button> 으로 묶고 💬 는 형제로 둔다. */
+      배터리·텍스트를 <button> 으로 묶고 💬 는 형제로 둔다.
+   ⚠️ chevron(›) 도 눌려야 한다 (2026-09-07) — 장식으로만 두었더니 "화살표를 눌러도 화면이 안 뜬다"는
+      제보. 💬 가 사이에 있어 본문 버튼 안에 넣을 수 없으니(중첩 버튼 금지) 같은 목적지로 가는
+      보조 버튼으로 둔다 — 포인터용이라 탭 순서·접근성 트리에서는 뺀다(본문 버튼이 대표). */
 
 import { CaretRight, ChatCircleDots } from '@phosphor-icons/react'
 import type { CoverageItem } from '@/data/types'
@@ -64,7 +67,16 @@ export function CoverageRow({ item, variant = 'compact', onOpen, onAsk }: Covera
         <ChatCircleDots size={22} weight="regular" color="var(--text-secondary)" />
       </button>
 
-      <CaretRight size={16} weight="regular" color="var(--text-disabled)" />
+      {/* › — 본문 버튼과 같은 곳으로. 그림은 16 이지만 세로 44(--hit-min) 로 눌린다 */}
+      <button
+        type="button"
+        className={styles.chevron}
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={() => onOpen?.(item)}
+      >
+        <CaretRight size={16} weight="regular" color="var(--text-disabled)" />
+      </button>
     </div>
   )
 }
