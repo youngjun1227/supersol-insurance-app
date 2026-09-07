@@ -67,8 +67,9 @@
 
 ## 화면
 
-Figma 최종 UI 25장을 [`docs/figma-ref/`](docs/figma-ref/) 에 커밋해 두었습니다.
-구현할 때 옆에 띄우고, 검수할 때 나란히 놓고 비교합니다. 아래는 흐름별 대표 화면입니다.
+아래는 **실제 구동 화면 캡처**입니다 ([`docs/screens/`](docs/screens/) · 393px 폭).
+비교 기준이 되는 Figma 최종 UI 25장은 [`docs/figma-ref/`](docs/figma-ref/) 에 따로 있습니다 —
+구현할 때 옆에 띄우고, 검수할 때 나란히 놓고 비교합니다.
 
 ### 아이디어 2 · 보험 메인 — 보유 건수에 따라 첫 화면이 달라진다
 
@@ -76,7 +77,7 @@ Figma 최종 UI 25장을 [`docs/figma-ref/`](docs/figma-ref/) 에 커밋해 두�
 
 | 보유 2건 (기본) | 보유 0건 | 내 보험 | 기준 시트 |
 |---|---|---|---|
-| ![보험 메인 2건](docs/figma-ref/S1-9-보험메인-2건.png) | ![보험 메인 0건](docs/figma-ref/S1-8-보험메인-0건.png) | ![내 보험](docs/figma-ref/S1-7-내보험.png) | ![기준 시트](docs/figma-ref/S1-13-기준시트.png) |
+| ![보험 메인 2건](docs/screens/S1-9-보험메인-2건.png) | ![보험 메인 0건](docs/screens/S1-8-보험메인-0건.png) | ![내 보험](docs/screens/S1-7-내보험.png) | ![기준 시트](docs/screens/S1-13-기준시트.png) |
 
 ### 아이디어 4 · 보장 진단 — 브리핑에서 대화까지 파고든다
 
@@ -84,13 +85,13 @@ Figma 최종 UI 25장을 [`docs/figma-ref/`](docs/figma-ref/) 에 커밋해 두�
 
 | 브리핑 | 진단 결과 (접힘) | 진단 결과 (펼침) | 항목 상세 |
 |---|---|---|---|
-| ![브리핑](docs/figma-ref/S3-D-브리핑.png) | ![진단 결과 접힘](docs/figma-ref/S3-C-진단결과-접힘.png) | ![진단 결과 펼침](docs/figma-ref/S3-C-1-진단결과-펼침.png) | ![항목 상세](docs/figma-ref/S3-E-항목상세-실손.png) |
+| ![브리핑](docs/screens/S3-D-브리핑.png) | ![진단 결과 접힘](docs/screens/S3-C-진단결과-접힘.png) | ![진단 결과 펼침](docs/screens/S3-C-1-진단결과-펼침.png) | ![항목 상세](docs/screens/S3-E-항목상세-실손.png) |
 
 에이전트 대화는 **프리셋 고정 응답**입니다 — 실제 LLM을 붙이지 않았습니다.
 
 | 대화 · 실손 | 대화 · 사망 |
 |---|---|
-| ![대화 실손](docs/figma-ref/S3-F-대화-실손.png) | ![대화 사망](docs/figma-ref/S3-F-대화-사망.png) |
+| ![대화 실손](docs/screens/S3-F-대화-실손.png) | ![대화 사망](docs/screens/S3-F-대화-사망.png) |
 
 ### 아이디어 3 · 청구 흐름 — 결제를 감지해 먼저 알린다
 
@@ -98,13 +99,13 @@ Figma 최종 UI 25장을 [`docs/figma-ref/`](docs/figma-ref/) 에 커밋해 두�
 
 | 결제 감지 팝업 | 알림 설정 | 청구 절차 | 청구 완료 |
 |---|---|---|---|
-| ![결제 감지 팝업](docs/figma-ref/S4-A-결제감지팝업.png) | ![알림 설정](docs/figma-ref/S5-A-알림설정.png) | ![청구 절차](docs/figma-ref/S4-D-청구절차.png) | ![청구 완료](docs/figma-ref/청구완료.png) |
+| ![결제 감지 팝업](docs/screens/S4-A-결제감지팝업.png) | ![알림 설정](docs/screens/S5-A-알림설정.png) | ![청구 절차](docs/screens/S4-D-청구절차.png) | ![청구 완료](docs/screens/청구완료.png) |
 
 ### 아이디어 1 · 상품 찾기 — 목록보다 조건을 먼저
 
 | 상품 찾기 | 카테고리 선택 후 | 상품 상세 | 툴팁 열림 |
 |---|---|---|---|
-| ![상품 찾기](docs/figma-ref/S2-A-상품찾기.png) | ![카테고리 선택 후](docs/figma-ref/S2-D-카테고리선택후.png) | ![상품 상세](docs/figma-ref/S6-A-상품상세.png) | ![툴팁 열림](docs/figma-ref/S6-A-1-툴팁열림-버블.png) |
+| ![상품 찾기](docs/screens/S2-A-상품찾기.png) | ![카테고리 선택 후](docs/screens/S2-D-카테고리선택후.png) | ![상품 상세](docs/screens/S6-A-상품상세.png) | ![툴팁 열림](docs/screens/S6-A-1-툴팁열림-버블.png) |
 
 ### 진입 경로 — 일부러 남긴 마찰
 
@@ -113,13 +114,14 @@ Figma 최종 UI 25장을 [`docs/figma-ref/`](docs/figma-ref/) 에 커밋해 두�
 
 | 메인홈 | 금융 · 은행 | 금융 · 카드 | 상품 · 발견 |
 |---|---|---|---|
-| ![메인홈](docs/figma-ref/00-메인홈.png) | ![금융 은행](docs/figma-ref/경로-09-금융-은행.png) | ![금융 카드](docs/figma-ref/경로-10-금융-카드.png) | ![상품 발견](docs/figma-ref/경로-12-상품-발견.png) |
+| ![메인홈](docs/screens/00-메인홈.png) | ![금융 은행](docs/screens/경로-09-금융-은행.png) | ![금융 카드](docs/screens/경로-10-금융-카드.png) | ![상품 발견](docs/screens/경로-12-상품-발견.png) |
 
 **픽셀 퍼펙트는 목표가 아닙니다.** Figma는 Noto Sans KR, 브라우저는 Pretendard라 1~2px 차이는 정상입니다.
 검수 기준은 두 개뿐입니다 — ① DevTools로 찍은 값이 토큰과 일치하는가 ② 나란히 놓고 육안으로 등가인가.
 픽셀 오버레이 비교는 하지 않습니다.
 
-> 위 이미지는 **Figma 시안**입니다. 실제 구동 화면 캡처는 배포 후 교체합니다.
+> 위 이미지는 배포본에서 찍은 **실제 구동 화면**입니다 (2026-09-07 기준 · 상태 B).
+> 화면이 바뀌면 같이 갱신합니다.
 
 ---
 
