@@ -42,7 +42,7 @@ export function ProductDetail() {
 
   /* 상품별 상세 가상값 (mock-data §3-1). 26개 전부 있다.
      제조사·판매 채널은 여기서 파생한다 — 목데이터에 중복 저장하지 않는다.
-     ⚠️ 전부 가상값이라 화면에 면책을 띄운다 (PRODUCT_DETAIL_COPY.detailNotice) */
+     (전부 가상값 — 화면의 면책 문구는 2026-09-11 뺐다, 변경로그 "고지·면책 문구 정리") */
   const d = product ? PRODUCT_DETAILS[product.id] : undefined
   const detail = product && d
     ? {
@@ -202,10 +202,6 @@ export function ProductDetail() {
                 </div>
               ))}
             </dl>
-
-            {/* 면책 — 스탯 3열(탭 위)과 이 표의 값이 전부 가상값이다.
-                자사는 실제 상품명을 쓰므로 표시가 없으면 실제 조건으로 읽힌다 */}
-            <p className={`${styles.notice} t-caption`}>{PD.detailNotice}</p>
           </>
         ) : (
           /* 상품안내 탭인데 값이 없는 경우와, 다른 탭(9/11 범위 밖)을 구분한다 —
