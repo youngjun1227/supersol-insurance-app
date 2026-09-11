@@ -427,8 +427,6 @@ export function FinanceInsurance() {
           )
         })}
       </div>
-
-      <p className={`${styles.diagDisclaimer} t-caption`}>{E.recommendNotice}</p>
     </Card>
   )
 

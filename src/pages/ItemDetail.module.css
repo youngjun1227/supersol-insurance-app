@@ -164,10 +164,6 @@
 /* 2분할 — 두 칸 같은 폭 (figma-ref 실측 171 / 171) */
 .dockButtons > * { flex: 1; min-width: 0; }
 
-.disclaimer {
-  color: var(--text-caption);
-  text-align: center;
-}
 
 /* 보장이 있는 항목의 또래 값 행 — 빈 상태(.emptyBox)와 달리 실제 내용이라
    회색·가운데가 아니라 본문 색으로 왼쪽 정렬한다 */
