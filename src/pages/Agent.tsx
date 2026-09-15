@@ -192,8 +192,6 @@ export function Agent() {
                   <p key={text} className={`${styles.paragraph} t-body`}>{fill(text)}</p>
                 ))}
 
-                <p className={`${styles.aiNotice} t-caption`}>{C.aiNotice}</p>
-
                 {/* 추천 칩은 마지막 덩이에만 — 위쪽 답변의 칩까지 남으면 어디를 누를지 헷갈린다 */}
                 {preset?.suggestion && i === turns.length - 1 ? (
                   <button

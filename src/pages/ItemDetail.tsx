@@ -116,7 +116,6 @@ export function ItemDetail() {
                 {C.findProducts}
               </Button>
             </div>
-            <p className={`${styles.disclaimer} t-caption`}>{C.disclaimer}</p>
           </div>
         </BottomCTA>
       }
